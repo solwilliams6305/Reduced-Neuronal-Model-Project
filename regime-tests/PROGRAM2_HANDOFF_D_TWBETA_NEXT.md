@@ -84,6 +84,19 @@ of the tanh-kink escape instanton `P⋆=−tanh τ` (`‖ψ₀‖²=∫sech⁴=4
    uniformity; the `n=1` off-diagonal is `σ_1=(−5/12)a^{-3/2}[1−(33/8)a^{-3/2}+(1555/64)a^{-3}+…]`).
    **Next actor:** derive/port the BN recursion, generate `R_4..R_~20`, extract `r_{n,n+1}` growth and
    confirm the on-axis singularity numerically. This is now the natural completion of Thread 2.
+   **BN-RECURSION PORT — STARTED 2026-07-22** (`PROGRAM2_TWBETA_BN_RECURSION_NOTES.md`,
+   `coupled-atlas/_tw_bn_brackets.py`; full 1111.2761 PDF extracted). The recursion is **not printed** —
+   it is a **β-deformed topological recursion** (§2.3): loop eqs 2-8/2-9, Gaussian 1-pt recursion 2-19 in
+   uniformization `x=√t(z+1/z)`, assembly Prop 2.1 eq 2-32. **Clean wins:** (a) Coulomb-gas sector = the
+   Bernoulli term `−B_{m+1}/(m(m+1))(2/β)^m` (Prop 2.1) — **a-independent**, = the `Γ(β/2)` Stirling
+   tail, independently confirming the uniform-note decomposition; (b) page-5 β=1,2,4 brackets to
+   `O(s^{-21/2})` give exact `R_m` at `X=2,1,1/2` for m≤6 (validated `R_1..R_3`; new `R_4,R_5,R_6` at 3
+   points — e.g. `R_4(1)=2905/128`). **Blocker:** faithful port needs two standard β-TR subtleties the
+   paper states only abstractly — a **branch-point projection** (naive `RHS/Y` is short by `+b/2` residue
+   at `z=±1`; verified at k=1 vs eq 2-26) and a **`W_2` coincident-limit (Bergman) regularization** (k=2).
+   `R_4` needs `ω_1^{[5]}` (paper prints `∫ω_1^{[≤4]}→R_3` only). 3 finite-β points can't fix `R_{m≥4}`
+   (deg ≤ m+1) nor the `X→∞` diagonal. **To finish:** fix the two subtleties, validate vs 2-26..2-30 +
+   `R_1..R_3`, run to `ω_1^{[5+]}`, edge-extract via Prop 2.1, cross-check vs the bracket data.
 3. **[structural] `α=1/2` vs `α=0` family assignment** (paper Rem.~in §5). The tail *saddle* is the
    α=1/2 Airy solution; the β=2 *distribution* is α=0 (HM). Pin the correspondence via the PII
    coalescence / Airy-solution structure. Does NOT block T1 (Costin's class covers all α); sharpens

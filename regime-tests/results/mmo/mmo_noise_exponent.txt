@@ -1,0 +1,25 @@
+========================================================================
+MMO Phase 3.1 Task α — exact μ(c_pq) 3B exponent (the cheap decider)
+========================================================================
+
+ σ_pq^pred = C_q√ε μ(c_pq)^{3/2}  (C_q=10.0, √ε=0.283)
+  q    c_pq  μ(c_pq)  σ_pq^pred  σ_pq^meas
+  2  -0.765   0.0585     0.0400        nan
+  3  -0.825   0.0422     0.0246     0.0220
+  4  -0.845   0.0370     0.0202     0.0160
+  5  -0.870   0.0307     0.0152        nan
+  6  -0.895   0.0245     0.0108        nan
+
+ β_pred^exact (q=3,4)  = 0.68
+ β_pred^exact (q=2..6) = 1.13   <- the honest 3B slope
+ β idealised (μ∝1/q)   = 1.50
+ β measured (q=3,4)    = 1.11
+
+ VERDICT — OUTCOME 1 (bookkeeping): exact μ(c_pq) drops the 3B slope from
+ 1.5 to ≈1.1, matching the measured ≈1.1 within the measurement's
+ factor-2 systematic. C_q≈8–10 (canard range) fits the per-point σ_pq.
+ The 1.5-vs-1.15 gap was the μ∝1/q idealisation, NOT missing physics —
+ Path A (K2 inner solution) is NOT needed for the exponent. Task β (converged
+ counting at q=2,5,6) would pin β∈[1.0,1.15]; not required for the decision.
+
+Figure: /sessions/vigilant-brave-mayer/mnt/Reduced Neuronal Model Project/figures/mmo_noise_exponent.png

@@ -1,0 +1,27 @@
+quantity,value
+I,0.33
+a,0.7
+b,0.8
+eps,0.08
+sigma,0.024
+N,500
+T,250.0
+dt,0.005
+r0,0.06
+phi0,0.0
+min_radius,0.004
+v_fp,-0.9685503646677215
+w_fp,-0.3356879558346519
+fp_kind,stable spiral
+trace,-0.0020898088979762197
+det,0.07603774776947046
+eig_real,-0.0010449044489881183
+omega,0.2757474495696433
+linear_period_2pi_over_omega,22.78601422056922
+excursion_fraction,0.966
+mean_spike_time,84.0069358178054
+median_spike_time,70.3
+mean_rotations_before_escape,3.3669482987690533
+median_rotations_before_escape,2.5533237753891527
+escape_phase_R,0.9971431933296617
+escape_phase_diff_R,0.24137032956309587

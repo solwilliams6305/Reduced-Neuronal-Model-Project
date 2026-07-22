@@ -1,0 +1,24 @@
+========================================================================
+MMO keystone — normal-form crossover η_*(μ): folded node → canard
+========================================================================
+ Θ grid: [1.5, 2.0, 2.5, 3.0, 3.5, 4.0];  μ→0 is the pure canard (λ=1/2).
+
+      μ  λ_eff Θ_crit=C_q     η_*μ^{3/2}·C_q0
+   0.00  0.500       2.01   1.422         nan
+   0.02  0.510       1.99   1.420       0.006
+   0.05  0.525       2.02   1.465       0.022
+   0.10  0.550       2.13   1.581       0.064
+   0.20  0.600       2.29   1.772       0.180
+   0.50  0.750       2.51   2.173       0.711
+
+ canard anchor (μ=0): C_q = Θ_crit = 2.01, η_* = 1.422
+ C_q(μ) range: 1.99–2.51  (drift 26%)
+
+ VERDICT: η_*(μ) stays O(η_canard) and → the canard plateau as μ→0; C_q≈const
+ (mild drift). NO μ^{3/2} regime in the LOCAL normal-form escape (the μ^{3/2}
+ is the global-return funnel-filling, MMO_K2 f(c)). The keystone INHERITANCE
+ holds: the folded-node escape is the canard escape with shared C_q, as a
+ continuous μ→0 limit. (Convention caveat §7.1; absolute C_q is dt/settings-
+ dependent — the constancy + canard limit is the convention-robust result.)
+
+Figure: /sessions/vigilant-brave-mayer/mnt/Reduced Neuronal Model Project/figures/mmo_crossover_nf.png

@@ -1,0 +1,41 @@
+========================================================================
+MMO Phase 3A — noise dissolution σ_pq(q)  (FHR, δ=0.2, deg. noise on v)
+========================================================================
+
+q=2 (ρ=1/2, c=-0.77):
+   σ=0.004 <ρ>=0.494 std=0.010 locked=1.00
+   σ=0.008 <ρ>=0.511 std=0.025 locked=1.00
+   σ=0.015 <ρ>=0.520 std=0.038 locked=0.97
+   σ=0.025 <ρ>=0.533 std=0.040 locked=0.96
+   σ=0.045 <ρ>=0.566 std=0.051 locked=0.70
+   σ_pq ≈ nan
+
+q=3 (ρ=1/3, c=-0.82):
+   σ=0.004 <ρ>=0.364 std=0.000 locked=1.00
+   σ=0.008 <ρ>=0.359 std=0.017 locked=0.86
+   σ=0.015 <ρ>=0.362 std=0.029 locked=0.67
+   σ=0.025 <ρ>=0.379 std=0.036 locked=0.41
+   σ=0.045 <ρ>=0.417 std=0.035 locked=0.11
+   σ_pq ≈ 0.0217
+
+q=4 (ρ=1/4, c=-0.845):
+   σ=0.004 <ρ>=0.252 std=0.005 locked=1.00
+   σ=0.008 <ρ>=0.259 std=0.017 locked=0.91
+   σ=0.015 <ρ>=0.282 std=0.027 locked=0.53
+   σ=0.025 <ρ>=0.318 std=0.028 locked=0.07
+   σ=0.045 <ρ>=0.361 std=0.048 locked=0.04
+   σ_pq ≈ 0.0156
+
+ σ_pq ~ q^(-β):  β ≈ 1.14  (measured; counter-H-sensitive, see doc)
+   3B prediction (accumulated variance, F(μ)~μ^{3/2}, μ∝1/q): β ≈ 1.5, γ≈1.
+   with α=1.55: measured γ = α/β = 1.36  (3B: γ≈1).
+
+ DISSOLUTION ORDER: σ_pq decreases with q ⇒ high-q (narrow, deep-funnel)
+ plateaus dissolve first — the predicted Farey-dissolution signature. ✓
+
+ HONEST STATUS: order + dt-convergence + O(√ε μ^{3/2}) scale CONFIRMED;
+ the exponent β is NOT tightly pinned (counter-H factor ~2; high-q SAOs at the
+ noise-countability floor) — β∈[~1.5(3B), ~2–4(meas)]. Validating the exponent
+ needs a dt-/H-converged counting study (the limiting hazard). See MMO_NOISE.md.
+
+Figure: /sessions/vigilant-brave-mayer/mnt/Reduced Neuronal Model Project/figures/mmo_noise_staircase.png

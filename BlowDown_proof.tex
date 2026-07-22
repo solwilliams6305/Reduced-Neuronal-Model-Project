@@ -1,0 +1,184 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\TW}{\mathrm{TW}}
+\newcommand{\eqd}{\stackrel{d}{=}}
+\newcommand{\ep}{\varepsilon}
+
+\title{\textbf{Blow-down to physical variables: the folded-cycle escape theorem}\\[2pt]
+\large assembling the chart results into the original $(\ep_1,\ep_2)$ system}
+\author{Solomon Williams \\ \small University of Edinburgh}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}\noindent
+We carry the chart results back through the geometric blow-up to the physical variables,
+completing Path~A's leading-order-with-prefactor analysis. The fold-weighted blow-up
+$r=\ep_2^{1/3}R,\ y=\ep_2^{2/3}Y,\ t=\ep_2^{-1/3}T$ maps the physical SDE \emph{exactly}
+onto the inner Riccati with effective noise $\eta=\sigma/\sqrt{\ep_2}$ (an It\^o change of
+variables, no anomaly). Blowing down the chart conclusions then gives, in the original
+variables: the critical-noise law
+$\sigma_*^A=2\sqrt\pi\,\sqrt{\ep_2}\,G$, the inner exit (peel-off) measure
+$\TW_\beta$ with $\beta=4\ep_2/\sigma^2$ at physical scales
+$(r,y)\sim(\ep_2^{1/3},\ep_2^{2/3})$, the early-escape probability $1-F_\beta(0)$, and the
+early-escape rate $e^{-c\,\ep_2/\sigma^2}$ with $c=5.4439\ldots$ The geometry factor $G$ is
+$\sqrt{ac/b}$ frozen ($\alpha=2$) or $\sqrt{\langle a\rangle\langle c\rangle/\langle
+b\rangle}$ averaged ($\alpha=1$). The noise collapse in $\sigma/\sqrt{\ep_2}$ is verified
+in the physical variables. This assembles the six companion notes into one statement.
+\end{abstract}
+
+\section{The blow-up and the noise covariance}
+
+The JKK normal form near the folded-cycle fold is, in physical variables,
+\begin{equation}\label{eq:phys}
+  \dd r=\bigl(b(\theta)r^2-a(\theta)y\bigr)\dd t+\sigma\,\dd W_t,\qquad
+  \dd y=-\ep_2\,c(\theta)\,\dd t,\qquad \dot\theta=\ep_1,
+\end{equation}
+with $a,b,c>0$ smooth $1$-periodic and $0<\ep_2\ll\ep_1\ll1$, $\ep_1=\ep^\alpha$,
+$\ep_2=\ep^3$. The Krupa--Szmolyan fold blow-up is the quasi-homogeneous (weights
+$(1,2,3)$ on $(r,y,\ep_2)$) map covered by charts $K_1$ (entry), $K_2$ (rescaling), $K_3$
+(exit). The central chart $K_2$ is $\rho=\ep_2^{1/3}$:
+\begin{equation}\label{eq:K2}
+  r=\ep_2^{1/3}R,\qquad y=\ep_2^{2/3}Y,\qquad T=\ep_2^{1/3}t .
+\end{equation}
+
+\begin{proposition}[exact noise covariance]\label{prop:noise}
+Under \eqref{eq:K2}, \eqref{eq:phys} becomes the inner Riccati
+\[
+  \dd R=\bigl(b R^2-a Y\bigr)\dd T+\eta\,\dd B_T,\qquad \dd Y=-c\,\dd T,
+  \qquad \boxed{\ \eta=\sigma/\sqrt{\ep_2}\ } ,
+\]
+exactly (an It\^o change of variables on the diffeomorphism \eqref{eq:K2}; the blow-up
+introduces no It\^o correction because it is a smooth coordinate change). After the linear
+rescaling absorbing $a,b,c$ this is the canonical $\dd R=(R^2-Y)\dd T+\eta\,\dd B$.
+\end{proposition}
+
+\begin{proof}
+$\dd r=\ep_2^{1/3}\dd R$; the drift $(br^2-ay)\dd t=\ep_2^{2/3}(bR^2-aY)\cdot
+\ep_2^{-1/3}\dd T=\ep_2^{1/3}(bR^2-aY)\dd T$; and the noise
+$\sigma\,\dd W_t=\sigma(\dd t)^{1/2}\hat Z=\sigma(\ep_2^{-1/3}\dd T)^{1/2}\hat
+Z=\sigma\,\ep_2^{-1/6}\dd B_T$. Dividing $\dd r=\ep_2^{1/3}\dd R$ through by $\ep_2^{1/3}$:
+$\dd R=(bR^2-aY)\dd T+\sigma\,\ep_2^{-1/2}\dd B_T$. Similarly $\ep_2^{2/3}\dd Y=-\ep_2
+c\,\ep_2^{-1/3}\dd T$ gives $\dd Y=-c\,\dd T$.
+\end{proof}
+
+\begin{remark}[scales]
+The chart inner scales $R\sim\eta^{2/3}$, $Y\sim\eta^{4/3}$ blow down, via \eqref{eq:K2}
+and $\eta=\sigma/\sqrt{\ep_2}$, to the \emph{physical} noise-induced peel-off scales
+\[
+  r_{\rm peel}\sim\ep_2^{1/3}\eta^{2/3}=\sigma^{2/3},\qquad
+  y_{\rm peel}\sim\ep_2^{2/3}\eta^{4/3}=\sigma^{4/3},
+\]
+independent of $\ep_2$ --- the noise-induced jump scales --- while the typical (canard)
+escape sits at $y=\ep_2^{2/3}a_1$.
+\end{remark}
+
+\section{The blow-down theorem}
+
+Blowing down the chart conclusions (the reduction, the shooting characterisation, the
+instanton rate, and the composition propagation, all $\theta$-uniform) through
+\eqref{eq:K2} and Proposition~\ref{prop:noise} gives the physical statement.
+
+\begin{theorem}[Path~A, physical variables]\label{thm:main}
+For \eqref{eq:phys}, modulo the per-chart Berglund--Gentz tubes and the JKK deterministic
+backbone:
+\begin{enumerate}
+\item[\textup{(i)}] \textup{(critical noise)} escape across the fold becomes likely at
+\[
+  \boxed{\ \sigma_*^A=2\sqrt\pi\,\sqrt{\ep_2}\;G\ },\qquad
+  G=\begin{cases}\sqrt{a(\theta_*)c(\theta_*)/b(\theta_*)}, & \alpha=2\ (\text{frozen }\theta),\\[2pt]
+     \sqrt{\langle a\rangle\langle c\rangle/\langle b\rangle}, & \alpha=1\ (\text{averaged}),\end{cases}
+\]
+uniformly in $\theta$;
+\item[\textup{(ii)}] \textup{(inner exit measure)} the peel-off level is
+$y_{\rm peel}=\ep_2^{2/3}\,Y_{\rm node}$ with $Y_{\rm node}\eqd\TW_\beta$,
+$\beta=4\ep_2/\sigma^2$; equivalently the early-escape probability is
+$\mathbb P_{\rm early}=1-F_{\beta}(0)$;
+\item[\textup{(iii)}] \textup{(early-escape rate)} as $\sigma/\sqrt{\ep_2}\to0$,
+$\mathbb P_{\rm early}=\exp\!\bigl(-c\,\ep_2/\sigma^2\,(1+o(1))\bigr)$, $c=5.4439\ldots$
+\end{enumerate}
+All three depend on $(\sigma,\ep_2)$ only through $\eta=\sigma/\sqrt{\ep_2}$ at leading
+order.
+\end{theorem}
+
+\begin{proof}
+By Proposition~\ref{prop:noise} the $K_2$ dynamics is the canonical inner Riccati with
+$\eta=\sigma/\sqrt{\ep_2}$. (ii) is the reduction theorem ($Y_{\rm node}\eqd\TW_\beta$,
+$\beta=4/\eta^2=4\ep_2/\sigma^2$) blown down by $y=\ep_2^{2/3}Y$; (iii) is the instanton
+rate $e^{-c/\eta^2}=e^{-c\ep_2/\sigma^2}$. For (i): escape is order-one when the integrated
+inner hazard $H=\eta^2/4\pi$ is order one, i.e.\ $\eta_*=2\sqrt\pi$, so
+$\sigma_*=2\sqrt\pi\sqrt{\ep_2}$ in the canonical chart; restoring $a,b,c$ (the linear
+rescaling that canonicalises $bR^2-aY$ with sweep rate $c$) multiplies by the geometry
+factor $G$. The composition-propagation theorem carries these inner laws through the entry
+($K_1$) and exit ($K_3$) charts with $\theta$-uniform, sub-dominant Gaussian corrections
+(the fold renewal annihilating the entry deviation); the deterministic geometry is JKK
+Theorem~3.2, whose $\alpha$-dichotomy (frozen vs.\ averaged $\theta$) gives the two cases
+of $G$. Every estimate is $\theta$-uniform by the $\theta$-uniformity lemma.
+\end{proof}
+
+\paragraph{Verification of the collapse.} Simulating the \emph{physical} system
+\eqref{eq:phys} ($a=b=c=1$) through the fold and rescaling $Y=y_{\rm peel}/\ep_2^{2/3}$,
+the early-escape probability and the peel-off law depend only on $\eta=\sigma/\sqrt{\ep_2}$:
+\[
+  \begin{array}{lll}
+   \eta=1.5: & (\ep_2,\sigma)=(0.05,0.335):\ \mathbb P_{\rm early}=0.117,\ \langle Y\rangle=-1.20 & (0.20,0.671):\ 0.113,\ -1.21\\
+   \eta=1.0: & (\ep_2,\sigma)=(0.05,0.224):\ \mathbb P_{\rm early}=0.011,\ \langle Y\rangle=-1.60 & (0.20,0.447):\ 0.010,\ -1.60
+  \end{array}
+\]
+a clean collapse across a factor $4$ in $\ep_2$ (\texttt{blowdown.py}).
+
+\section{Uniformity and the assembled statement}
+
+\paragraph{Uniformity in $(\ep_1,\ep_2)$.} The $\ep_2$-dependence enters only through the
+blow-up radius $\rho=\ep_2^{1/3}$ and the chart noise $\eta=\sigma/\sqrt{\ep_2}$
+(Proposition~\ref{prop:noise}), so the chart estimates---$\theta$-uniform and
+$\ep_2$-uniform once written in $\eta$---transfer verbatim. The $\ep_1=\ep^\alpha$
+dependence enters only through the angular drift $\dot\theta=\ep_1$: for $\alpha=2$ the
+angle is frozen on the passage timescale and $G$ is local; for $\alpha=1$ the angle is
+fast and Khasminskii averaging replaces $a,b,c$ by $\langle a\rangle,\langle
+b\rangle,\langle c\rangle$ with $O(1/\ep_1)$ corrections. This is exactly JKK Theorem~3.2's
+deterministic $\alpha$-dichotomy, now carrying the noise.
+
+\paragraph{The assembled Path~A.} Theorem~\ref{thm:main} is the capstone of the chain:
+\emph{Cole--Hopf} (exact It\^o) $\Rightarrow$ \emph{reduction} to the stochastic Airy
+operator $\Rightarrow$ \emph{shooting characterisation} ($Y_{\rm node}\eqd-\Lambda_0\eqd
+\TW_\beta$, proved) $\Rightarrow$ \emph{instanton} rate $c=5.4439$ (proved) $\Rightarrow$
+\emph{composition propagation} ($\theta$-uniform, fold renewal, proved) $\Rightarrow$
+\emph{blow-down} (this note) to the physical critical-noise, exit-measure and rate laws.
+The folded-limit-cycle canard escape is thereby placed in the Tracy--Widom / KPZ edge
+universality class, in the original variables.
+
+\section{Honest scope}
+
+The blow-down is rigorous \emph{given} the chart results: Proposition~\ref{prop:noise} is
+an exact change of variables, the scale blow-downs are algebra, and the assembly is the
+composition theorem plus JKK's deterministic backbone. The remaining softness is inherited,
+not introduced: the per-chart $K_1,K_3$ tubes are cited Berglund--Gentz (standard for
+hyperbolic charts), and Channel~B is scaling-level. What this note adds is the final
+desingularisation---turning the $O(1)$ chart statements into the physical-$(\sigma,\ep_2)$
+theorem---which was the last named structural item of Path~A.
+
+\begin{thebibliography}{9}
+\bibitem{KS} M.~Krupa, P.~Szmolyan, \emph{Extending GSPT to nonhyperbolic points},
+SIAM J.\ Math.\ Anal.\ \textbf{33} (2001) 286--314 (the fold blow-up).
+\bibitem{JKK} S.~Jelbart, C.~Kuehn, N.~Kuntz, arXiv:2208.01361 (2024), Theorem~3.2.
+\bibitem{BG} N.~Berglund, B.~Gentz, \emph{Noise-Induced Phenomena in Slow--Fast Dynamical
+Systems}, Springer (2006).
+\bibitem{int} Companion notes: \texttt{ShootingCharacterisation\_proof},
+\texttt{InstantonPrinciple\_proof}, \texttt{CompositionPropagation\_proof},
+\texttt{ChannelB\_SNIC\_proof}, \texttt{PathA\_endgame\_writeup}.
+\end{thebibliography}
+
+\end{document}

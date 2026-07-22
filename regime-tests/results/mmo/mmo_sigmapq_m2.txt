@@ -1,0 +1,42 @@
+========================================================================
+MMO Phase M2 — deterministic a_min(c) + μ·a_min vs μ^{3/2}
+========================================================================
+
+(1) a_min(c) across the band (deterministic) — note within-plateau variation:
+   c=-0.770  s=1.0  a_min=1.281
+   c=-0.785  s=1.0  a_min=1.219
+   c=-0.799  s=1.5  a_min=0.799
+   c=-0.814  s=2.0  a_min=0.441
+   c=-0.829  s=2.0  a_min=0.248
+   c=-0.844  s=3.0  a_min=0.252
+   c=-0.858  s=3.0  a_min=0.179
+   c=-0.873  s=4.0  a_min=0.139
+   c=-0.888  s=5.0  a_min=0.096
+
+(2) at plateau centres (s=q−1): a_min, a_max, s, μ, κ, μ·a_min
+    q       c       μ   s   a_min   a_max      κ  μ·a_min
+    2  -0.770  0.0571   1   1.281   1.281   0.00  0.07317
+    3  -0.807  0.0471   2   0.540   1.222   8.68  0.02540
+    4  -0.844  0.0374   3   0.252   1.171  13.69  0.00942
+    5  -0.866  0.0318   4   0.182   1.142  14.42  0.00580
+    6  -0.888  0.0263   5   0.096   1.110  18.57  0.00254
+
+(3) σ_pq candidates (normalised at q=3) vs measured:
+    q   μ·a_min   μ^{3/2}  measured
+    2    0.0634    0.0294       nan
+    3    0.0220    0.0220    0.0220
+    4    0.0082    0.0156    0.0160
+    5    0.0050    0.0122       nan
+    6    0.0022    0.0092       nan
+
+   σ_pq/(μ·a_min) at resolved plateaus: q3:0.87, q4:1.70
+   (NOT flat — vs the plan's 2-pt ~1.9; the difference is the a_min protocol/c.)
+
+ VERDICT: a_min ambiguous at factor ~2 (varies across plateau width); this
+ ambiguity exceeds the μ·a_min-vs-μ^{3/2} gap, so the deterministic side can
+ NOT separate the forms. κ→2π² only at high q (8 at q=3 → 17 at q=6). The
+ separation needs M1 (robust q=2…6 noise σ_pq) AND a derived a_min(c) (Phase B,
+ the K2 inner solution) — the shared-unknown coupling the plan identifies.
+ μ^{3/2} stays a placeholder; μ·a_min is mechanistically motivated but unproven.
+
+Figure: /sessions/vigilant-brave-mayer/mnt/Reduced Neuronal Model Project/figures/mmo_sigmapq_m2.png

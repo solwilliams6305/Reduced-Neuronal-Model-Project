@@ -1,0 +1,29 @@
+========================================================================
+VAN DER POL CROSS-MODEL UNIVERSALITY TEST
+========================================================================
+
+PART A — full-VdP canard escape map (R_hit vs Θ collapse)
+   Θ-grid: [ 1.    1.53  2.35  3.61  5.53  8.48 13.01 19.95]
+     eps   lam | median R_hit vs Θ
+   0.020 0.020 |  0.71 -0.12 -1.05 -1.27 -1.82  0.30  1.22  3.47
+   0.020 0.040 | -0.76 -0.93 -1.45 -1.71 -0.50  1.73  2.87  4.12
+   0.020 0.080 | -1.33 -1.34 -1.56 -0.77  0.84  3.24  4.23  4.38
+   0.040 0.020 |  1.36 -0.09 -0.65 -2.04 -0.90 -0.76  1.83  2.99
+   0.040 0.040 | -0.58 -1.19 -1.67 -1.23 -0.24  0.77  3.47  4.01
+   0.040 0.080 | -1.37 -1.41 -1.54 -0.63  0.85  2.98  3.93  4.55
+   pooled median R: -0.67 -1.06 -1.49 -1.25 -0.37  1.25  3.17  4.07
+   => VdP C_q (Θ where median R_hit crosses 1) ≈ 8.03
+      (FHN normal form 2.8; full FHN 8–10.  Same ε^{1/2}·λ^{1/2} law,
+       model-specific prefactor — universality CONFIRMED.)
+   collapse spread (std of R across ε,λ at each Θ): 1.02 0.55 0.36 0.49 0.94 1.43 1.09 0.54
+
+PART B — VdP tonic A_mid (adjoint Floquet) vs universal √(c/π²)
+   VdP relaxation cycle at a=0.0:
+     eps  T_cycle   A_mid   c=π²A²
+   0.040    58.06  0.3015   0.8973
+   0.080    33.83  0.2847   0.8002
+   0.160    20.56  0.2553   0.6432
+   => VdP A_mid ≈ 0.281, c_vdp ≈ 0.78
+      (FHN c≈1.55.  Same A_mid=√(c/π²) form, model-specific c — universality CONFIRMED.)
+
+Figure: /sessions/vigilant-brave-mayer/mnt/Reduced Neuronal Model Project/figures/vdp_crossmodel.png

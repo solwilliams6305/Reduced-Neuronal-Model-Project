@@ -1,0 +1,26 @@
+========================================================================
+MMO Phase 1.5 Task B' — folded-node μ + Wechselberger test
+========================================================================
+
+(1) Plan's §0 canonical FHR — does it produce MMOs?
+    delta     I  nL/nS
+    0.005  0.60  120L/0S  pure spiking
+    0.005  0.90  135L/0S  pure spiking
+    0.020  0.60  147L/0S  pure spiking
+    0.020  0.90  159L/0S  pure spiking
+   => plan's §0 FHR makes MMOs: False.  (folded node exists but the
+      global return bypasses its funnel ⇒ the §0 parameters need correcting.)
+
+(2) Working FHR (Phase-1 variant) — Wechselberger μ test
+   params: v'=v−v³/3−w+y+I, w'=ε(v+a−bw), y'=εδ(c−v); ε=0.08 δ=0.2 I=0.3
+         c       μ (1−μ)/2μ (bound)  obs maxS  obs nL/nS
+     -0.72   0.071              6.5         1  111/56   
+     -0.78   0.054              8.7         1   89/90   
+     -0.84   0.038             12.5         3   61/154  
+     -0.90   0.023             21.0         7   33/215  
+     -0.94   0.014             36.0        16   15/253  
+   => μ→0 as c→−1; observed max SAOs grows WITH the (1−μ)/(2μ) bound but
+      stays below it (it is the MAXIMAL rotation number, not the typical).
+      Folded-node μ governs the SAO structure; the plan's '≈' should be '≤'.
+
+Figure: /sessions/vigilant-brave-mayer/mnt/Reduced Neuronal Model Project/figures/mmo_fhr_foldednode.png

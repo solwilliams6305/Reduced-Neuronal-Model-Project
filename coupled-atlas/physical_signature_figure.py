@@ -1,0 +1,22 @@
+import numpy as np, matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+g=np.array([0.02,-0.02,-0.04,-0.06,-0.08,-0.11,-0.14])
+std8=np.array([0.0035,0.0040,0.0044,0.0053,0.0069,0.0101,0.0137]); exk8=np.array([0.172,0.253,0.019,0.082,-0.011,-0.651,-1.092])
+std15=np.array([0.0041,0.0047,0.0058,0.0075,0.0090,0.0112,0.0138]); exk15=np.array([0.094,0.044,-0.116,-0.424,-0.617,-0.628,-0.608])
+fig,ax=plt.subplots(1,2,figsize=(11,4.3))
+a=ax[0]
+a.axhspan(-1.3,0,color="#e9f5f0",zorder=0); a.axhline(0,color="grey",lw=1,ls="--")
+a.plot(-g,exk8,"o-",color="#264653",label=r"$\epsilon=0.008$")
+a.plot(-g,exk15,"s-",color="#e76f51",label=r"$\epsilon=0.015$")
+a.axhline(-0.24,color="#2a9d8f",ls=":",lw=1.2,label=r"normal-form W ($-0.24$)")
+a.text(0.02,-1.15,"SUB-GAUSSIAN\n(cusp fingerprint)",fontsize=8,color="#2a9d8f")
+a.text(0.02,0.15,"fold (Gaussian/heavier)",fontsize=8,color="#888")
+a.set_xlabel(r"repulsive coupling $-g$ (toward synchrony loss)"); a.set_ylabel("excess kurtosis of desync amplitudes")
+a.set_title("(a) desync distribution goes SUB-GAUSSIAN near the cusp"); a.legend(fontsize=8)
+a=ax[1]
+a.plot(-g,std8/std8[0],"o-",color="#264653",label=r"$\epsilon=0.008$ ($\times$%.1f)"%(std8[-1]/std8[0]))
+a.plot(-g,std15/std15[0],"s-",color="#e76f51",label=r"$\epsilon=0.015$ ($\times$%.1f)"%(std15[-1]/std15[0]))
+a.set_xlabel(r"repulsive coupling $-g$"); a.set_ylabel("desync spread (normalized to weak coupling)")
+a.set_title("(b) spread amplifies toward the cusp"); a.legend(fontsize=8)
+fig.suptitle("Physical signature in genuine coupled FHN: noise-induced desync becomes sub-Gaussian + spread-amplified near synchrony loss",fontsize=9.5)
+fig.subplots_adjust(left=0.08,right=0.97,top=0.87,bottom=0.13,wspace=0.26)
+fig.savefig("figures/physical_signature.png",dpi=130); print("saved figures/physical_signature.png")

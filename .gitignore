@@ -1,0 +1,16 @@
+# Dependencies / caches (regenerable)
+node_modules/
+__pycache__/
+*.pyc
+
+# OS / editor junk
+.DS_Store
+.Rhistory
+
+# LaTeX build artifacts (keep .tex and .pdf, drop the intermediates)
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk

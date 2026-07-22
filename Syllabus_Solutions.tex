@@ -1,0 +1,621 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue]{hyperref}
+\usepackage{mathtools}
+
+\newcommand{\eqd}{\stackrel{d}{=}}
+\newcommand{\TW}{\mathrm{TW}}
+\newcommand{\ep}{\varepsilon_2}
+\newcommand{\Ai}{\mathrm{Ai}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\renewcommand{\Pr}{\mathbb{P}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Ynode}{Y_{\mathrm{node}}}
+\newcommand{\Lam}{\Lambda_0}
+
+\title{\textbf{Solutions to the Self-Paced, Proof-Level Syllabus}\\[2pt]
+\large for \emph{``The Noisy Folded Limit Cycle: Tracy--Widom Statistics of Canard Escape''}}
+\author{}
+\date{}
+
+\theoremstyle{definition}
+\newtheorem*{sol}{Solution}
+
+\begin{document}
+\maketitle
+\vspace{-2.4em}
+
+\noindent This document works every \emph{milestone problem} (Part~I, by module) and then answers
+the thirteen \emph{``Can you explain it?''} self-test questions of \S11 (Part~II). Throughout,
+the inner equation is the swept Riccati
+\begin{equation}\label{eq:ricc}
+\dd R=(R^2-Y)\,\dd T+\eta\,\dd B,\qquad Y=Y_0-T,\qquad \eta=\sigma/\sqrt{\ep},\tag{1}
+\end{equation}
+with deterministic limit the Airy equation and Cole--Hopf linearisation $R=-u'/u$,
+$u''=(Y-\eta\xi)u$. The dictionary to the stochastic Airy operator is $\eta=2/\sqrt\beta$,
+$\beta=4/\eta^2$, and the central result is $\Ynode\eqd-\Lam(\beta)\eqd\TW_\beta$.
+
+\bigskip
+\hrule
+\section*{Part I --- Milestone problems}
+
+\subsection*{Module F1 --- ODEs, invariant manifolds, bifurcations}
+
+\paragraph{F1.1 (Saddle--node normal form via centre manifold).}
+\begin{sol}
+Let $\dot x=f(x,y,\mu)$, $\dot y=g(x,y,\mu)$ be a planar family with $f,g$ smooth, an
+equilibrium at the origin for $\mu=0$, and linearisation having a simple zero eigenvalue
+(eigendirection $x$) and one eigenvalue $-\lambda<0$ (direction $y$). The Centre Manifold
+Theorem gives a locally invariant $C^k$ curve $y=h(x,\mu)$, $h=O(x^2,\mu)$, attracting at rate
+$\lambda$; the dynamics reduce to the scalar field $\dot x=F(x,\mu):=f(x,h(x,\mu),\mu)$.
+Expand $F(x,\mu)=a\mu+\tfrac12 b\,x^2+O(\mu x,\mu^2,x^3)$ with
+$a=\partial_\mu F(0,0)=f_\mu$ and $b=\partial_x^2F(0,0)=f_{xx}$ (the genericity/transversality
+conditions are $a\neq0$, $b\neq0$). The near-identity rescaling
+$x\mapsto |b/2|^{-1}x$, $\mu\mapsto (a)\,\mu$ and a time reparametrisation put this in the
+universal form
+\[
+\dot x=\mu\pm x^2,\qquad \text{sign}=\operatorname{sign}(b).
+\]
+Two equilibria $x=\pm\sqrt{\mp\mu}$ exist on one side of $\mu=0$ and collide and disappear at
+$\mu=0$: the saddle--node.
+\end{sol}
+
+\paragraph{F1.2 (Fold of cycles $=$ saddle--node of the Poincar\'e map).}
+\begin{sol}
+Take a cross-section $\Sigma$ transverse to a limit cycle $\Gamma$ and let $P:\Sigma\to\Sigma$
+be the first-return (Poincar\'e) map; $\Gamma\cap\Sigma$ is a fixed point $p_*=P(p_*)$, and the
+nontrivial Floquet multipliers of $\Gamma$ are the eigenvalues of $DP(p_*)$. An attracting and a
+saddle cycle correspond to two fixed points of $P$; a \emph{fold of limit cycles} is their
+collision and annihilation, i.e.\ a \emph{saddle--node bifurcation of the fixed point of $P$}.
+At such a bifurcation $DP(p_*)$ has an eigenvalue equal to $+1$ (a one-dimensional centre
+direction of the map, $\det(DP-I)=0$ with the eigenvalue crossing through $+1$), while the
+trivial multiplier along the flow is unchanged. Equivalently, one nontrivial Floquet multiplier
+of the cycle crosses $+1$ --- the periodic-orbit signature of the fold.
+\end{sol}
+
+\paragraph{F1.3 (The deterministic normal form; positivity and periodicity of $a,b,c$).}
+\begin{sol}
+After reduction to the centre manifold of the folded cycle manifold and introduction of the fast
+phase $\theta$ (period normalised to $1$), the deterministic skeleton is the \emph{fold family}
+\[
+r'=b(\theta)\,r^2-a(\theta)\,y,\qquad y'=-\,c(\theta)\,\ep,\qquad \theta'=1,
+\]
+i.e.\ a $\theta$-parametrised quadratic fold with a slow drift of the bifurcation variable $y$.
+The coefficients $a,b,c$ are geometric quantities (curvature of the cycle manifold, fold
+coefficient, slow-drift rate) \emph{evaluated along the underlying periodic orbit}; since that
+orbit has period $1$ in $\theta$, $a,b,c$ are $1$-periodic functions of $\theta$. They are
+\emph{positive} because: $b>0$ encodes a genuine quadratic (non-degenerate) fold; $a>0$ that the
+attracting branch lies on the correct side ($r\sim-\sqrt{a y/b}$ is real and attracting for
+$y>0$); and $c>0$ that the slow variable is swept monotonically through the fold. Their
+combination $G=\sqrt{a c/b}$ is the geometry factor in the physical critical noise
+$\sigma_*=2\sqrt{\pi}\,\sqrt{\ep}\,G$.
+\end{sol}
+
+\subsection*{Module F2 --- Measure-theoretic probability}
+
+\paragraph{F2.1 (L\'evy continuity: convergence in distribution $\Leftrightarrow$ pointwise
+convergence of characteristic functions).}
+\begin{sol}
+Let $\varphi_n(t)=\E e^{itX_n}$. ($\Rightarrow$) If $X_n\Rightarrow X$ then, since
+$x\mapsto e^{itx}$ is bounded and continuous, $\varphi_n(t)\to\varphi(t)$ for every $t$ by the
+definition of weak convergence. ($\Leftarrow$) Suppose $\varphi_n(t)\to\varphi(t)$ pointwise with
+$\varphi$ continuous at $0$. The bound
+$\Pr(|X_n|>2/\delta)\le \tfrac1\delta\int_{-\delta}^{\delta}\!\bigl(1-\operatorname{Re}\varphi_n(t)\bigr)\dd t$
+together with $\varphi(0)=1$ and continuity of $\varphi$ at $0$ gives, via dominated convergence,
+$\limsup_n\Pr(|X_n|>2/\delta)\le \tfrac1\delta\int_{-\delta}^{\delta}(1-\operatorname{Re}\varphi)\to0$
+as $\delta\to0$; hence $\{X_n\}$ is tight. By Prokhorov every subsequence has a further weakly
+convergent subsequence, whose limit has characteristic function $\varphi$ (by the forward
+direction); since $\varphi$ determines the law uniquely (inversion), all subsequential limits
+coincide, so $X_n\Rightarrow X$ with $\E e^{itX}=\varphi(t)$.
+\end{sol}
+
+\paragraph{F2.2 (Brownian stationarity, reflection, and white noise).}
+\begin{sol}
+Let $B$ be standard Brownian motion. \emph{Stationary increments:} for $s<t$,
+$B_t-B_s\sim N(0,t-s)$ depends only on $t-s$, and increments over disjoint intervals are
+independent (both from the defining Gaussian covariance $\E B_sB_t=s\wedge t$). \emph{Reflection
+$t\mapsto-t$:} on a symmetric interval define $\tilde B_t:=B_{-t}$ (or, for two-sided white-noise
+purposes, note $-B$ and the time-reversed process are again Brownian); the covariance is
+preserved and Gaussianity is preserved, so the law is invariant under reflection. \emph{White
+noise:} $\xi:=\dd B/\dd t$ is defined as the distributional (Schwartz) derivative; for test
+functions $\phi$, $\langle\xi,\phi\rangle:=-\int B\,\phi'\,\dd t=\int\phi\,\dd B$, a centred
+Gaussian field with $\E\langle\xi,\phi\rangle\langle\xi,\psi\rangle=\int\phi\psi$, i.e.\ a
+\emph{stationary} generalised process with covariance ``$\delta(t-s)$'', invariant under
+translation and reflection. These two invariances are exactly what collapses the random spectral
+level in \S4.3 to a deterministic one.
+\end{sol}
+
+\subsection*{Module F3 --- Functional analysis, Sturm--Liouville/oscillation}
+
+\paragraph{F3.1 (Variational characterisation of the lowest Dirichlet eigenvalue).}
+\begin{sol}
+For $H=-\partial_x^2+V$ on $L^2(0,\infty)$ with Dirichlet data $\psi(0)=0$ and $V$ bounded below
+and confining, $H$ is self-adjoint and bounded below with form
+$\mathcal Q[\psi]=\int_0^\infty(\psi'^2+V\psi^2)$ on the form domain $H^1_0$. The spectral theorem
+gives, for the bottom of the spectrum,
+\[
+\Lambda_0=\inf_{\substack{\psi\in H^1_0,\ \|\psi\|=1}}\mathcal Q[\psi]
+=\inf_{\psi\neq0}\frac{\int(\psi'^2+V\psi^2)}{\int\psi^2}.
+\]
+($\le$) Any admissible $\psi$ gives an upper bound (Rayleigh quotient). ($\ge$) Diagonalise:
+$\psi=\sum c_k\phi_k$, $H\phi_k=\lambda_k\phi_k$, $\mathcal Q[\psi]=\sum\lambda_k|c_k|^2\ge
+\Lambda_0\sum|c_k|^2=\Lambda_0\|\psi\|^2$. The infimum is attained at the ground state, which
+(Perron--Frobenius/positivity) may be taken nodeless on $(0,\infty)$.
+\end{sol}
+
+\paragraph{F3.2 (Dirichlet domain monotonicity).}
+\begin{sol}
+Let $\Omega_1\subset\Omega_2$ and $\Lambda_0(\Omega_i)$ the lowest Dirichlet eigenvalue of
+$-\partial_x^2+V$ on $\Omega_i$. Extension by zero embeds $H^1_0(\Omega_1)\hookrightarrow
+H^1_0(\Omega_2)$ isometrically for both $\int\psi^2$ and $\mathcal Q[\psi]$ (the extended
+function is $H^1$ because it vanishes on $\partial\Omega_1$). Hence the minimising set for
+$\Omega_2$ contains that for $\Omega_1$, and taking an infimum over a \emph{larger} set can only
+decrease it:
+\[
+\Lambda_0(\Omega_2)=\inf_{H^1_0(\Omega_2)}\frac{\mathcal Q}{\|\cdot\|^2}
+\le\inf_{H^1_0(\Omega_1)}\frac{\mathcal Q}{\|\cdot\|^2}=\Lambda_0(\Omega_1).
+\]
+So shrinking the domain raises the ground state. This monotonicity is the engine of the shooting
+argument: it makes the spectral function $G(\ell)$ strictly increasing.
+\end{sol}
+
+\paragraph{F3.3 (Sturm fact: $\Ynode=a_1=-\Lam(\infty)$ for the deterministic Airy operator).}
+\begin{sol}
+Consider $H=-\partial_x^2+x$ on $[\ell,\infty)$ with Dirichlet data at $\ell$. By Sturm
+oscillation theory the number of nodes in $(\ell,\infty)$ of the recessive (decaying) solution
+at energy $0$ equals the number of eigenvalues of $H$ below $0$. The recessive solution is
+$\Ai(x)$ (up to scale), whose first zero is $a_1\approx-2.3381$. Sweeping the left endpoint:
+$G(\ell):=\Lambda_0\bigl(H|_{[\ell,\infty)}\bigr)$ is strictly increasing (F3.2) and
+$G(\ell)=0\iff \Ai$ has its first node exactly at the energy-zero turning configuration with left
+endpoint $\ell=a_1$. Equivalently, on the whole line the deterministic peel-off
+($R=\Ai'/\Ai\to\infty$) occurs at $Y=a_1$, and $a_1=-\Lambda_0(\infty)$ where
+$\Lambda_0(\infty)$ is the bottom eigenvalue of $-\partial_x^2+x$ on $[0,\infty)$. Thus
+$\Ynode=a_1=-\Lambda_0(\infty)$ --- the deterministic ($\beta\to\infty$) limit of the main
+theorem.
+\end{sol}
+
+\subsection*{Module F4 --- Airy, Riccati, Cole--Hopf, asymptotics}
+
+\paragraph{F4.1 ($R=\Ai'/\Ai$ solves the Riccati and escapes at $a_1$).}
+\begin{sol}
+Write $R(Y)=\Ai'(Y)/\Ai(Y)$. Then
+\[
+\frac{\dd R}{\dd Y}=\frac{\Ai''\Ai-\Ai'^2}{\Ai^2}=\frac{\Ai''}{\Ai}-R^2=Y-R^2,
+\]
+using the Airy equation $\Ai''(Y)=Y\,\Ai(Y)$. In the inner time $T$ with $Y=Y_0-T$
+($\dd Y/\dd T=-1$) this is $\dd R/\dd T=-(\,Y-R^2)=R^2-Y$, i.e.\ the deterministic Riccati~(1).
+As $T$ increases $Y$ decreases from $Y_0>0$; on the attracting branch $R\sim-\sqrt{Y}$ (this is
+the canard, the recessive $\Ai$ solution). $R$ blows up exactly where $\Ai(Y)=0$; the first such
+$Y$ (reached as $Y$ decreases) is $a_1\approx-2.3381$, where $\Ai'(a_1)>0$ so $R\to+\infty$.
+This is the deterministic canard escape.
+\end{sol}
+
+\paragraph{F4.2 (Deterministic Cole--Hopf).}
+\begin{sol}
+Put $R=-u'/u$. Then $R'=-\dfrac{u''}{u}+\Bigl(\dfrac{u'}{u}\Bigr)^2=-\dfrac{u''}{u}+R^2$, so
+$R'=R^2-Y$ is equivalent to $u''=Y\,u$ (the linear Airy/Schr\"odinger equation). A finite-time
+blow-up of $R=-u'/u$ occurs precisely where $u=0$ with $u'\neq0$, i.e.\ at a simple zero (node)
+of $u$. Hence ``Riccati escape'' $=$ ``first node of $u$'' --- the algebraic skeleton of
+Lemma~6, which survives verbatim when $Y\mapsto Y-\eta\xi$.
+\end{sol}
+
+\paragraph{F4.3 (Watson/Laplace evaluation of the hazard integral).}
+\begin{sol}
+With $I=\displaystyle\int_0^\infty Y^{1/2}\,e^{-8Y^{3/2}/(3\eta^2)}\,\dd Y$, substitute
+$w=Y^{3/2}$, $\dd w=\tfrac32 Y^{1/2}\dd Y$, so $Y^{1/2}\dd Y=\tfrac23\dd w$:
+\[
+I=\frac23\int_0^\infty e^{-8w/(3\eta^2)}\,\dd w=\frac23\cdot\frac{3\eta^2}{8}=\frac{\eta^2}{4}.
+\]
+(The substitution makes the exponent linear, so Watson's lemma is exact here.) Therefore the
+integrated hazard is $H(\eta)=\tfrac1\pi I=\eta^2/4\pi$, and the critical level $H=1$ gives
+$\eta_*=2\sqrt\pi$.
+\end{sol}
+
+\subsection*{Module A --- GSPT, fold/canard, geometric blow-up}
+
+\paragraph{A.1 ($K_2$ rescaling $\to$ inner Riccati; $\eta=\sigma/\sqrt{\ep}$).}
+\begin{sol}
+Insert the rescaling chart $r=\ep^{1/3}R$, $y=\ep^{2/3}Y$, $T=\ep^{1/3}t$ (so
+$\dd T=\ep^{1/3}\dd t$) into the noisy normal form $\dd r=(b r^2-a y)\dd t+\sigma\,\dd W$,
+$\dd y=-c\,\ep\,\dd t$. Drift: $\dd r=\ep^{1/3}\dd R$, while
+$(br^2-ay)\dd t=(b\ep^{2/3}R^2-a\ep^{2/3}Y)\ep^{-1/3}\dd T=\ep^{1/3}(bR^2-aY)\dd T$; absorbing
+$a,b$ into the unit normalisation gives $\dd R=(R^2-Y)\dd T$. Noise: a Brownian increment in
+$t$ scales as $\dd W_t=\ep^{-1/6}\dd W_T$ (since $\dd t=\ep^{-1/3}\dd T$ and $\dd W\sim\sqrt{\dd t}$),
+so the noise term is $\sigma\ep^{-1/6}\dd W_T$; dividing the whole line by $\ep^{1/3}$ leaves
+\[
+\dd R=(R^2-Y)\dd T+\sigma\,\ep^{-1/6-1/3}\,\dd W_T=(R^2-Y)\dd T+\eta\,\dd B,\qquad
+\eta=\sigma\,\ep^{-1/2}=\sigma/\sqrt{\ep}.
+\]
+\end{sol}
+
+\paragraph{A.2 ($(1,2,3)$ weights; what each chart resolves).}
+\begin{sol}
+Assign weights $(p_r,p_y,p_\varepsilon)$ to $(r,y,\ep)$ and demand the fold normal form
+$r'=r^2-y$, $\dot\ep=0$ (with slow drift $y'\sim\ep$) be invariant under
+$(r,y,\ep)\mapsto(\kappa^{p_r}r,\kappa^{p_y}y,\kappa^{p_\varepsilon}\ep)$ after a time
+rescaling $t\mapsto\kappa^{-p_r}t$. Matching $r'=r^2$: $p_r-(-p_r)=2p_r$ is automatic;
+matching $r^2$ vs $y$ forces $p_y=2p_r$; matching the slow equation $y'\sim\ep$ forces
+$p_\varepsilon=p_y+p_r=3p_r$. Normalising $p_r=1$ gives the weights $(1,2,3)$ on $(r,y,\ep)$.
+The blow-up $(r,y,\ep)=(\bar r\rho,\bar y\rho^2,\bar\ep\rho^3)$ desingularises the fold; the three
+charts resolve: $K_1$ (entry) the incoming attracting Fenichel manifold; $K_2$ (rescaling) the
+inner Airy/Riccati dynamics where hyperbolicity is fully lost; $K_3$ (exit) the departure onto
+the fast fibre and matching to the outer solution.
+\end{sol}
+
+\paragraph{A.3 (Canard and escape in the inner equation).}
+\begin{sol}
+The deterministic inner equation is $\dd R/\dd T=R^2-Y$, $Y=Y_0-T$; as in F4.1 its canard is
+$R=\Ai'(Y)/\Ai(Y)$, the solution tracking the attracting branch $R\sim-\sqrt Y$ for $Y\gg0$ and
+escaping to $+\infty$ at the first Airy zero $Y=a_1\approx-2.3381$. This is the deterministic
+peel-off the noise perturbs.
+\end{sol}
+
+\subsection*{Module B1 --- Brownian motion, It\^o, SDEs}
+
+\paragraph{B1.1 (Lemma 6: Cole--Hopf with no It\^o correction).}
+\begin{sol}
+Let $\dd u=v\,\dd T$, $\dd v=(Yu)\,\dd T-\eta u\,\dd B$, and $R=-v/u$. Only $v$ carries noise, so
+$(\dd u)^2=\dd u\,\dd v=0$ and $(\dd v)^2=\eta^2u^2\,\dd T$. With $R=R(u,v)=-v/u$,
+$R_u=v/u^2,\ R_v=-1/u,\ R_{vv}=0,\ R_{uv}=1/u^2,\ R_{uu}=-2v/u^3$. It\^o:
+\[
+\dd R=R_u\,\dd u+R_v\,\dd v+\tfrac12R_{uu}(\dd u)^2+R_{uv}\,\dd u\,\dd v+\tfrac12R_{vv}(\dd v)^2
+=\frac{v}{u^2}(v\,\dd T)-\frac1u\bigl[(Yu)\dd T-\eta u\,\dd B\bigr].
+\]
+The second-order terms vanish because $(\dd u)^2=\dd u\,\dd v=0$ and $R_{vv}=0$. Hence
+$\dd R=\frac{v^2}{u^2}\dd T-Y\,\dd T+\eta\,\dd B=(R^2-Y)\,\dd T+\eta\,\dd B$ --- \emph{exactly}
+the Riccati, with no It\^o--Stratonovich correction. (Equivalently the diffusion vector
+$g=(0,-\eta u)$ has $\tfrac12(g\!\cdot\!\nabla)g=0$.)
+\end{sol}
+
+\paragraph{B1.2 (Proposition 8: change of variables is exact).}
+\begin{sol}
+Combine A.1 and B1.1. Apply the deterministic chart map (3) to the physical SDE~(2); the drift
+transforms as in A.1 to $(R^2-Y)\dd T$, and because the physical noise is \emph{additive}
+(constant coefficient $\sigma$), the It\^o term transforms with no correction (B1.1), giving
+$\eta=\sigma/\sqrt{\ep}$ exactly --- not merely to leading order. Thus the blown-up,
+rescaled physical system \emph{is} the canonical noisy Riccati~(1).
+\end{sol}
+
+\paragraph{B1.3 (Peel-off scalings $r_{\rm peel}\sim\sigma^{2/3},\ y_{\rm peel}\sim\sigma^{4/3}$).}
+\begin{sol}
+Escape is an $O(1)$ event in inner variables ($R,Y=O(1)$) when $\eta=\sigma/\sqrt{\ep}=O(1)$, i.e.\
+at criticality $\ep\sim\sigma^2$. Undoing the chart, $r=\ep^{1/3}R\sim(\sigma^2)^{1/3}=\sigma^{2/3}$
+and $y=\ep^{2/3}Y\sim(\sigma^2)^{2/3}=\sigma^{4/3}$. These are the physical noise-induced
+peel-off scales.
+\end{sol}
+
+\subsection*{Module B2 --- Berglund--Gentz sample-path tubes}
+
+\paragraph{B2.1 (Integrated Kramers hazard).}
+\begin{sol}
+The instantaneous separatrix-crossing rate near the fold is Arrhenius in the local barrier
+$\propto Y^{3/2}$; the integrated hazard is
+$H(\eta)=\tfrac1\pi\int_0^\infty Y^{1/2}e^{-8Y^{3/2}/3\eta^2}\dd Y=\eta^2/4\pi$ by F4.3. Setting
+$H=1$ gives the critical effective noise $\eta_*=2\sqrt\pi$ (hence physically
+$\sigma_*=2\sqrt\pi\sqrt{\ep}\,G$). Note $H$ is the saddle-crossing hazard and is
+\emph{polynomial} in $\eta$, distinct from the exponential canonical escape probability of \S5.
+\end{sol}
+
+\paragraph{B2.2 (Telescoping the transition-error recursion).}
+\begin{sol}
+Write the transverse deviation after chart $i$ as $|\delta_i|\le L_i|\delta_{i-1}|+|\zeta_i|$,
+$L_i$ the local contraction/expansion factor and $\zeta_i$ the fresh fluctuation. Iterating,
+\[
+|\delta_n|\le\Bigl(\textstyle\prod_{i=1}^n L_i\Bigr)|\delta_0|
++\sum_{k=1}^n\Bigl(\textstyle\prod_{i=k+1}^n L_i\Bigr)|\zeta_k|.
+\]
+At the fold the dynamics are exponentially contracting along the attracting branch, $L_{\rm fold}\ll1$,
+so the prefactor $\prod L_i$ multiplying the \emph{entry} error $\delta_0$ is exponentially small:
+the incoming fluctuation is forgotten, and the exit law is set only by the local fluctuations
+$\zeta_k$ accumulated inside $K_2$. This is the renewal/``forgetting'' that lets the inner
+problem be analysed in isolation (Lemma~7, \S6.1).
+\end{sol}
+
+\subsection*{Module B3 --- Large deviations: Schilder, contraction}
+
+\paragraph{B3.1 ($\Lam(\eta)$ as a continuous functional of the path).}
+\begin{sol}
+By Rayleigh--Ritz the ground state of $M=-\partial_x^2+x-\eta\dot W$ on $[0,\infty)$ (Dirichlet)
+is
+\[
+\Lam(\eta)=\inf_{\|\psi\|=1,\ \psi(0)=0}\Bigl(K[\psi]+\eta N[\psi]\Bigr),\quad
+K[\psi]=\int_0^\infty(\psi'^2+x\psi^2),\quad N[\psi]=\int_0^\infty\psi^2\,\dd W.
+\]
+Integrating by parts (and using $\psi(0)=0$), $N[\psi]=-2\int_0^\infty\psi\psi'\,W\,\dd x$, which
+is a \emph{bounded continuous} linear functional of the path $W\in C_0$. Hence
+$\Lam(\eta)=F(\eta W)$ for the continuous map $F:C_0\to\R$, $F(h)=\inf_\psi(K[\psi]-2\int\psi\psi'h)$
+(an infimum of continuous affine functionals, hence upper semicontinuous; continuity holds on the
+relevant compact sublevel sets).
+\end{sol}
+
+\paragraph{B3.2 (Schilder $+$ contraction $\Rightarrow$ the rate constant $c$).}
+\begin{sol}
+Schilder: $\eta W$ satisfies an LDP with good rate $I(h)=\tfrac12\int h'^2$ as $\eta\to0$. The
+early-escape event is $\{\Lam(\eta)<0\}=\{F(\eta W)<0\}$; by the contraction principle its rate is
+\[
+c=\inf\Bigl\{\tfrac12\textstyle\int g'^2:\ F(g)\le0\Bigr\}
+=\tfrac12\,\min_{\psi}\frac{K[\psi]^2}{\int\psi^4},
+\]
+the last equality by optimising the linear-in-$g$ constraint (the worst-case path aligned with
+$\psi^2$). The Euler--Lagrange equation of $\min K[\psi]^2/\int\psi^4$ is, after scaling,
+\[
+-g''+x g=g^3,
+\]
+the nonlinear-Airy ground state; then $P_{\rm early}=\exp(-c/\eta^2(1+o(1)))$ with $c=\int g'^2$.
+\end{sol}
+
+\subsection*{Module C --- Random matrices and the stochastic Airy operator}
+
+\paragraph{C.1 (RRV Riccati diffusion $=$ the swept inner Riccati).}
+\begin{sol}
+Ram\'irez--Rider--Vir\'ag characterise the ground state $\Lam(\beta)$ of
+$\mathcal H_\beta=-\partial_x^2+x+\tfrac{2}{\sqrt\beta}b'$ by the explosion of the Riccati
+diffusion $\dd p=(x-\Lambda-p^2)\,\dd x+\tfrac{2}{\sqrt\beta}\,\dd b$: $\Lambda$ is an eigenvalue
+iff $p$ explodes to $-\infty$. Term-by-term this is the swept inner Riccati~(1) (with $x\leftrightarrow$
+swept level, $p\leftrightarrow R$ up to orientation) provided the noise strengths match:
+$\tfrac{2}{\sqrt\beta}=\eta$, i.e.\ $\eta=2/\sqrt\beta$, $\beta=4/\eta^2$. Hence the paper's inner
+equation \emph{is} RRV's diffusion, and $\Ynode\eqd-\Lam(\beta)\eqd\TW_\beta$.
+\end{sol}
+
+\paragraph{C.2 ($\beta\to\infty$ recovers the deterministic Airy zero).}
+\begin{sol}
+As $\beta\to\infty$ ($\eta\to0$) the noise $\tfrac2{\sqrt\beta}b'\to0$ and $\mathcal H_\beta\to
+-\partial_x^2+x$, the deterministic Airy operator, whose ground state is $-a_1$. Thus
+$-\Lam(\infty)=a_1\approx-2.3381$, recovering F3.3/F4.1: the noiseless peel-off is the first Airy
+zero. $\TW_\beta\to\delta_{a_1}$ (fluctuations of order $\eta$ shrink to zero).
+\end{sol}
+
+\paragraph{C.3 ($\beta=1,2,4$ and non-integer $\beta$).}
+\begin{sol}
+$\beta=1,2,4$ are the Dyson symmetry classes GOE/GUE/GSE (real/complex/quaternion entries), whose
+soft-edge fluctuations are $\TW_1,\TW_2,\TW_4$. The stochastic-Airy / $\beta$-ensemble construction
+extends $\TW_\beta$ to \emph{all} $\beta>0$ via the operator $\mathcal H_\beta$. The paper realises
+\emph{continuous, generally non-integer} $\beta=4/\eta^2$ tuned by the physical noise-to-curvature
+ratio $\eta$ --- e.g.\ $\eta=\sqrt2\Rightarrow\beta=2$, $\eta=2\Rightarrow\beta=1$ --- so the
+canard-escape law sweeps the whole Tracy--Widom family.
+\end{sol}
+
+\subsection*{Module D --- Painlev\'e II and the exact laws}
+
+\paragraph{D.1 ($g=\sqrt2\,s$ maps the nonlinear Airy ground state to Painlev\'e II).}
+\begin{sol}
+In $-g''+xg=g^3$ put $g=\sqrt2\,s$: $-\sqrt2\,s''+\sqrt2\,x s=2\sqrt2\,s^3$; divide by $\sqrt2$:
+\[
+s''=x s-2s^3,
+\]
+the homogeneous ($\alpha=0$) Painlev\'e~II equation. So the instanton is a Painlev\'e~II
+transcendent (the Hastings--McLeod-type solution decaying at $+\infty$).
+\end{sol}
+
+\paragraph{D.2 (Pohozaev reduction; $c=5.4439\ldots$, not $2\pi$).}
+\begin{sol}
+For the decaying solution of $-g''+xg=g^3$: multiplying by $g$ and integrating gives
+$\int g'^2+\int x g^2=\int g^4$; multiplying by $g'$ and integrating (a Pohozaev/virial identity)
+gives a second relation, and together they yield
+\[
+\int g'^2=\int x g^2=\tfrac12\int g^4=:c.
+\]
+Hence the variational value $\tfrac12\min K[\psi]^2/\!\int\psi^4$ collapses to $c=\int g'^2$.
+Numerically (shooting on the Painlev\'e~II solution, verified to $10^{-13}$ via the Pohozaev
+identities) $c=5.4439\ldots$. A finite-$\eta$ slope fit overshoots to $\approx6.22$ because the
+prefactor has not yet decayed; the asymptotic value is the Painlev\'e~II action, and there is
+\emph{no} reason for it to equal $2\pi\approx6.283$ --- the coincidence is numerical only.
+\end{sol}
+
+\paragraph{D.3 (Exact $\TW_2$ density and the Monte-Carlo overlay).}
+\begin{sol}
+$F_2(s)=\exp\!\bigl(-\int_s^\infty(x-s)q(x)^2\dd x\bigr)$ with $q$ the Hastings--McLeod solution
+of $q''=xq+2q^3$, $q\sim\Ai$ at $+\infty$; differentiating gives the exact $\TW_2$ density.
+Monte-Carloing the inner Riccati~(1) at $\eta=\sqrt2$ ($\beta=2$) and histogramming $\Ynode$ with
+\emph{no} centring or scaling reproduces this density (mean, variance, skewness and the asymmetric
+tails), confirming Figure~1.
+\end{sol}
+
+\subsection*{Module E --- Excitability and the phase channel}
+
+\paragraph{E.1 (Adler bottleneck $\to$ canonical noisy saddle-node).}
+\begin{sol}
+Near the SNIC the slow phase obeys the Adler equation $\dd\theta=(1-\cos\theta)\dd t+\sigma\dd W$;
+at the degenerate saddle $\theta\approx0$, $1-\cos\theta\approx\theta^2/2$, so
+$\dd\theta=\tfrac12\theta^2\dd t+\sigma\dd W$. Scale $\theta=\sigma^{2/3}u$, $t=\sigma^{-2/3}\tau$:
+then $\dd\theta=\sigma^{2/3}\dd u$, $\tfrac12\theta^2\dd t=\tfrac12\sigma^{4/3}u^2\sigma^{-2/3}\dd\tau
+=\tfrac12\sigma^{2/3}u^2\dd\tau$, and $\sigma\dd W=\sigma\cdot\sigma^{-1/3}\dd W_\tau=\sigma^{2/3}\dd W_\tau$
+(since $\dd W\sim\sqrt{\dd t}=\sigma^{-1/3}\dd W_\tau$). Dividing by $\sigma^{2/3}$:
+\[
+\dd u=\tfrac12u^2\,\dd\tau+\dd W_\tau,
+\]
+the parameter-free canonical noisy saddle-node.
+\end{sol}
+
+\paragraph{E.2 (MFPT quadrature $\Rightarrow$ the $2/3$ law).}
+\begin{sol}
+The mean first-passage time of $\dd u=\tfrac12u^2\dd\tau+\dd W$ across the bottleneck is the
+double quadrature $\langle\tau\rangle=2\iint_{w<u}e^{(w^3-u^3)/3}\dd w\,\dd u=:2J$ (Watson's lemma
+controls the tails, giving convergence). Undoing $t=\sigma^{-2/3}\tau$, the physical rotation rate
+and phase diffusion inherit the prefactor:
+\[
+\omega=\frac{\pi}{J}\,\sigma^{2/3}\bigl(1+o(1)\bigr),\qquad D_\phi\sim\sigma^{2/3},
+\]
+the bifurcation-specific $2/3$ exponent of the SNIC channel, $J=\iint_{w<u}e^{(w^3-u^3)/3}$.
+\end{sol}
+
+\paragraph{E.3 (Fold of cycles gives regular $\sigma^2$ diffusion).}
+\begin{sol}
+If the cycle dies at a \emph{fold of cycles} the period stays finite at the bifurcation, so the
+phase-response curve is bounded and the phase obeys an ordinary averaged diffusion
+$D_\phi=\sigma^2\langle Z^2\rangle\sim\sigma^2$ (regular, no anomalous exponent). The singular
+$\sigma^{2/3}$ law is special to the \emph{infinite-period} SNIC, where the diverging period
+$\sim\log$ near the bottleneck concentrates the phase noise. Thus the destroying bifurcation
+selects which channel is singular: amplitude (Tracy--Widom) for the fold of cycles, phase
+($2/3$) for the SNIC.
+\end{sol}
+
+\subsection*{Module S1 --- The shooting characterisation (keystone, \S4.3)}
+
+\paragraph{S1 (Reconstruct $\Ynode\eqd-\Lam(\beta)\eqd\TW_\beta$).}
+\begin{sol}
+\emph{(i) The spectral function.} For $\ell\in\R$ let $G(\ell)$ be the ground-state eigenvalue of
+\[
+M=-\partial_Y^2+Y-\eta\tilde\xi\quad\text{on }[\ell,\infty),\ \text{Dirichlet at }\ell,
+\]
+where $\tilde\xi$ is the (reflected) white noise. \emph{(ii) Monotonicity.} By Dirichlet domain
+monotonicity (F3.2), shrinking the half-line $[\ell,\infty)$ as $\ell$ increases raises the ground
+state, so $G$ is strictly increasing; therefore the random first node and the spectral level are
+linked by the \emph{pathwise} identity
+\[
+\{\Ynode\le t\}=\{G(t)\ge0\}.
+\]
+(The first node of the Cole--Hopf $u$ lies left of $t$ iff the operator on $[t,\infty)$ has no
+nonpositive eigenvalue, i.e.\ $G(t)\ge0$.) \emph{(iii) Removing the random level.} The level $t$
+on the right-hand side is now \emph{deterministic}. Shift $Y=t+x$: then
+$M|_{[t,\infty)}=\bigl(-\partial_x^2+x-\eta\hat\xi\bigr)+t$, and by \emph{stationarity and
+reflection symmetry} of white noise (F2.2) $\hat\xi\eqd b'$, so
+$G(t)\eqd\Lam(\beta)+t$ with $\Lam(\beta)$ the ground state of the fixed half-line operator
+$\mathcal H_\beta$ on $[0,\infty)$. \emph{(iv) Conclude.}
+\[
+\Pr(\Ynode\le t)=\Pr(G(t)\ge0)=\Pr(\Lam(\beta)\ge-t)=\Pr(-\Lam(\beta)\le t),
+\]
+hence $\Ynode\eqd-\Lam(\beta)\eqd\TW_\beta$, $\beta=4/\eta^2$.
+
+\smallskip\emph{Forgetting lemma.} Because the canard branch is attracting, the finite-$Y_0$ swept
+solution converges (as $Y_0\to\infty$) to the recessive solution used above (B2.2); this links the
+abstract $\Ynode$ to the genuine dynamical peel-off of the trajectory.
+
+\smallskip\emph{Black box vs.\ proved here.} The single imported result is the RRV meaning of
+$\mathcal H_\beta$ and $-\Lam(\beta)\eqd\TW_\beta$ (Module~C). Everything else --- the monotone
+spectral function $G$ and the collapse of the \emph{random} level to a deterministic one via
+stationarity/reflection --- is proved here; that collapse is the original obstruction the paper
+removes.
+\end{sol}
+
+\subsection*{Module S2 --- Section-by-section dependency map}
+
+\paragraph{S2.}
+\begin{sol}
+\begin{center}
+\begin{tabular}{ll}
+\hline
+Paper element & Supported by\\
+\hline
+\S1 Introduction; eq.~(1) inner Riccati & A, F4\\
+\S2 Normal form, blow-up, charts; $\eta=\sigma/\sqrt{\ep}$ & A (B1 for Prop.~8)\\
+\S2.3 Two channels; hazard (5) & B2, F4\\
+\S3 Main theorems (statements) & C, D\\
+\S4.1 Cole--Hopf, Lemma 6 & F4, B1\\
+\S4.2 Stochastic Airy operator; Sturm fact & C, F3\\
+\S4.3 Shooting characterisation (Thm 2) & S1 $=$ A+B+C+F3\\
+\S5 Escape probability and rate constant $c$ & B3, D\\
+\S6 $\theta$-uniformity, composition, blow-down (Prop.~8) & A, B1--B2\\
+\S7 Phase channel; SNIC; $2/3$ exponent & E, F4\\
+\S8 Numerical validation & C, D (B for Monte-Carlo)\\
+\S9 Universality and applications & C (KPZ), E\\
+\hline
+\end{tabular}
+\end{center}
+\emph{Optional reproduction (carried out).} (1) Monte-Carlo of (1) at $\beta=1,2$ overlays the exact
+TW densities with no fitting (Fig.~1). (2) A random tridiagonal discretisation of
+$\mathcal H_\beta$ matches the ODE-shooting law of $\Ynode$ at $\beta=1,2,4$ (Fig.~2). (3) The
+local slope $-\dd\log P_{\rm early}/\dd(\eta^{-2})$ descends toward $c=5.444$; the early-escape
+tail matches the TW CDF ($\beta=2$: $0.0298$ vs.\ $0.0306$; $\beta=1$: $0.1644$ vs.\ $0.1681$),
+and the physical law collapses in $\eta=\sigma/\sqrt{\ep}$ across a factor four in $\ep$.
+\emph{Beyond the syllabus:} a recrossing analysis shows the TW law is the small-noise edge
+($\eta\lesssim1$); for larger $\eta$ a static-Kramers boundary $\sigma^2\sim\Delta U/\log(1/\ep)$
+takes over.
+\end{sol}
+
+\bigskip
+\hrule
+\section*{Part II --- ``Can you explain it?'' (\S11 self-test)}
+
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.5em]
+\item \textbf{Folded limit cycle vs.\ fold point vs.\ folded node.}
+A \emph{fold point} is a saddle--node of \emph{equilibria} on a critical manifold of a $2$-D
+fast--slow system. A \emph{folded node} is a singularity of the \emph{reduced (slow) flow} at a
+fold curve in a system with $\ge2$ slow variables, generating canards and mixed-mode oscillations.
+A \emph{folded limit cycle} is the analogue one dimension up in the cyclic direction: a
+one-parameter family of \emph{limit cycles} (a manifold of cycles) that has a saddle--node of
+\emph{periodic orbits} --- an attracting and a saddle cycle collide --- as a slow parameter drifts.
+The paper perturbs this last object.
+
+\item \textbf{Why slow passage makes a canard; deterministic escape $a_1$.}
+As the slow variable $Y$ drifts through the fold, the trajectory tracks the attracting branch
+$R\sim-\sqrt Y$ but cannot turn instantly when the branch disappears; it follows the
+\emph{repelling} continuation for an $O(1)$ inner time --- a canard --- before escaping. In the
+inner Airy variable the attracting solution is $R=\Ai'(Y)/\Ai(Y)$, which blows up at the first
+Airy zero $a_1\approx-2.3381$: the deterministic peel-off.
+
+\item \textbf{What the blow-up accomplishes; why weights $(1,2,3)$.}
+At the fold normal hyperbolicity fails and Fenichel theory breaks down. The geometric blow-up
+replaces the degenerate point by a sphere, lifting the dynamics to charts where hyperbolicity is
+restored and the inner Airy/Riccati problem becomes a regular boundary-value problem. The weights
+$(1,2,3)$ on $(r,y,\ep)$ are forced by quasi-homogeneous invariance of the fold normal form
+$r'=r^2-y$ with slow drift $y'\sim\ep$ (A.2): $p_y=2p_r$, $p_\varepsilon=3p_r$.
+
+\item \textbf{The inner Riccati (1) and $\eta=\sigma/\sqrt{\ep}$.}
+$\dd R=(R^2-Y)\dd T+\eta\,\dd B$, $Y=Y_0-T$. It is the universal local model of a noisy slow
+passage through a quadratic fold. The effective noise $\eta=\sigma/\sqrt{\ep}$ arises because the
+rescaling $r=\ep^{1/3}R$, $T=\ep^{1/3}t$ amplifies a fixed physical noise $\sigma$ by
+$\ep^{-1/2}$ (A.1): faster passage (larger $\ep$) means relatively weaker noise.
+
+\item \textbf{Why no It\^o--Stratonovich correction (Lemma 6).}
+The physical noise is \emph{additive} (constant coefficient), and the Cole--Hopf map $R=-v/u$ is
+linear in the only noisy variable $v$, so $R_{vv}=0$ and the quadratic-variation correction
+vanishes (B1.1). It\^o $=$ Stratonovich here; the Riccati picks up $\eta\,\dd B$ with no drift
+shift.
+
+\item \textbf{What Cole--Hopf $R=-u'/u$ achieves; blow-up $=$ node.}
+It linearises the quadratic Riccati to the linear Schr\"odinger/Airy equation
+$u''=(Y-\eta\xi)u$, turning a blow-up problem into a spectral/first-zero problem. Since
+$R=-u'/u$, a finite-time divergence of $R$ is exactly a simple zero (node) of $u$; ``escape'' $=$
+``first node''.
+
+\item \textbf{The stochastic Airy operator $\mathcal H_\beta$ and why its ground state is TW.}
+$\mathcal H_\beta=-\partial_x^2+x+\tfrac{2}{\sqrt\beta}b'$ on $[0,\infty)$ is the continuum limit
+of the tridiagonal $\beta$-ensemble at the soft edge (RRV); its ground state $-\Lam(\beta)$ is, by
+construction, the soft-edge fluctuation, i.e.\ $-\Lam(\beta)\eqd\TW_\beta$. The Cole--Hopf of the
+inner Riccati is exactly this operator with $\eta=2/\sqrt\beta$.
+
+\item \textbf{Dictionary $\beta=4/\eta^2$; Theorem 2 in words.}
+Matching the noise strengths $\eta=2/\sqrt\beta$ gives $\beta=4/\eta^2$. Theorem~2: the slow-variable
+value at canard escape (the peel-off) is Tracy--Widom distributed, $\Ynode\eqd-\Lam(\beta)\eqd\TW_\beta$.
+
+\item \textbf{Why the swept-first-node law $=$ the fixed operator's ground state ($G$).}
+Define $G(\ell)=$ ground state of the operator on $[\ell,\infty)$. Dirichlet monotonicity makes
+$G$ strictly increasing, giving the pathwise identity $\{\Ynode\le t\}=\{G(t)\ge0\}$ with $t$
+\emph{deterministic}; then stationarity and reflection of white noise give $G(t)\eqd\Lam(\beta)+t$,
+hence $\Ynode\eqd-\Lam(\beta)$. $G$ is what converts a \emph{random} spectral level (the
+obstruction) into a deterministic shift.
+
+\item \textbf{Early-escape $1-F_\beta(0)$ vs.\ hazard $H=\eta^2/4\pi$.}
+$P_{\rm early}=\Pr(\Ynode>0)=\Pr(\Lam(\beta)<0)=1-F_\beta(0)$ is the probability of peeling off
+\emph{before} the deterministic fold --- the left tail of $\TW_\beta$, exponentially small
+($\sim e^{-c/\eta^2}$). The hazard $H=\eta^2/4\pi$ is the integrated \emph{saddle-crossing} rate,
+\emph{polynomial} in $\eta$, and sets the critical noise $\eta_*=2\sqrt\pi$. They are different
+observables: a separatrix crossing is not yet a full escape, so $P_{\rm early}<H$.
+
+\item \textbf{Why $c=5.4439\ldots$ is a Painlev\'e II action, not $2\pi$.}
+The LDP rate is $c=\inf\{\tfrac12\int g'^2:F(g)\le0\}=\tfrac12\min K[\psi]^2/\!\int\psi^4$, whose
+minimiser solves $-g''+xg=g^3$. Via $g=\sqrt2 s$ this is Painlev\'e~II $s''=xs-2s^3$, so $c=\int
+g'^2$ is its action; Pohozaev identities give $\int g'^2=\int xg^2=\tfrac12\int g^4$ and the value
+$5.4439\ldots$. The near-coincidence with $2\pi$ is numerical; a finite-$\eta$ fit even overshoots
+to $\approx6.22$ before settling.
+
+\item \textbf{SNIC $\sigma^{2/3}$ vs.\ fold-of-cycles $\sigma^2$ in the phase channel.}
+A SNIC has \emph{infinite} period at onset; near the bottleneck the Adler equation rescales
+($\theta=\sigma^{2/3}u$) to the canonical noisy saddle-node, whose first-passage law gives
+$\omega,D_\phi\sim\sigma^{2/3}$. A fold of cycles keeps a \emph{finite} period, so the phase
+response is bounded and phase diffusion is the ordinary $D_\phi\sim\sigma^2$. The destroying
+bifurcation decides which channel is singular.
+
+\item \textbf{Universality claim and physical predictions.}
+The canard-escape (peel-off) law sits in the Tracy--Widom / KPZ \emph{edge} universality class: any
+white-noise-perturbed slow passage whose inner equation is the Airy/Riccati canard Cole--Hopf-maps
+to the stochastic Airy operator, giving $\TW_\beta$ with $\beta$ read off $\eta=2/\sqrt\beta$.
+Concrete predictions: peel-off scales $(r,y)\sim(\sigma^{2/3},\sigma^{4/3})$ and physical critical
+noise $\sigma_*\propto\sqrt{\ep}$ (with geometry factor $G=\sqrt{ac/b}$).
+\end{enumerate}
+
+\end{document}

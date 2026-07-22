@@ -1,0 +1,92 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\theoremstyle{plain}\newtheorem{proposition}{Proposition}\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{remark}\newtheorem{remark}[proposition]{Remark}
+\newcommand{\dd}{\,\mathrm{d}}\newcommand{\R}{\mathbb{R}}\newcommand{\C}{\mathbb{C}}\newcommand{\E}{\mathbb{E}}
+\newcommand{\OK}{{\footnotesize\textsf{[computed]}}}\newcommand{\cited}{{\footnotesize\textsf{[cited]}}}
+\newcommand{\gap}{{\footnotesize\textsf{[refinement]}}}
+\begin{document}
+\title[The complex Stokes constant, computed]{Route R1: the complex Stokes constant of the
+$\mathrm{TW}_\beta$ tail, computed via the Painlev\'e~II median resummation}
+\author{Solomon Williams}\date{\today}
+\begin{abstract}
+Route R1 closes the qualitative question of the last open piece --- the complex Stokes constant on
+the $s\to-\infty$ branch --- and computes the backbone value. By Theorem~T1 the tail coefficients
+are Painlev\'e~II trans-series coefficients, so the Stokes datum is inherited from the
+Hastings--McLeod solution, which we compute directly. The $s\to-\infty$ asymptotic coefficients of
+$q(s)$, $a_0=1,\ a_1=-\tfrac18,\ a_2=-\tfrac{73}{128},\dots$, are \emph{non-sign-alternating}
+(all $a_{k\ge1}<0$) --- the Borel singularity sits on the positive real axis, the lateral Borel
+sums differ by an imaginary amount, and the median is the real tail. This is the genuine
+median-resummation Stokes structure. The large-order growth is
+$a_k\sim -C\,\Gamma(2k-\tfrac12)\,(9/8)^k$ with $C\approx0.139\approx1/(4\sqrt\pi)$, giving the
+Borel-singularity/action $A=\tfrac{2\sqrt2}{3}$ and a nonzero (imaginary-ambiguity) Stokes
+constant. It also corrects a framing slip in the O5c note: the tail Stokes datum is a single
+function inherited from PII, not an $O(1/\beta)$ ``shift''.
+\end{abstract}
+\maketitle
+
+\section{The computation}
+
+By Theorem~T1 the fluctuation coefficients $c_n(a)$ of the tail are Painlev\'e~II trans-series
+coefficients; the median-resummation Stokes datum they carry is therefore that of the
+Hastings--McLeod solution on its $s\to-\infty$ branch. We compute the latter directly. Substituting
+$q(s)=\sqrt{-s/2}\sum_{k\ge0}a_k(-s)^{-3k}$ into $q''=2q^3+sq$ gives the recursion, solved exactly:
+\begin{equation}\label{eq:coeffs}
+a_0=1,\quad a_1=-\tfrac18,\quad a_2=-\tfrac{73}{128},\quad a_3=-\tfrac{10657}{1024},\quad
+a_4=-\tfrac{13912277}{32768},\ \dots
+\end{equation}
+($a_1=-\tfrac18$ and $a_2=-\tfrac{73}{128}$ are the known Hastings--McLeod values).
+
+\begin{proposition}[Median-resummation Stokes structure]\label{prop:stokes}
+The coefficients \eqref{eq:coeffs} are \emph{non-sign-alternating}: $a_k<0$ for all $k\ge1$. Hence
+the Borel transform has its singularity on the positive real axis, the lateral Borel sums
+$\mathcal S_\pm$ differ by a purely imaginary amount, and the physical (real) asymptotics is their
+median $\tfrac12(\mathcal S_++\mathcal S_-)$. The large-order growth is
+\begin{equation}\label{eq:growth}
+a_k\ \sim\ -\,C\,\Gamma\!\bigl(2k-\tfrac12\bigr)\,\Bigl(\tfrac98\Bigr)^{k},\qquad
+C\approx0.139\ (\approx\tfrac1{4\sqrt\pi}),
+\end{equation}
+verified numerically: $a_{k+1}/a_k/(4k^2)\to1.126\to\tfrac98$, and $C$ stable under Richardson
+extrapolation over $k\le9$. The Borel-singularity/action is $A=\tfrac{2\sqrt2}{3}\approx0.943$ (in
+the variable $(-s)^{3/2}$), and the Stokes constant --- the imaginary discontinuity across the
+positive-axis singularity, $\mathrm{Im}\,\mathcal S\sim\pi C\,e^{-A(-s)^{3/2}}$ --- is nonzero.
+\OK
+\end{proposition}
+
+\begin{corollary}[The $\mathrm{TW}_\beta$ tail inherits this]\label{cor:inherit}
+By Theorem~T1 the tail trans-series carries exactly this median-resummation Stokes structure: a
+positive-axis Borel singularity, an imaginary lateral ambiguity, and a nonzero Stokes constant of
+Hastings--McLeod type. So the complex Stokes datum of $\mathrm{TW}_\beta$ --- the genuine analogue
+of the cusp's complex structure --- \emph{exists and is computed at the backbone level}, and is a
+\textbf{trans-series} (median-resummation) phenomenon, not a resonance shift (O5c). \OK\,/\,\cited
+\end{corollary}
+
+\section{Correction to O5c, and what remains}
+
+The O5c note wrote the Stokes constant as $\mathsf S(\beta)=\mathsf S_{\mathrm{HM}}+\beta^{-1}\mathsf
+S_1+\cdots$. That decomposition is imprecise: the Stokes datum is a single function $\mathsf S(a)$
+read from the large-order growth of the $c_n(a)$ (not itself a $1/\beta$ series), and by
+Theorem~T1 its \emph{structure} and \emph{backbone value} are the Hastings--McLeod ones of
+Proposition~\ref{prop:stokes}. There is no separate ``$O(1/\beta)$ noise shift'' of the Stokes
+constant; the $1/\beta$ is the trans-series variable whose Stokes structure is PII's.
+
+\emph{What is closed:} the qualitative question --- \emph{is} there a complex Stokes constant for
+$\mathrm{TW}_\beta$, and of what type --- is answered: yes, a median-resummation (imaginary-ambiguity)
+Stokes constant, computed via the Hastings--McLeod backbone (Prop.~\ref{prop:stokes},
+Cor.~\ref{cor:inherit}), with action $\tfrac{2\sqrt2}{3}$, index $-\tfrac12$, amplitude
+$\approx0.139$.
+\emph{Refinement remaining:} the precise \emph{$a$-dependence} $\mathsf S(a)$ of the tail-specific
+Stokes constant (as opposed to the backbone value) would require the tail coefficients $c_n(a)$
+themselves --- the transport hierarchy of the O1 note --- and an independent value of $C$ (e.g.\
+matching the exact PII connection constant of Its--Kapaev, to test $C\stackrel?=1/(4\sqrt\pi)$).
+\gap
+
+\begin{thebibliography}{9}
+\bibitem{CleriDunne} N.~J.~Cleri, G.~V.~Dunne, \emph{Resurgent trans-series for generalized
+Hastings--McLeod solutions}, J. Phys. A \textbf{53} (2020) 305201; arXiv:2002.06270.
+\bibitem{FIKN} A.~S.~Fokas, A.~R.~Its, A.~A.~Kapaev, V.~Yu.~Novokshenov, \emph{Painlev\'e
+Transcendents: The Riemann--Hilbert Approach}, AMS Math. Surveys Monogr. \textbf{128}, 2006.
+\end{thebibliography}
+\end{document}

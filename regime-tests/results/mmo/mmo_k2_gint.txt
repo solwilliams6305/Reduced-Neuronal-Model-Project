@@ -1,0 +1,21 @@
+==============================================================================
+MMO κ=2π² — Route B numerical validation (∫g, ∫Ω along the FHR funnel)
+==============================================================================
+FHR (a,b,ε,δ,I)=(0.7,0.8,0.08,0.2,0.3);  2π² = 19.74
+
+     c     mu nep k_amp(K2) k_amp(gr)  k_g(gr)  g/lnA ph/loop
+ -0.86  0.033  29     14.21     12.72    24.67   1.94   1.002
+ -0.88  0.028  24     16.81     16.26    25.35   1.59   1.017
+ -0.90  0.023  38     19.07     19.48    26.49   1.38   1.011
+ -0.92  0.018  28     19.84     27.74    35.64   1.28   1.004
+ -0.94  0.014  17     22.09     30.59    37.56   1.23   0.999
+
+Verdict:
+  • phase check ph/loop ≈ 1.00 across the band ⇒ Ω=Im(λ_c) IS the SAO rotation (clean).
+  • k_amp(K2) reproduces MMO_K2's κ (mean ~2π², hits 19.7 mid-band; c=−0.94→22.1).
+  • k_g(gr) (frozen-g integral) OVERestimates: 25–38; the reduction ∫g=ln(amp) holds
+    only to a factor g/lnA = 1.9→1.2 that shrinks toward 1 as μ→0 (finite-μ correction).
+  • κ DRIFTS with μ (dt-converged ⇒ physical): the 2π²(1+O(μ)) effect, not a sharp const.
+  ⇒ Route B not killed, not cleanly validated: rotation exact, growth antidamping-driven
+    and ~2π² mid-band, but the raw frozen g overestimates at accessible μ. Pinning 2π²
+    exactly is the μ→0 limit ⇒ Route A (PCF), now anchored to these numerics.

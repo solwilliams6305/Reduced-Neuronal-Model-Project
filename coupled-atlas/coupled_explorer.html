@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Coupled FitzHugh–Rinzel explorer</title>
+<style>
+  :root{ --bg:#0e1117; --panel:#161b22; --ink:#e6edf3; --mut:#9aa7b4; --line:#30363d;
+         --c1:#4aa3ff; --c2:#ff8f4a; --acc:#b3402b; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1080px;margin:0 auto;padding:18px 20px 40px;}
+  h1{font-size:20px;font-weight:600;margin:0 0 2px;}
+  .sub{color:var(--mut);font-size:13px;margin:0 0 16px;line-height:1.5;}
+  .grid{display:grid;grid-template-columns:300px 1fr;gap:16px;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+  .ctrl{margin:0 0 13px;}
+  .ctrl label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mut);margin-bottom:5px;}
+  .ctrl label b{color:var(--ink);font-weight:600;}
+  input[type=range]{width:100%;accent-color:var(--c1);}
+  .seg{display:flex;gap:6px;margin-top:4px;}
+  .seg button{flex:1;background:#0d1117;color:var(--mut);border:1px solid var(--line);
+              border-radius:7px;padding:6px 4px;font-size:12px;cursor:pointer;}
+  .seg button.on{background:var(--c1);color:#04121f;border-color:var(--c1);font-weight:600;}
+  .row{display:flex;gap:8px;margin-top:6px;}
+  .row button{flex:1;background:#0d1117;color:var(--ink);border:1px solid var(--line);
+              border-radius:7px;padding:8px;font-size:13px;cursor:pointer;}
+  .row button:hover{border-color:var(--c1);}
+  canvas{display:block;width:100%;background:#0b0e13;border:1px solid var(--line);border-radius:8px;}
+  .cap{font-size:12px;color:var(--mut);margin:7px 2px 14px;}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12.5px;font-weight:600;}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin:2px 0 8px;}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px;margin-right:5px;}
+  .read{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
+  .read .k{font-size:12px;color:var(--mut);}
+  .read .vv{font-size:18px;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Coupled FitzHugh–Rinzel explorer</h1>
+  <p class="sub">Two electrically (gap-junction) coupled folded-cycle units:
+     v′ = v − v³/3 − w + y + I + g·Φ(v<sub>partner</sub>(t−τ) − v) + σξ,&nbsp;
+     w′ = ε(v + A − Bw),&nbsp; y′ = εδ(c − v). Drag the sliders to move through the atlas
+     (synchrony, anti-phase, MMOs, delay-induced phase-flip, coherence resonance).</p>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="ctrl"><label>coupling strength&nbsp; g <b id="vg">0.00</b></label>
+        <input id="g" type="range" min="0" max="0.40" step="0.005" value="0"></div>
+
+      <div class="ctrl"><label>coupling form</label>
+        <div class="seg" id="form">
+          <button data-f="linear" class="on">linear</button>
+          <button data-f="tanh">tanh</button>
+          <button data-f="rectifying">rectify</button>
+        </div></div>
+
+      <div class="ctrl"><label>heterogeneity&nbsp; Δc <b id="vdc">0.00</b></label>
+        <input id="dc" type="range" min="0" max="0.20" step="0.005" value="0"></div>
+
+      <div class="ctrl"><label>delay&nbsp; τ <b id="vtau">0.0</b></label>
+        <input id="tau" type="range" min="0" max="50" step="0.5" value="0"></div>
+
+      <div class="ctrl"><label>noise&nbsp; σ <b id="vsig">0.000</b></label>
+        <input id="sig" type="range" min="0" max="0.06" step="0.001" value="0"></div>
+
+      <div class="ctrl"><label>control&nbsp; c (folded-node depth) <b id="vc">−0.82</b></label>
+        <input id="c" type="range" min="-0.95" max="-0.55" step="0.005" value="-0.82"></div>
+
+      <div class="row">
+        <button id="play">⏸ pause</button>
+        <button id="reset">↺ reset</button>
+        <button id="anti">anti-phase IC</button>
+      </div>
+      <p class="cap" style="margin-top:12px;">Presets give a quick tour:</p>
+      <div class="row">
+        <button data-preset="sync">synchrony</button>
+        <button data-preset="mmo">MMO</button>
+      </div>
+      <div class="row">
+        <button data-preset="flip">delay flip</button>
+        <button data-preset="cr">coherence res.</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="read">
+        <div><div class="k">regime</div><span id="regime" class="badge">—</span></div>
+        <div><div class="k">synchrony ρ(v₁,v₂)</div><div class="vv" id="rho">—</div></div>
+        <div><div class="k">model time</div><div class="vv" id="clock">0</div></div>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--c1)"></span>unit 1</span>
+        <span><span class="dot" style="background:var(--c2)"></span>unit 2</span>
+      </div>
+      <canvas id="ts" height="230"></canvas>
+      <p class="cap">Voltage traces v₁(t), v₂(t) — in-phase overlap, anti-phase alternate; small wiggles = MMO sub-threshold oscillations.</p>
+      <canvas id="pp" height="300"></canvas>
+      <p class="cap">Phase-plane projection (v, w): the folded-cycle trajectory of each unit.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const P = { A:0.7, B:0.8, eps:0.08, delta:0.2, I0:0.30,
+            c:-0.82, dc:0.0, g:0.0, form:'linear', tau:0.0, sigma:0.0 };
+const dt = 0.04, STEPS_PER_FRAME = 26;
+let S, hist, tclock, running = true;
+let tsBuf, ppBuf;            // display buffers
+const TS_WIN = 5000;         // time-series samples kept (~200 t units)
+const PP_WIN = 1400;
+
+function gauss(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function phi(x){ if(P.form==='linear')return x; if(P.form==='tanh')return Math.tanh(2*x)/2; return x>0?x:0; }
+
+function reset(anti){
+  S = { v:[0.6, anti?-0.6:-0.55], w:[0.0,0.0], y:[0.0,0.0] };
+  hist = [[S.v[0],S.v[1]]]; tclock = 0;
+  tsBuf = []; ppBuf = [[],[]];
+}
+function delayedPartner(){
+  const lag = Math.round(P.tau/dt);
+  const idx = hist.length-1-lag;
+  const vd = idx>=0 ? hist[idx] : hist[0];
+  return [vd[1], vd[0]];
+}
+function deriv(v,w,y,vpd){
+  const c=[P.c-P.dc/2, P.c+P.dc/2], dv=[0,0],dw=[0,0],dy=[0,0];
+  for(let i=0;i<2;i++){
+    const coup=P.g*phi(vpd[i]-v[i]);
+    dv[i]=v[i]-v[i]*v[i]*v[i]/3 - w[i] + y[i] + P.I0 + coup;
+    dw[i]=P.eps*(v[i]+P.A-P.B*w[i]);
+    dy[i]=P.eps*P.delta*(c[i]-v[i]);
+  }
+  return [dv,dw,dy];
+}
+function step(){
+  const vpd=delayedPartner();
+  const a=(arr,k,h)=>[arr[0]+k[0]*h, arr[1]+k[1]*h];
+  const k1=deriv(S.v,S.w,S.y,vpd);
+  const k2=deriv(a(S.v,k1[0],dt/2),a(S.w,k1[1],dt/2),a(S.y,k1[2],dt/2),vpd);
+  const k3=deriv(a(S.v,k2[0],dt/2),a(S.w,k2[1],dt/2),a(S.y,k2[2],dt/2),vpd);
+  const k4=deriv(a(S.v,k3[0],dt),a(S.w,k3[1],dt),a(S.y,k3[2],dt),vpd);
+  for(let i=0;i<2;i++){
+    S.v[i]+=dt/6*(k1[0][i]+2*k2[0][i]+2*k3[0][i]+k4[0][i]);
+    S.w[i]+=dt/6*(k1[1][i]+2*k2[1][i]+2*k3[1][i]+k4[1][i]);
+    S.y[i]+=dt/6*(k1[2][i]+2*k2[2][i]+2*k3[2][i]+k4[2][i]);
+    if(P.sigma>0) S.v[i]+=P.sigma*Math.sqrt(dt)*gauss();
+  }
+  tclock+=dt;
+  hist.push([S.v[0],S.v[1]]); if(hist.length>1400) hist.shift();
+  tsBuf.push([S.v[0],S.v[1]]); if(tsBuf.length>TS_WIN) tsBuf.shift();
+  ppBuf[0].push([S.v[0],S.w[0]]); if(ppBuf[0].length>PP_WIN) ppBuf[0].shift();
+  ppBuf[1].push([S.v[1],S.w[1]]); if(ppBuf[1].length>PP_WIN) ppBuf[1].shift();
+}
+
+function corr(){
+  const n=tsBuf.length; if(n<200) return NaN;
+  const m=Math.min(n,1600); let s1=0,s2=0;
+  for(let i=n-m;i<n;i++){s1+=tsBuf[i][0];s2+=tsBuf[i][1];}
+  const m1=s1/m,m2=s2/m; let c=0,a=0,b=0;
+  for(let i=n-m;i<n;i++){const d1=tsBuf[i][0]-m1,d2=tsBuf[i][1]-m2;c+=d1*d2;a+=d1*d1;b+=d2*d2;}
+  return (a>0&&b>0)? c/Math.sqrt(a*b) : NaN;
+}
+function amp(){ const n=tsBuf.length,m=Math.min(n,1600); let lo=9,hi=-9;
+  for(let i=n-m;i<n;i++){lo=Math.min(lo,tsBuf[i][0]);hi=Math.max(hi,tsBuf[i][0]);} return hi-lo; }
+
+const ts=document.getElementById('ts'), pp=document.getElementById('pp');
+const tx=ts.getContext('2d'), px=pp.getContext('2d');
+function fit(cv){ const r=cv.getBoundingClientRect(),dpr=devicePixelRatio||1;
+  cv.width=r.width*dpr; cv.height=cv.height*dpr; cv.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
+  return [r.width, cv.height/dpr]; }
+let TSW,TSH,PPW,PPH;
+function resize(){ [TSW,TSH]=fit(ts); [PPW,PPH]=fit(pp); }
+addEventListener('resize',resize);
+
+function drawTS(){
+  tx.clearRect(0,0,TSW,TSH);
+  const vlo=-2.4, vhi=2.4, yo=v=>TSH-( (v-vlo)/(vhi-vlo) )*TSH;
+  tx.strokeStyle='#202833'; tx.lineWidth=1; tx.beginPath(); tx.moveTo(0,yo(0)); tx.lineTo(TSW,yo(0)); tx.stroke();
+  const n=tsBuf.length; if(n<2) return;
+  const x=i=>i/(TS_WIN-1)*TSW, start=Math.max(0,n-TS_WIN);
+  for(let u=0;u<2;u++){
+    tx.strokeStyle=u?'#ff8f4a':'#4aa3ff'; tx.lineWidth=1.3; tx.beginPath();
+    for(let i=start;i<n;i++){ const xx=x(i-start); const yy=yo(tsBuf[i][u]);
+      i===start?tx.moveTo(xx,yy):tx.lineTo(xx,yy); }
+    tx.stroke();
+  }
+}
+function drawPP(){
+  px.clearRect(0,0,PPW,PPH);
+  const vlo=-2.5,vhi=2.5,wlo=-0.8,whi=2.6;
+  const X=v=>(v-vlo)/(vhi-vlo)*PPW, Y=w=>PPH-(w-wlo)/(whi-wlo)*PPH;
+  // v-nullcline (w = v - v^3/3 + I0), guide
+  px.strokeStyle='#2a3340'; px.lineWidth=1; px.beginPath();
+  for(let v=vlo;v<=vhi;v+=0.04){ const w=v-v*v*v/3+P.I0; const xx=X(v),yy=Y(w);
+    v===vlo?px.moveTo(xx,yy):px.lineTo(xx,yy);} px.stroke();
+  for(let u=0;u<2;u++){
+    const buf=ppBuf[u]; if(buf.length<2) continue;
+    px.lineWidth=1.2;
+    for(let i=1;i<buf.length;i++){ const al=i/buf.length;
+      px.strokeStyle=(u?'255,143,74':'74,163,255'); px.globalAlpha=al*0.9;
+      px.beginPath(); px.moveTo(X(buf[i-1][0]),Y(buf[i-1][1])); px.lineTo(X(buf[i][0]),Y(buf[i][1]));
+      px.strokeStyle='rgba('+(u?'255,143,74':'74,163,255')+','+(al).toFixed(2)+')'; px.stroke(); }
+    px.globalAlpha=1;
+    const last=buf[buf.length-1]; px.fillStyle=u?'#ff8f4a':'#4aa3ff';
+    px.beginPath(); px.arc(X(last[0]),Y(last[1]),3.4,0,7); px.fill();
+  }
+}
+function updateReadout(){
+  const r=corr(), a=amp();
+  document.getElementById('rho').textContent = isNaN(r)?'—':(r>=0?'+':'')+r.toFixed(2);
+  document.getElementById('clock').textContent = tclock.toFixed(0);
+  const bd=document.getElementById('regime'); let lab,bg,fg;
+  if(a<0.8){lab='quiescent / death';bg='#3a3f47';fg='#cfd6dd';}
+  else if(isNaN(r)){lab='settling…';bg='#3a3f47';fg='#cfd6dd';}
+  else if(r>0.6){lab='in-phase (synchronized)';bg='#13344e';fg='#7fc4ff';}
+  else if(r<-0.2){lab='anti-phase';bg='#4a2a16';fg='#ffb98a';}
+  else {lab='partial / drifting';bg='#3a3520';fg='#f0d97a';}
+  bd.textContent=lab; bd.style.background=bg; bd.style.color=fg;
+}
+
+let frame=0;
+function loop(){
+  if(running){ for(let k=0;k<STEPS_PER_FRAME;k++) step(); }
+  drawTS(); drawPP(); if((frame++ %6)===0) updateReadout();
+  requestAnimationFrame(loop);
+}
+
+function bindSlider(id,key,fmt,el){ const s=document.getElementById(id);
+  const out=document.getElementById(el); const f=()=>{P[key]=parseFloat(s.value); out.textContent=fmt(P[key]);};
+  s.addEventListener('input',f); f(); }
+bindSlider('g','g',x=>x.toFixed(2),'vg');
+bindSlider('dc','dc',x=>x.toFixed(2),'vdc');
+bindSlider('tau','tau',x=>x.toFixed(1),'vtau');
+bindSlider('sig','sigma',x=>x.toFixed(3),'vsig');
+bindSlider('c','c',x=>x.toFixed(2).replace('-','−'),'vc');
+document.querySelectorAll('#form button').forEach(b=>b.addEventListener('click',()=>{
+  P.form=b.dataset.f; document.querySelectorAll('#form button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); }));
+document.getElementById('play').addEventListener('click',e=>{running=!running;
+  e.target.textContent=running?'⏸ pause':'▶ play';});
+document.getElementById('reset').addEventListener('click',()=>reset(false));
+document.getElementById('anti').addEventListener('click',()=>reset(true));
+
+function setUI(){ g.value=P.g; dc.value=P.dc; tau.value=P.tau; sig.value=P.sigma; c.value=P.c;
+  document.getElementById('vg').textContent=P.g.toFixed(2);
+  document.getElementById('vdc').textContent=P.dc.toFixed(2);
+  document.getElementById('vtau').textContent=P.tau.toFixed(1);
+  document.getElementById('vsig').textContent=P.sigma.toFixed(3);
+  document.getElementById('vc').textContent=P.c.toFixed(2).replace('-','−');
+  document.querySelectorAll('#form button').forEach(x=>x.classList.toggle('on',x.dataset.f===P.form)); }
+const presets={
+  sync:{g:0.18,dc:0.06,tau:0,sigma:0,c:-0.74,form:'linear'},
+  mmo:{g:0.0,dc:0.0,tau:0,sigma:0,c:-0.88,form:'linear'},
+  flip:{g:0.15,dc:0.0,tau:18,sigma:0,c:-0.72,form:'linear'},
+  cr:{g:0.15,dc:0.0,tau:0,sigma:0.03,c:-0.78,form:'linear'}
+};
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
+  Object.assign(P,presets[b.dataset.preset]); setUI(); reset(b.dataset.preset==='flip'); }));
+
+resize(); reset(false); loop();
+</script>
+</body>
+</html>

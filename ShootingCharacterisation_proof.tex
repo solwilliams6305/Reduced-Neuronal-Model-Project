@@ -1,0 +1,266 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}{Standing fact}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\Ynode}{Y_{\mathrm{node}}}
+\newcommand{\TW}{\mathrm{TW}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\eqd}{\stackrel{d}{=}}
+\newcommand{\xit}{\widetilde{\xi}}
+\DeclareMathOperator{\Ai}{Ai}
+
+\title{\textbf{A complete proof of the shooting characterisation:\\
+the noisy-Airy inner exit measure is Tracy--Widom}}
+\author{Solomon Williams \\ \small University of Edinburgh}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We prove that the inner exit measure of the noisy folded limit cycle---the law of the
+first-node level $\Ynode$ of the swept noisy Airy equation---coincides with the law of
+minus the ground-state eigenvalue of the stochastic Airy operator, and hence with
+Tracy--Widom: $\Ynode\eqd-\Lambda_0(\beta)\eqd\TW_\beta$, $\eta=2/\sqrt\beta$. The proof
+is elementary given the random-Schr\"odinger framework of Ram\'irez--Rider--Vir\'ag
+(RRV): the swept solution is the \emph{energy-zero} solution of a random Schr\"odinger
+operator $M$, its first zero is the level at which the truncated $M$ has ground state
+$0$, and that level is read off through a \emph{monotone spectral function} whose
+defining event involves only a \emph{deterministic} translation---so the stationarity
+and reflection symmetry of white noise close the identity. The single nontrivial random
+shift, which obstructed earlier arguments, is bypassed by Dirichlet domain
+monotonicity.
+\end{abstract}
+
+\section{Setup and standing facts}
+
+\paragraph{The two objects.} Fix $\eta>0$ and $\beta=4/\eta^2$. Let $\xit$ be a white
+noise on $\R$ (the distributional derivative of a two-sided Brownian motion $W$).
+
+\emph{Object 1 (the inner exit level).} In the rescaling chart the noisy canard solves,
+in the slow variable $Y$,
+\begin{equation}\label{eq:Yeq}
+  u_{YY}=\bigl(Y-\eta\,\xit\bigr)\,u .
+\end{equation}
+(This is \eqref{eq:Yeq} because $Y=Y_0-T$ gives $\partial_Y^2=\partial_T^2$, and the
+time white noise becomes a white noise in $Y$.) Let $\psi$ be the solution of
+\eqref{eq:Yeq} that is recessive (square-integrable) as $Y\to+\infty$; its largest zero
+is the \emph{inner exit level} $\Ynode$.
+
+\emph{Object 2 (the SAO ground state).} The stochastic Airy operator
+\begin{equation}\label{eq:SAO}
+  H_\beta=-\frac{\dd^2}{\dd x^2}+x+\frac{2}{\sqrt\beta}\,b'(x)
+  \qquad\text{on }[0,\infty),\ \text{Dirichlet at }0,
+\end{equation}
+($b'$ a white noise, $2/\sqrt\beta=\eta$) has a.s.\ a simple lowest eigenvalue
+$\Lambda_0(\beta)$.
+
+\paragraph{The operator $M$.} Write \eqref{eq:Yeq} as $Mu=0$ with the random
+Schr\"odinger operator
+\begin{equation}\label{eq:M}
+  M=-\frac{\dd^2}{\dd Y^2}+Y-\eta\,\xit(Y),
+\end{equation}
+i.e.\ $\psi$ is the energy-$0$ recessive solution of $M$. For $\ell\in\R$ let
+$M_\ell$ denote $M$ acting on $L^2([\ell,\infty))$ with a Dirichlet condition at $\ell$.
+
+We use four standing facts, each classical in its area.
+
+\begin{assumption}[white-noise invariances]\label{F1}
+For every deterministic $c\in\R$, $\ \xit(c+\cdot)\eqd\xit\ $ (stationarity) and
+$-\xit\eqd\xit$ (reflection symmetry). Consequently $-\eta\,\xit(c+\cdot)\eqd
+\tfrac{2}{\sqrt\beta}b'$.
+\end{assumption}
+
+\begin{assumption}[random Schr\"odinger operator]\label{F2}
+For a.e.\ realisation and every $\ell$, $M_\ell$ is self-adjoint and bounded below with
+purely discrete spectrum near its bottom; its lowest eigenvalue is simple with a
+ground-state eigenfunction that is strictly positive on $(\ell,\infty)$. The same holds
+for $H_\beta$. \emph{(This is the RRV construction \cite{RRV}; the confining potential
+$Y\to+\infty$ and the white-noise term are handled by their quadratic-form/Riccati
+analysis. See also \cite{FN} for $1$D Schr\"odinger operators with white-noise potential.)}
+\end{assumption}
+
+\begin{assumption}[Weyl limit point at $+\infty$]\label{F3}
+Since the potential $\to+\infty$, equation \eqref{eq:Yeq} is in the limit-point case at
+$+\infty$: for each energy there is a unique-up-to-scale solution that is square-integrable
+near $+\infty$ \cite{CL}. In particular the recessive solution $\psi$ exists and is
+unique up to scale.
+\end{assumption}
+
+\begin{assumption}[RRV edge]\label{F4}
+$-\Lambda_0(\beta)\eqd\TW_\beta$ \cite{RRV}.
+\end{assumption}
+
+\section{The theorem}
+
+\begin{theorem}[Shooting characterisation]\label{thm:main}
+With the notation above,
+\[
+  \Ynode \eqd -\Lambda_0(\beta)\eqd \TW_\beta ,\qquad \eta=2/\sqrt\beta .
+\]
+Moreover, if $u^{Y_0}$ denotes the solution of \eqref{eq:Yeq} started at $Y=Y_0$ on the
+canard branch ($u_Y/u=-\sqrt{Y_0}$) and $\Ynode(Y_0)$ its largest zero, then
+$\Ynode(Y_0)\to\Ynode$ almost surely as $Y_0\to\infty$; hence
+$\Ynode(Y_0)\xrightarrow{d}-\Lambda_0(\beta)$.
+\end{theorem}
+
+The proof is four lemmas. The crux is Lemma~\ref{lem:mono}: the event $\{\Ynode\le t\}$
+equals $\{G(t)\ge0\}$ for a monotone spectral function $G$, and the level $t$ there is
+\emph{deterministic}, so Fact~\ref{F1} applies.
+
+\begin{lemma}[the exit level is well defined]\label{lem:exists}
+Almost surely $\psi$ exists (Fact~\ref{F3}), is real and not identically zero, is
+positive for all large $Y$, and has a largest zero $\Ynode\in\R$.
+\end{lemma}
+
+\begin{proof}
+Existence and uniqueness up to scale are Fact~\ref{F3}; take $\psi$ real (the equation
+has real coefficients). For $Y$ large the potential $Y-\eta\xit$ is positive, so by
+\eqref{eq:Yeq} $\psi$ is convex where positive and concave where negative; the recessive
+(decaying) branch is positive for all large $Y$. For $Y\to-\infty$ the potential
+$\to-\infty$ and $\psi$ oscillates with infinitely many zeros, which are isolated (a
+nontrivial solution of a second-order linear ODE has only simple, isolated zeros). The
+set of zeros is therefore bounded above (none for large $Y$) and discrete, so it has a
+maximum $\Ynode$.
+\end{proof}
+
+\begin{lemma}[forgetting: the sweep limit]\label{lem:forget}
+Almost surely $\Ynode(Y_0)\to\Ynode$ as $Y_0\to\infty$, exponentially fast.
+\end{lemma}
+
+\begin{proof}
+Work with the Riccati variable $P=u_Y/u$, which solves
+$P_Y=(Y-\eta\xit)-P^2$. On the barrier $\{Y>0\}$ the two WKB branches are
+$P\approx\pm\sqrt{Y}$, and linearising about $P=-\sqrt Y$ gives
+$\partial_P\bigl[(Y-\eta\xit)-P^2\bigr]=-2P\approx+2\sqrt Y$. Thus along \emph{decreasing}
+$Y$ the branch $P=-\sqrt Y$ is attracting: if $P^{(1)},P^{(2)}$ are two solutions with
+$\delta=P^{(1)}-P^{(2)}$ then $\delta_Y=-(P^{(1)}+P^{(2)})\delta$, so for $Y$ decreasing
+from $Y_0$,
+\[
+  |\delta(Y)|=|\delta(Y_0)|\exp\!\Bigl(-\!\int_Y^{Y_0}\!(P^{(1)}+P^{(2)})\dd Y'\Bigr)
+            \le|\delta(Y_0)|\,e^{-2\int_Y^{Y_0}\sqrt{Y'}\,(1+o(1))\dd Y'} .
+\]
+The canard datum $P^{Y_0}(Y_0)=-\sqrt{Y_0}$ differs from the recessive value
+$P_\psi(Y_0)$ by the WKB error $\delta(Y_0)=O(Y_0^{-1})$ (Fact~\ref{F3}); integrating
+down to any fixed $Y_*$ contracts this to $O\!\bigl(Y_0^{-1}e^{-\frac43 Y_0^{3/2}}\bigr)$,
+uniformly. Hence $P^{Y_0}\to P_\psi$ locally uniformly on $\{Y\le Y_*\}$, and the largest
+zero $\Ynode(Y_0)$ (a continuous functional of $P$ on a neighbourhood of $\Ynode$, where
+$P\to-\infty$ transversally) converges to $\Ynode$.
+\end{proof}
+
+\begin{lemma}[monotone spectral function]\label{lem:mono}
+Let $G(\ell)$ be the lowest eigenvalue of $M_\ell$ (Fact~\ref{F2}). Almost surely:
+\begin{enumerate}
+\item[\textup{(i)}] $G$ is strictly increasing on $\R$;
+\item[\textup{(ii)}] $G(\Ynode)=0$;
+\item[\textup{(iii)}] for every $t\in\R$,\quad $\{\Ynode\le t\}=\{G(t)\ge0\}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\textit{(i)} For $\ell_1<\ell_2$, the form domain of $M_{\ell_2}$ embeds into that of
+$M_{\ell_1}$ by extension by zero, and the quadratic forms agree on the image; hence by
+the min--max principle $G(\ell_1)\le G(\ell_2)$ (Dirichlet domain monotonicity
+\cite[XIII]{RS}). The inequality is strict: the ground state $\varphi_1$ of $M_{\ell_1}$
+is strictly positive on $(\ell_1,\infty)$ (Fact~\ref{F2}), so $\varphi_1(\ell_2)>0$ and
+$\varphi_1$ is \emph{not} admissible for $M_{\ell_2}$ (which requires vanishing at
+$\ell_2$); the variational minimum therefore strictly increases.
+
+\textit{(ii)} Restrict $\psi$ to $[\Ynode,\infty)$. There $\psi(\Ynode)=0$ (Dirichlet
+satisfied), $\psi\in L^2$ (recessive decay at $+\infty$), $M\psi=0$, and $\psi$ has no
+zero in $(\Ynode,\infty)$ since $\Ynode$ is the \emph{largest} zero
+(Lemma~\ref{lem:exists}). A nodeless $L^2$ eigenfunction is the ground state
+(Fact~\ref{F2}), so $0$ is the lowest eigenvalue of $M_{\Ynode}$: $G(\Ynode)=0$.
+
+\textit{(iii)} By (i) and (ii), $G(t)\ge0=G(\Ynode)\iff t\ge\Ynode$.
+\end{proof}
+
+\begin{lemma}[deterministic translation]\label{lem:translate}
+For each fixed $t\in\R$,\quad $G(t)\eqd\Lambda_0(\beta)+t$.
+\end{lemma}
+
+\begin{proof}
+Fix $t$ and substitute the \emph{deterministic} shift $Y=t+x$, $x\ge0$. Then
+\[
+  M_t=-\frac{\dd^2}{\dd x^2}+(t+x)-\eta\,\xit(t+x)
+     =\underbrace{\Bigl[-\frac{\dd^2}{\dd x^2}+x-\eta\,\xit(t+x)\Bigr]}_{=:H'_t}+\,t ,
+\]
+an operator on $[0,\infty)$ with Dirichlet at $0$. By Fact~\ref{F1}, $\xit(t+\cdot)\eqd
+\xit$ and $-\eta\,\xit(t+\cdot)\eqd\tfrac{2}{\sqrt\beta}b'$, so $H'_t\eqd H_\beta$ as
+random operators; in particular their lowest eigenvalues have the same law,
+$\Lambda_0(H'_t)\eqd\Lambda_0(\beta)$. Since $M_t=H'_t+t$, $\;G(t)=\Lambda_0(H'_t)+t$,
+whence $G(t)\eqd\Lambda_0(\beta)+t$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Fix $t\in\R$. Using Lemma~\ref{lem:mono}(iii) (a pathwise event identity) and then
+Lemma~\ref{lem:translate} (a statement about the law of $G(t)$ at the fixed level $t$),
+\[
+  \mathbb P(\Ynode\le t)
+  =\mathbb P\bigl(G(t)\ge0\bigr)
+  =\mathbb P\bigl(\Lambda_0(\beta)+t\ge0\bigr)
+  =\mathbb P\bigl(\Lambda_0(\beta)\ge-t\bigr)
+  =\mathbb P\bigl(-\Lambda_0(\beta)\le t\bigr).
+\]
+As $t$ was arbitrary, $\Ynode\eqd-\Lambda_0(\beta)$; by Fact~\ref{F4},
+$\Ynode\eqd\TW_\beta$. The sweep statement is Lemma~\ref{lem:forget} together with the
+continuous-mapping theorem.
+\end{proof}
+
+\section{Discussion}
+
+\paragraph{What is elementary and what is cited.} Given Facts~\ref{F1}--\ref{F4}, the
+proof is elementary: Lemmas~\ref{lem:exists}, \ref{lem:mono} and \ref{lem:translate} use
+only Sturm theory, Dirichlet domain monotonicity, and the substitution $Y=t+x$;
+Lemma~\ref{lem:forget} is a Gronwall estimate on the Riccati. The only heavy input is
+Fact~\ref{F2}---the rigorous meaning of a Schr\"odinger operator with a white-noise
+potential and the simplicity/positivity of its ground state. That is precisely the RRV
+framework we are matching to, applied to $M$, which is an SAO \emph{in law}
+(Lemma~\ref{lem:translate} at $t=0$); so the proof imports no machinery beyond what the
+statement already presupposes.
+
+\paragraph{Why earlier arguments stalled.} A direct ``reflection'' argument tries to
+translate by the random level $\Ynode$, producing a noise $\xit(\Ynode+\cdot)$ shifted by
+a noise-dependent amount---not a clean white noise. Lemma~\ref{lem:mono} removes this
+obstruction: the event $\{\Ynode\le t\}$ is recast as $\{G(t)\ge0\}$ with $t$
+\emph{deterministic}, after which Fact~\ref{F1} applies verbatim.
+
+\paragraph{Numerical confirmation.} (i) The conclusion $\Ynode\eqd-\Lambda_0(\beta)$ is
+confirmed by computing $-\Lambda_0$ as the smallest eigenvalue of the tridiagonal
+discretisation of $H_\beta$ and $\Ynode$ by ODE shooting---two methods with no shared
+code path---which agree in mean, variance and skewness at $\beta=1,2,4$, and match the
+exact $\TW_\beta$ densities. (ii) The mechanism of Lemma~\ref{lem:mono} is confirmed
+directly: for fixed realisations, $G(\ell)$ (smallest eigenvalue of the discretised
+$M_\ell$) is monotone increasing and crosses $0$ at the recessive solution's largest
+zero $\Ynode$ computed from the same noise.
+
+\paragraph{Consequence.} The inner exit measure of the noisy folded limit cycle is
+$\TW_\beta$ with $\beta=4/\eta^2$, exactly; the early-escape probability is the tail mass
+$1-F_\beta(0)$, and the folded-limit-cycle canard escape thereby lies in the
+Tracy--Widom / KPZ edge universality class.
+
+\begin{thebibliography}{9}
+\bibitem{RRV} J.~Ram\'irez, B.~Rider, B.~Vir\'ag, \emph{Beta ensembles, stochastic Airy
+spectrum, and a diffusion}, J.\ Amer.\ Math.\ Soc.\ \textbf{24} (2011) 919--944.
+\bibitem{FN} M.~Fukushima, S.~Nakao, \emph{On spectra of the Schr\"odinger operator with
+a white Gaussian noise potential}, Z.\ Wahrsch.\ \textbf{37} (1977) 267--274.
+\bibitem{CL} E.~Coddington, N.~Levinson, \emph{Theory of Ordinary Differential
+Equations}, McGraw--Hill (1955), Ch.~9 (limit-point/limit-circle).
+\bibitem{RS} M.~Reed, B.~Simon, \emph{Methods of Modern Mathematical Physics IV},
+Academic Press (1978), \S XIII (min--max, Dirichlet--Neumann bracketing).
+\bibitem{TW} C.~Tracy, H.~Widom, \emph{Level-spacing distributions and the Airy kernel},
+Comm.\ Math.\ Phys.\ \textbf{159} (1994) 151--174.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,15 @@
+V4 blow-up normal-form fit summary
+===================================
+
+event_mode=window
+target_mode=frac
+target_frac=0.75
+window=[0.5 W*, 2.0 W*]
+W_min=1e-08
+hard_W_cut=None
+fit_lambda_min=None
+fit_lambda_max=None
+
+all: eta50 = C lambda^beta, C=2.20963, beta=0.50505, R2=0.999362, n_fit=9
+unclipped: eta50 = C lambda^beta, C=2.20963, beta=0.50505, R2=0.999362, n_fit=9
+range: eta50 = C lambda^beta, C=2.20963, beta=0.50505, R2=0.999362, n_fit=9

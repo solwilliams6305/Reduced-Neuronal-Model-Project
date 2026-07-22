@@ -1,0 +1,41 @@
+========================================================================
+MID-TONIC FOLD-PASSAGE TRANSVERSE AMPLIFICATION — first-principles audit
+========================================================================
+
+(1) True transverse Floquet exponent λ2 and expanding integral
+       eps   I_mid       T       λ2    ∮trJdt  ∮max(λ⊥,0)  exp(∮max) mult e^{λ2T}
+     0.040   0.875   62.84   -1.186    -74.53       5.003      148.9     4.29e-33
+     0.080   0.875   36.42   -1.025    -37.32       4.114       61.2     6.20e-17
+     0.160   0.875   22.24   -0.837    -18.62       3.207       24.7     8.16e-09
+    => cycle is hugely net-contracting; exp(∮max λ⊥) is O(10–10²), not 2.7.
+
+(2) Post-fold-tip inner expanding integral 2∫₀^Vout V dT  (λ_rel=0.467, eps-independent)
+    Vout= 0.5:  2∫VdT =  0.2718   exp =   1.312
+    Vout= 1.0:  2∫VdT =  0.7496   exp =   2.116
+    Vout= 1.5:  2∫VdT =  1.2184   exp =   3.382
+    Vout= 2.0:  2∫VdT =  1.6323   exp =   5.116
+    Vout= 3.0:  2∫VdT =  2.3042   exp =  10.017
+    => reaches ln(2.719)=1.000 only at tuned Vout = 1.262; integral is cutoff-dependent (NOT convergent) -> 2.7 is not first-principles.
+
+(3a) σ-dependence of the §10 CV ratio (A_fold must be σ-independent)
+      sigma   CV_meas   CV/(σ·A)
+      0.005    0.0019      0.953
+      0.020    0.0217      2.720
+      0.050    0.2837     14.224
+    => §10 ratio grows ~1 -> 2.7 -> 14 with σ; a deterministic A_fold would be flat.
+
+(3b) FRESH stochastic ISI onset sweep (I=0.83, ε=0.08, this run)
+      sigma   CV_meas   CV/(σ·A)
+      0.005    0.0020      0.993  <- leading order
+      0.015    0.0058      0.975  <- leading order
+      0.020    0.0332      4.157  <- broken (escape)
+      0.025    0.0406      4.075  <- broken (escape)
+      0.030    0.1448     12.100  <- broken (escape)
+    A(I=0.83) = 0.3989.  Leading order CV=σ·A holds (ratio≈1) up to
+    σ≈0.015, then JUMPS sharply (ratio 4–12) — a non-perturbative escape
+    onset, NOT a smooth σ-independent factor.  The exact ratio just above
+    onset is sampling-dependent (§10 got 2.72 here; this run differs),
+    confirming 2.7 is a readout of the escape onset σ_onset≈0.02,
+    not a deterministic cycle constant (cf. TONIC_PHASE.md §18.2).
+
+Figure: /sessions/vigilant-brave-mayer/mnt/Reduced Neuronal Model Project/figures/tonic_fold_amplification.png

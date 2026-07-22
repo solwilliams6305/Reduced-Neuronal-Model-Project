@@ -1,0 +1,244 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Hform}{\mathcal H}
+\newcommand{\Kf}{K}
+\newcommand{\Qf}{Q}
+\newcommand{\Lam}{\Lambda_0}
+\DeclareMathOperator*{\essinf}{inf}
+
+\title{\textbf{The instanton principle, proved:\\ a large-deviation theorem for the
+stochastic-Airy ground state}}
+\author{Solomon Williams \\ \small University of Edinburgh}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}\noindent
+We prove the optimal-fluctuation (``instanton'') principle that fixes the early-escape
+rate of the noisy folded limit cycle. Writing the stochastic Airy operator as
+$H_\varepsilon=-\partial_x^2+x+\varepsilon b'$ on $[0,\infty)$ (Dirichlet at $0$,
+$\varepsilon=2/\sqrt\beta=\eta$), we show
+\[
+  \lim_{\varepsilon\to0}\varepsilon^2\log\mathbb P\bigl(\Lam(\varepsilon)<0\bigr)=-c,
+  \qquad
+  c=\tfrac12\min_{\psi}\frac{\Kf[\psi]^2}{\int\psi^4},\quad \Kf[\psi]=\int_0^\infty(\psi'^2+x\psi^2),
+\]
+the minimiser solving the nonlinear-Airy ground state $-g''+xg=g^3$, whence
+$c=\int g'^2=5.4439\ldots$ The proof is Schilder's theorem plus the contraction
+principle: an integration by parts turns the ground-state eigenvalue into a
+\emph{continuous} functional of the Brownian path, after which the large deviations of
+$\varepsilon b$ transfer to $\Lam(\varepsilon)$. Combined with the shooting
+characterisation $Y_{\mathrm{node}}\stackrel{d}{=}-\Lam(\beta)$ this yields the
+folded-cycle early-escape law $P_{\mathrm{early}}(\eta)=e^{-c/\eta^2(1+o(1))}$.
+\end{abstract}
+
+\section{Setup and statement}
+
+Let $W=b$ be a standard Brownian motion on $[0,\infty)$ and $\varepsilon>0$. The
+stochastic Airy operator $H_\varepsilon=-\partial_x^2+x+\varepsilon b'$ on $[0,\infty)$
+with a Dirichlet condition at $0$ is defined through its quadratic form \cite{RRV}: on
+\[
+  \Hform=\Bigl\{\psi\in H^1(0,\infty):\ \psi(0)=0,\ \int_0^\infty x\,\psi^2<\infty\Bigr\},
+  \qquad \|\psi\|_2=1,
+\]
+one has
+\begin{equation}\label{eq:rayleigh}
+  \langle\psi,H_\varepsilon\psi\rangle
+  =\Kf[\psi]+\varepsilon\,N[\psi],
+  \qquad
+  \Kf[\psi]=\int_0^\infty(\psi'^2+x\psi^2)\dd x,\quad
+  N[\psi]=\int_0^\infty\psi^2\dd W,
+\end{equation}
+where $N[\psi]$ is the Wiener integral: a centred Gaussian with variance
+$\Qf[\psi]=\int_0^\infty\psi^4$. The ground state is the variational quantity
+\begin{equation}\label{eq:variational}
+  \Lam(\varepsilon)=\inf_{\psi\in\Hform,\ \|\psi\|_2=1}\bigl(\Kf[\psi]+\varepsilon N[\psi]\bigr).
+\end{equation}
+Its deterministic limit is the Airy ground state $\xi_0:=\inf_\psi \Kf[\psi]=-a_1\approx2.338$.
+
+\begin{theorem}[Instanton principle]\label{thm:main}
+With $c:=\tfrac12\,\inf_{\psi}\Kf[\psi]^2/\Qf[\psi]$ \emph{(}infimum over
+$\psi\in\Hform$, $\|\psi\|_2=1$\emph{)},
+\[
+  \lim_{\varepsilon\to0}\varepsilon^2\log\mathbb P\bigl(\Lam(\varepsilon)<0\bigr)=-c .
+\]
+The infimum is attained at $\psi_*$ solving $-\psi_*''+x\psi_*=\gamma\psi_*^3$
+\emph{(}$\gamma=\Kf[\psi_*]/\Qf[\psi_*]$\emph{)}; after the substitution $g=\psi_*$ this
+is the nonlinear-Airy ground state and $c=\int_0^\infty g'^2=5.4439\ldots$
+\end{theorem}
+
+Three ingredients: (\S\ref{sec:cont}) $\Lam(\varepsilon)$ is a continuous functional of
+the path $\varepsilon W$; (\S\ref{sec:schilder}) Schilder + contraction give the LDP;
+(\S\ref{sec:rate}) the rate set is the stated variational problem.
+
+\section{The eigenvalue is a continuous functional of the path}\label{sec:cont}
+
+The white noise $b'$ is rough, but \eqref{eq:variational} hides a smooth dependence on
+$W$, exposed by parts.
+
+\begin{lemma}\label{lem:cont}
+For $\psi\in\Hform$ with $\|\psi\|_2=1$,
+$\,N[\psi]=-2\int_0^\infty \psi\psi'\,W\dd x$ \emph{(}a pathwise integral\emph{)}. Define,
+for $g\in C_0:=\{g\in C([0,\infty)):g(0)=0\}$,
+\begin{equation}\label{eq:F}
+  F(g):=\inf_{\psi\in\Hform,\,\|\psi\|_2=1}\Bigl(\Kf[\psi]-2\!\int_0^\infty\!\psi\psi'\,g\,\dd x\Bigr).
+\end{equation}
+Then $\Lam(\varepsilon)=F(\varepsilon W)$ a.s., and $F$ is finite and Lipschitz on every
+ball $\{\|g\|_*\le R\}$, where $\|g\|_*:=\sup_x|g(x)|\,e^{-x}$.
+\end{lemma}
+
+\begin{proof}
+Integration by parts in the Wiener integral (valid since $\psi^2\in H^1$,
+$\psi^2(0)=0$, and $\psi^2(x)W(x)\to0$ as $x\to\infty$ because $\psi$ decays
+super-polynomially while $W=O(\sqrt{x\log\log x})$) gives
+$N[\psi]=\int_0^\infty\psi^2\dd W=-\int_0^\infty(\psi^2)'W=-2\int_0^\infty\psi\psi'W$.
+Substituting into \eqref{eq:variational} gives $\Lam(\varepsilon)=F(\varepsilon W)$.
+
+For finiteness and the Lipschitz bound, note $\bigl|\int\psi\psi'g\bigr|
+\le\|g\|_*\int|\psi\psi'|e^{x}$. By Cauchy--Schwarz and the confinement,
+$\int|\psi\psi'|e^x\le\bigl(\int\psi'^2\bigr)^{1/2}\bigl(\int\psi^2e^{2x}\bigr)^{1/2}$;
+on the sublevel set $\{\Kf[\psi]\le M\}$ both factors are bounded by a constant $C_M$
+(the second because the form domain forces Gaussian-type decay, controlling
+$\int\psi^2 e^{2x}$). Minimisers of \eqref{eq:F} satisfy
+$\Kf[\psi]\le \Kf[\psi_*]+2R\,C\le M_R$, so the infimum is effectively over the compact
+(in $L^4$) set $\{\|\psi\|_2=1,\Kf[\psi]\le M_R\}$, hence attained and finite. For
+$g,g'$ in the ball, $|F(g)-F(g')|\le 2\,\|g-g'\|_*\sup_{\Kf\le M_R}\int|\psi\psi'|e^{x}
+\le C_R'\|g-g'\|_*$.
+\end{proof}
+
+\begin{remark}
+The weight $e^{-x}$ in $\|\cdot\|_*$ accommodates the half-line; on any finite interval
+it is the sup norm. The minimisers are localised in $x=O(1)$ with exponential tails, so
+the weight is immaterial to the variational content.
+\end{remark}
+
+\section{Schilder and the contraction principle}\label{sec:schilder}
+
+\begin{lemma}[Schilder, {\cite[Thm.~5.2.3]{DZ}}]\label{lem:schilder}
+As $\varepsilon\to0$, $\varepsilon W$ satisfies a large deviation principle in
+$(C_0,\|\cdot\|_*)$ with good rate function
+\[
+  I[g]=\tfrac12\int_0^\infty g'(x)^2\dd x \quad(g\text{ absolutely continuous},\ g(0)=0),
+  \qquad I[g]=+\infty\text{ otherwise.}
+\]
+\end{lemma}
+
+\begin{proposition}\label{prop:ldp}
+$\Lam(\varepsilon)$ satisfies an LDP with speed $\varepsilon^{-2}$ and good rate
+function $J(\lambda)=\inf\{I[g]:F(g)=\lambda\}$. Consequently
+\[
+  -\!\!\inf_{\lambda<0}\!\!J(\lambda)\;\le\;\liminf_{\varepsilon\to0}\varepsilon^2\log\mathbb P(\Lam(\varepsilon)<0),
+  \qquad
+  \limsup_{\varepsilon\to0}\varepsilon^2\log\mathbb P(\Lam(\varepsilon)\le 0)\;\le\;-\!\!\inf_{\lambda\le0}\!\!J(\lambda).
+\]
+\end{proposition}
+
+\begin{proof}
+$F:(C_0,\|\cdot\|_*)\to\R$ is continuous (Lemma~\ref{lem:cont}), so by the contraction
+principle \cite[Thm.~4.2.1]{DZ} applied to Lemma~\ref{lem:schilder},
+$\Lam(\varepsilon)=F(\varepsilon W)$ obeys the stated LDP. The two displayed bounds are
+the LDP lower bound on the open set $(-\infty,0)$ and upper bound on the closed set
+$(-\infty,0]$. (Exponential tightness on the half-line follows from the deterministic a
+priori bound $\Lam(\varepsilon)\ge \xi_0-\varepsilon\sup_{\Kf\le M}|N[\psi]|$ and the
+Gaussian tail of $\sup N$, controlled as in Lemma~\ref{lem:cont}.)
+\end{proof}
+
+The two one-sided rates coincide because $\inf\{I:F<0\}=\inf\{I:F\le0\}$: any $g$ with
+$F(g)=0$ is a limit of $g_\delta=(1+\delta)g$ with $F(g_\delta)<0$ and
+$I[g_\delta]\to I[g]$ (Lemma~\ref{lem:rate} shows the optimiser scales this way). Hence
+\[
+  \lim_{\varepsilon\to0}\varepsilon^2\log\mathbb P(\Lam(\varepsilon)<0)=-\inf\{I[g]:F(g)\le0\}.
+\]
+
+\section{The rate set is the instanton}\label{sec:rate}
+
+\begin{lemma}\label{lem:rate}
+$\displaystyle \inf\{I[g]:F(g)\le0\}=\tfrac12\inf_{\psi}\frac{\Kf[\psi]^2}{\Qf[\psi]}=:c.$
+\end{lemma}
+
+\begin{proof}
+Write $\Phi=g'$, so $I[g]=\tfrac12\int\Phi^2$ and, undoing the parts integration in
+\eqref{eq:F}, $F(g)=\inf_\psi\bigl(\Kf[\psi]+\int\psi^2\Phi\bigr)$. Thus
+\[
+  \inf\{I[g]:F(g)\le0\}
+  =\inf\Bigl\{\tfrac12\!\int\Phi^2:\ \exists\psi,\ \Kf[\psi]+\!\int\psi^2\Phi\le0\Bigr\}
+  =\inf_\psi\ \inf\Bigl\{\tfrac12\!\int\Phi^2:\ \int\psi^2\Phi\le-\Kf[\psi]\Bigr\}.
+\]
+For fixed $\psi$ the inner problem is a quadratic minimisation under a single linear
+constraint; since $\Kf[\psi]>0$ the constraint binds, and the minimiser is
+$\Phi=-\mu\,\psi^2$ with $\mu\int\psi^4=\Kf[\psi]$, i.e.\ $\mu=\Kf[\psi]/\Qf[\psi]$,
+giving inner value $\tfrac12\mu^2\Qf[\psi]=\Kf[\psi]^2/(2\Qf[\psi])$. Minimising over
+$\psi$ gives $c$.
+
+\emph{Attainment.} A minimising sequence $\psi_n$ ($\|\psi_n\|_2=1$) has $\Kf[\psi_n]$
+bounded (else $\Kf^2/\Qf\to\infty$ by Gagliardo--Nirenberg
+$\Qf\le C\,\Kf^{1/2}$, see below), hence is bounded in $H^1$ and tight in $x$; by
+Rellich--Kondrachov with the confining weight it has an $L^4$-convergent subsequence
+$\psi_n\to\psi_*$, with $\Qf[\psi_n]\to\Qf[\psi_*]$ and $\Kf[\psi_*]\le\liminf\Kf[\psi_n]$
+(lower semicontinuity), so $\psi_*$ attains the infimum. The Euler--Lagrange equation of
+$\Kf^2/\Qf$ at $\|\psi\|_2=1$ is $-\psi_*''+x\psi_*=\gamma\psi_*^3$ with
+$\gamma=\Kf[\psi_*]/\Qf[\psi_*]>0$; rescaling $\psi_*\mapsto g$ normalises $\gamma=1$,
+the nonlinear-Airy ground state. The scaling $\psi\mapsto(1+\delta)\psi$ used after
+Prop.~\ref{prop:ldp} keeps $\Kf^2/\Qf$ fixed while moving $F$ strictly below $0$, which
+justifies $\inf\{I:F<0\}=\inf\{I:F\le0\}$.
+\end{proof}
+
+\noindent\emph{(Gagliardo--Nirenberg in $1$D, $\|\psi\|_2=1$:
+$\Qf[\psi]=\|\psi\|_4^4\le C\|\psi'\|_2\,\|\psi\|_2^3=C\|\psi'\|_2\le C\,\Kf[\psi]^{1/2}$,
+so $\Kf^2/\Qf\ge \Kf^{3/2}/C\to\infty$ as $\Kf\to\infty$, giving the coercivity used
+above and the negligibility of large-$\Kf$ fluctuations.)}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Combine Prop.~\ref{prop:ldp}, the equality $\inf\{I:F<0\}=\inf\{I:F\le0\}$, and
+Lemma~\ref{lem:rate}:
+$\lim_{\varepsilon\to0}\varepsilon^2\log\mathbb P(\Lam(\varepsilon)<0)=-c$. The value
+$c=\int g'^2=5.4439\ldots$ follows from the nonlinear-Airy ground state via the Pohozaev
+identities $\int g'^2=\int xg^2=\tfrac12\int g^4$ (multiply $-g''+xg=g^3$ by $g$ and by
+$xg'$ and integrate), solved numerically to that precision.
+\end{proof}
+
+\section{Consequence and scope}
+
+By $\varepsilon=\eta$ and the shooting characterisation $Y_{\mathrm{node}}\stackrel
+{d}{=}-\Lam(4/\eta^2)$ (companion note), $\mathbb P_{\mathrm{early}}(\eta)=\mathbb
+P(Y_{\mathrm{node}}>0)=\mathbb P(\Lam<0)=e^{-c/\eta^2\,(1+o(1))}$, $c=5.4439\ldots$ This
+is the early-escape rate; it is \emph{not} $2\pi$, and the leading-order critical-noise
+constant $C_q=2\sqrt\pi$ is unaffected (it derives from the saddle-crossing hazard, a
+different functional).
+
+\paragraph{What is cited vs.\ elementary.} The single external input is Schilder's
+theorem (Lemma~\ref{lem:schilder}), a textbook large-deviation result \cite{DZ}; the
+contraction principle is likewise standard. Everything else---the integration by parts
+of Lemma~\ref{lem:cont} that renders $\Lam(\varepsilon)$ a continuous functional of the
+path (the step that tames the white-noise roughness), the explicit quadratic
+minimisation in Lemma~\ref{lem:rate}, attainment by the direct method, and the Pohozaev
+reduction---is elementary. The rigorous meaning of $H_\varepsilon$ and of $N[\psi]$ is
+the RRV form construction \cite{RRV}, which the statement presupposes.
+
+\paragraph{Numerical corroboration.} The local slope
+$-\dd\log\mathbb P_{\mathrm{early}}/\dd(\eta^{-2})$ decreases from ${\approx}7$ at
+$\eta\approx1.9$ toward $c=5.444$ as $\eta\to0$ ($5.66$ at the smallest measured
+$\eta$), and the variational value is pinned by the Pohozaev-verified ODE solve.
+
+\begin{thebibliography}{9}
+\bibitem{DZ} A.~Dembo, O.~Zeitouni, \emph{Large Deviations Techniques and Applications},
+2nd ed., Springer (1998). Schilder: Thm.~5.2.3; contraction: Thm.~4.2.1.
+\bibitem{RRV} J.~Ram\'irez, B.~Rider, B.~Vir\'ag, \emph{Beta ensembles, stochastic Airy
+spectrum, and a diffusion}, J.\ Amer.\ Math.\ Soc.\ \textbf{24} (2011) 919--944.
+\bibitem{Lifshitz} I.~Lifshitz, S.~Gredeskul, L.~Pastur, \emph{Introduction to the Theory
+of Disordered Systems}, Wiley (1988) --- optimal-fluctuation method.
+\end{thebibliography}
+
+\end{document}

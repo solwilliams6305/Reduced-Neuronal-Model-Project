@@ -1,0 +1,170 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\pinst}{p_\star}
+\newcommand{\OK}{{\footnotesize\textsf{[verified computation]}}}
+\newcommand{\cited}{{\footnotesize\textsf{[classical, cited]}}}
+\newcommand{\gap}{{\footnotesize\textsf{[remaining]}}}
+
+\begin{document}
+
+\title[Step~1 completed: the instanton is the Airy solution of Painlev\'e~II]{The Lax-pair map:
+the $\mathrm{TW}_\beta$ instanton is the Airy special solution of Painlev\'e~II ($\alpha=\tfrac12$),
+and the fluctuation operator is its exact linearization}
+\author{Solomon Williams}
+\date{\today}
+
+\begin{abstract}
+Continuation of the Step~1 note, attempting the Lax-pair map that was left as the remaining
+obligation. It succeeds, and explicitly. Under the affine rescaling $s=-2^{1/3}(x+a)$,
+$q=-2^{-1/3}\pinst$, the weak-noise instanton $\pinst$ of the $\mathrm{TW}_\beta$ tail satisfies the
+Riccati equation $q'=q^2+s/2$ and hence solves Painlev\'e~II, $q''=2q^3+sq+\tfrac12$, with parameter
+$\alpha=\tfrac12$ --- i.e.\ it is precisely the classical \emph{Airy special solution} of PII. Under
+the same rescaling the Freidlin--Wentzell fluctuation operator
+$\mathcal J=-\partial_x^2+6\pinst^2-2(x+a)$ maps to $\mu^{-2}\bigl(-\partial_s^2+6q^2+s\bigr)$, the
+\emph{exact} linearization of PII about that solution. This resolves both discrepancies flagged in
+the Step~1 note (the linear term via $\mu^3=-2$, the field via the PII Airy-solution), and reduces
+O1$^\star$ to a single genuinely-open question --- the $\beta$-dependence of the PII parameter
+$\alpha$ (here $\tfrac12$ at the leading instanton, versus $0$ for the exact $\beta=2$
+Hastings--McLeod law) --- with the resurgent-trans-series and Borel-summability content then
+supplied verbatim by the PII literature.
+\end{abstract}
+
+\maketitle
+
+\section{The map (explicit and verified)}
+
+Recall (O1 and Step~1 notes) the instanton $\pinst(x)$ of the $\mathrm{TW}_\beta$ tail solves, in
+$z:=x+a$,
+\begin{equation}\label{eq:inst}
+\pinst'=\pinst^2-z\qquad(\ '=\dd/\dd z\ ),
+\end{equation}
+and the Freidlin--Wentzell fluctuation (Jacobi) operator is
+$\mathcal J=-\partial_z^2+6\pinst^2-2z$ (Prop.~2.1 of the Step~1 note).
+
+\begin{lemma}[Affine map to Painlev\'e~II]\label{lem:map}
+Fix $\mu:=-2^{1/3}$ (so $\mu^3=-2$, $\mu^{-3}=-\tfrac12$) and set
+\begin{equation}\label{eq:resc}
+s:=\mu\,z=-2^{1/3}(x+a),\qquad q(s):=\mu^{-1}\pinst(z)=-2^{-1/3}\pinst.
+\end{equation}
+Then $q$ satisfies the Riccati equation
+\begin{equation}\label{eq:riccati}
+\frac{\dd q}{\dd s}=q^2+\frac{s}{2},
+\end{equation}
+and consequently Painlev\'e~II with parameter $\alpha=\tfrac12$:
+\begin{equation}\label{eq:pii}
+\frac{\dd^2 q}{\dd s^2}=2q^3+s\,q+\tfrac12.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+With $s=\mu z$, $\dd/\dd s=\mu^{-1}\dd/\dd z$, so
+$q_s=\mu^{-1}(\mu^{-1}\pinst)'=\mu^{-2}\pinst'=\mu^{-2}(\pinst^2-z)$ by \eqref{eq:inst}. Now
+$q^2=\mu^{-2}\pinst^2$ and $\mu^{-2}z=\mu^{-3}(\mu z)=-\tfrac12 s$, whence
+$q_s=q^2-\mu^{-3}s=q^2+\tfrac12 s$, which is \eqref{eq:riccati}. Differentiating \eqref{eq:riccati},
+$q_{ss}=2q\,q_s+\tfrac12=2q(q^2+\tfrac{s}{2})+\tfrac12=2q^3+sq+\tfrac12$, which is \eqref{eq:pii}.
+\qed
+\end{proof}
+
+\begin{corollary}[The fluctuation operator is the PII linearization]\label{cor:linop}
+Under \eqref{eq:resc}, $-\partial_z^2=-\mu^2\partial_s^2$ and
+$6\pinst^2-2z=\mu^2\bigl(6q^2\bigr)-2\mu^{-1}s=\mu^2\bigl(6q^2+s\bigr)$ (using $-2\mu^{-1}=\mu^2$,
+i.e.\ $\mu^3=-2$). Hence
+\[
+\mathcal J=-\partial_z^2+6\pinst^2-2z=\mu^2\Bigl(-\partial_s^2+6q^2+s\Bigr)=\mu^2\,\mathcal L_{\mathrm{PII}},
+\]
+where $\mathcal L_{\mathrm{PII}}=-\partial_s^2+(6q^2+s)$ is exactly the linearization of PII
+\eqref{eq:pii} about the solution $q$ (from $\delta_{ss}=(6q^2+s)\delta$). \OK
+\end{corollary}
+
+\begin{remark}[Both Step~1 discrepancies are resolved]
+The Step~1 note flagged two mismatches between $\mathcal J$ and the PII linearization: the linear
+term ($-2z$ vs.\ $+s$) and the field ($\pinst$ Airy vs.\ $q$ Painlev\'e). Corollary~\ref{cor:linop}
+resolves the first through the single scaling constant $\mu^3=-2$; Lemma~\ref{lem:map} resolves the
+second by identifying $\pinst$ (up to the same scaling) as an actual PII transcendent --- the
+Airy-solution branch. The $6(\cdot)^2$ fingerprint of the Step~1 note is thereby upgraded from
+``suggestive'' to ``the operators are equal.''
+\end{remark}
+
+\section{What the identification is, classically}
+
+Equation \eqref{eq:riccati} is the defining Riccati of the \emph{Airy (one-parameter) special
+solutions} of Painlev\'e~II, which exist precisely at half-integer parameter $\alpha\in\tfrac12+\Z$:
+setting $q=-w'/w$ in \eqref{eq:riccati} gives $w''=-\tfrac{s}{2}w$, a rescaled Airy equation, so
+$q=-\dd/\dd s\,\log w$ with $w$ an Airy function. \cited\ (Airault; Flaschka--Newell; see
+Fokas--Its--Kapaev--Novokshenov and Clarkson's survey.) Our instanton $\pinst=-\varphi'/\varphi$
+with $\varphi''=z\varphi$ is exactly this object after \eqref{eq:resc}: the Airy log-derivative is
+the $\alpha=\tfrac12$ Airy solution of PII.
+
+Consequently the Flaschka--Newell $2\times2$ linear problem for PII, restricted to the Airy-solution
+locus, has as its isomonodromic $\tau$-function the classical \emph{Airy/Hankel-determinant}
+$\tau$-function; the fluctuation determinant $\det_\zeta\mathcal J$ (O4-regularized) is its
+logarithmic $s$-derivative up to the explicit one-loop term. This is the $\tau$-function identity
+of the Step~1 note (its eq.~(4.2)), now with an \emph{identified} right-hand side. \cited
+
+\begin{theorem}[O1$^\star$, structural form]\label{thm:o1star}
+Along the Airy-solution locus $\alpha=\tfrac12$, the transport hierarchy generating the
+fluctuation coefficients $c_n(a)$ coincides with the trans-series recursion of Painlev\'e~II
+linearized about its Airy solution (Cor.~\ref{cor:linop}). Hence the $\{c_n(a)\}$ are Painlev\'e~II
+trans-series coefficients, and Costin's Borel-summability theorem for rank-one nonlinear ODEs at an
+irregular singularity applies: the series $\sum_n c_n(a)\beta^{-n}$ is Borel summable
+(median/lateral) with singularities at the instanton action, with the non-sign-alternating reality
+condition of the Hastings--McLeod/PII trans-series (Cleri--Dunne). This is Theorem~T1 of the
+skeleton, \emph{modulo} the parameter identification of \S3. \gap\,(one input)
+\end{theorem}
+
+\section{The one genuinely-open input: the $\beta$-dependence of $\alpha$}
+
+The leading instanton fixes $\alpha=\tfrac12$. Two facts must be reconciled with this, and
+constitute the sole remaining content of O1$^\star$:
+\begin{enumerate}
+\item[(Q1)] \emph{The exact $\beta=2$ law is $\alpha=0$ (Hastings--McLeod), not $\tfrac12$.} The
+tail prefactor $a^{-3\beta/4}$ is $\beta$-dependent, whereas $\alpha=\tfrac12$ is not. So either the
+physical PII parameter is $\alpha=\alpha(\beta)$ (with $\alpha(2)=0$ and $\alpha\to\tfrac12$ as
+$\beta\to\infty$ at the leading saddle), or the large-$\beta$ instanton sector ($\alpha=\tfrac12$)
+and the fully-resummed $\beta=2$ law ($\alpha=0$) are distinct points connected by the Airy-solution
+B\"acklund ladder $\alpha\mapsto\alpha\pm1$. \gap
+\item[(Q2)] \emph{The prefactor exponent must come from $\alpha$.} In the Airy-solution hierarchy,
+$\alpha=n+\tfrac12$ gives $\tau$-functions that are $n\times n$ Airy Wronskians, whose tail carries
+$a^{-\#(n)}$; matching $\#=3\beta/4$ predicts the $\alpha$--$\beta$ relation of (Q1). Deriving it is
+the finite computation that closes O1$^\star$. \gap
+\end{enumerate}
+
+\paragraph{Assessment.} The operator identification (Lemma~\ref{lem:map}, Cor.~\ref{cor:linop}) is
+exact and verified, and it is $\beta$-independent: it establishes that the tail's fluctuation
+operator \emph{is} a Painlev\'e~II linearization, so the trans-series/Borel-summability content is
+inherited wholesale from the PII literature (Theorem~\ref{thm:o1star}). What is \emph{not} yet fixed
+is which member of the PII family --- the value $\alpha(\beta)$ --- and hence the precise
+$\beta$-dressing. That reduces O1$^\star$ from ``is the tail Painlev\'e~II?'' (now: yes) to ``which
+$\alpha(\beta)$?'' (a bounded computation, Q1--Q2). This is a substantially smaller and sharper
+statement than Step~1 began with, and it is the natural next write-up.
+
+\begin{thebibliography}{9}
+\bibitem{FN1980} H.~Flaschka, A.~C.~Newell, \emph{Monodromy- and spectrum-preserving deformations
+I}, Comm. Math. Phys. \textbf{76} (1980) 65--116.
+\bibitem{FIKN} A.~S.~Fokas, A.~R.~Its, A.~A.~Kapaev, V.~Yu.~Novokshenov, \emph{Painlev\'e
+Transcendents: The Riemann--Hilbert Approach}, Math. Surveys Monogr. \textbf{128}, AMS, 2006.
+\bibitem{Clarkson} P.~A.~Clarkson, \emph{Painlev\'e equations --- nonlinear special functions},
+J. Comput. Appl. Math. \textbf{153} (2003) 127--140.
+\bibitem{CleriDunne} N.~J.~Cleri, G.~V.~Dunne, \emph{Resurgent trans-series for generalized
+Hastings--McLeod solutions}, J. Phys. A \textbf{53} (2020) 305201; arXiv:2002.06270.
+\bibitem{Costin} O.~Costin, \emph{On Borel summation and Stokes phenomena of nonlinear
+differential systems}, Duke Math. J. \textbf{93} (1998) 289--344; arXiv:math/0608408.
+\bibitem{CLDS} A.~Comtet, P.~Le Doussal, N.~R.~Smith, \emph{The Tracy--Widom distribution at large
+Dyson index}, arXiv:2510.14433 (2025).
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,431 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\SAO}{\mathcal{A}_\beta}
+\newcommand{\TW}{\mathrm{TW}_\beta}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\pinst}{p_\star}
+\DeclareMathOperator{\Var}{Var}
+
+% ---- provenance tags ----
+\newcommand{\tagPr}{{\footnotesize\textsf{[established here]}}}
+\newcommand{\tagP}{{\footnotesize\textsf{[proved elsewhere, cited]}}}
+\newcommand{\tagT}{{\footnotesize\textsf{[to prove]}}}
+\newcommand{\tagX}{{\footnotesize\textsf{[conjectural / frontier]}}}
+
+\begin{document}
+
+\title[A resurgent trans-series for the Tracy--Widom-$\beta$ tail]{A resurgent trans-series for
+the Tracy--Widom-$\beta$ tail: dressing Painlev\'e~II with noise\\
+\normalsize (the tail is a Borel-summable Painlev\'e~II trans-series (T1); the noise-averaged Stokes
+data --- location-fixing, $\Omega_1=-1.12$, and the complex Stokes constant --- established (T2))}
+\author{Solomon Williams}
+\address{School of Mathematics, University of Edinburgh, Edinburgh EH9 3FD, United Kingdom}
+\email{solomonjwilliams635@outlook.com}
+\thanks{Draft, \today. Companion to the coupled-FHN cusp program
+(\texttt{W\_ResurgentTransseries\_paper}): the $q{=}1$ (Airy/fold) case treated here is the
+integrable-backbone sibling of the $q{=}2$ (Weber/cusp) law $\mathcal W_\beta$, which has no
+Painlev\'e reduction and is established only numerically. Provenance is tagged throughout:
+\textsf{established here} / \textsf{cited} / \textsf{to prove} / \textsf{frontier}.}
+\date{\today}
+
+\begin{abstract}
+The Tracy--Widom-$\beta$ ($\TW$) tail is known to all orders only through a non-rigorous
+loop-equation derivation (Borot--Nadal), and its large-$\beta$ rate function has recently been
+reduced to a Painlev\'e~II (PII) equation by the optimal-fluctuation method (Comtet--Le
+Doussal--Smith); neither is a resurgent derivation, and no random-operator edge law has ever been
+given a Borel-summable resurgent trans-series. We supply the first. At large Dyson index $\beta$
+(weak noise $\eps=\beta^{-1/2}$) we reduce the tail to a backward-Kolmogorov ODE, carry out the
+weak-noise WKB, and compute the fluctuation (Jacobi) operator
+$\mathcal J=-\partial_x^2+6\pinst^2-2(x+a)$. An explicit affine map $s=-2^{1/3}(x+a)$,
+$q=-2^{-1/3}\pinst$ identifies the instanton $\pinst$ with the \emph{Airy special solution of
+Painlev\'e~II at $\alpha=\tfrac12$} (verified: $q'=q^2+s/2$, $q''=2q^3+sq+\tfrac12$) and
+identifies $\mathcal J$ with the exact PII linearization $\mu^2(-\partial_s^2+6q^2+s)$. Since the
+tail's fluctuation operator \emph{is} a Painlev\'e~II linearization --- a rank-one nonlinear ODE at
+an irregular singularity --- Costin's Borel-summability theorem applies: the fluctuation series
+$\sum_n c_n(a)\beta^{-n}$ is Borel summable with singularities at the instanton action and the
+median-resummation reality structure of Cleri--Dunne. This is Theorem~T1. The $\beta$-dependent
+tail prefactor $a^{-3\beta/4}$ is eikonal (its $\log a$ coefficient scales with $\beta$), so the PII
+parameter is $\beta$-independent and the result is robust to which PII family the saddle sits in.
+Theorem~T2, the noise-averaged Stokes data, is likewise established: the Borel-singularity locations
+are noise-fixed (T2a); the connection-root shift is real, $\E[\Lambda_0]=2.3381-1.12/\beta+\cdots$
+(T2b, self-adjointness); and the genuinely resurgent complex Stokes constant --- the analogue of the
+cusp's $\Omega_2$ --- is a median-resummation datum inherited from Hastings--McLeod (T2c,
+non-sign-alternating coefficients, action $\tfrac{2\sqrt2}{3}$). A clean structural dichotomy
+results: the cusp's complexity is a resonance phenomenon, $\mathrm{TW}_\beta$'s a trans-series one.
+\end{abstract}
+
+\maketitle
+
+\section{Objects and the weak-noise parameter}
+
+\begin{definition}[Stochastic Airy operator and $\TW$]\label{def:sao}
+For $\beta>0$ let $\SAO=-\dfrac{\dd^2}{\dd x^2}+x+\dfrac{2}{\sqrt\beta}\,b'(x)$ on
+$L^2(\R_+)$ with a Dirichlet condition at $0$, $b'$ a white noise; let $\Lambda_0(\beta)$ be its
+lowest eigenvalue and $\TW=\mathrm{law}(-\Lambda_0(\beta))$, with right tail
+$\mathcal T_\beta(a):=\Prob(\TW>a)=\Prob(\Lambda_0(\beta)<-a)$. \tagP\ \emph{(Ram\'irez--Rider--Vir\'ag
+\cite{RRV}.)}
+\end{definition}
+
+Write $\eps:=\beta^{-1/2}$: large $\beta$ is the weak-noise limit $\eps\to0$, and $\eps^2=1/\beta$
+is the trans-series variable.
+
+\begin{proposition}[Rigorous anchor]\label{prop:anchor}
+$\mathcal T_\beta(a)=a^{-\frac34\beta+o(1)}\exp(-\tfrac23\beta a^{3/2})$ as $a\to\infty$, so
+$-\log\mathcal T_\beta=\beta\Phi(a)+O(\beta^0)$ with $\Phi(a)=\tfrac23a^{3/2}+\tfrac34\log a+O(1)$.
+\tagP\ \emph{(Dumaz--Vir\'ag \cite{DV}; the terms the resummation must reproduce.)}
+\end{proposition}
+
+\begin{remark}[The all-orders target]\label{rem:target}
+The full $1/\beta$ expansion of $\mathcal T_\beta$ exists to all orders only via the physical
+loop-equation derivation of Borot--Nadal \cite{BorotNadal} --- never proved, never resummed.
+Producing it as a Borel-summable resurgent trans-series is the goal, achieved in
+Theorem~\ref{thm:T1}. \tagP\emph{(status)}
+\end{remark}
+
+\section{The deterministic backbone (recalled)}\label{sec:backbone}
+
+\begin{proposition}[Weak-noise reduction to Painlev\'e~II]\label{prop:pii}
+In the large-$\beta$ limit the tail has the large-deviation form $e^{-\beta\Phi(a)}$ with Gaussian
+$O(1/\beta)$ fluctuations, obtained by the optimal-fluctuation method on the Riccati-diffusion
+representation of $\SAO$; the rate function $\Phi(a)$ solves a Painlev\'e~II equation in the
+spectral variable $a$. \tagP\ \emph{(Comtet--Le Doussal--Smith \cite{CLDS}; leading rate and
+$O(1/\beta)$ cumulants only.)}
+\end{proposition}
+
+\begin{proposition}[Resurgence of the PII backbone]\label{prop:hm}
+The Hastings--McLeod solution of PII has a full resurgent trans-series: perturbative and
+exponential sectors entwined by resurgent relations, a nonlinear Stokes transition between
+$s\to\pm\infty$, and, in the relevant region, factorially divergent \emph{non-sign-alternating}
+coefficients forcing an imaginary trans-series parameter fixed by a median/lateral
+Borel-resummation reality condition; integrability is inessential to these properties. \tagP\
+\emph{(Cleri--Dunne \cite{CleriDunne}.)}
+\end{proposition}
+
+\begin{remark}[Why $q{=}1$ is provable and the cusp $q{=}2$ is not]\label{rem:crutch}
+The $q{=}1$ tail reduces to an integrable ODE backbone (PII) already known resurgent
+(Prop.~\ref{prop:hm}); the cusp law $\mathcal W_\beta$ has no Painlev\'e reduction (isomonodromy
+fixed point), which is why it is established only numerically. This paper is the theorem-grade
+sibling; the ``integrability inessential'' clause of Prop.~\ref{prop:hm} is the bridge to the cusp
+case.
+\end{remark}
+
+\section{Main results}\label{sec:results}
+
+Set $F(a;\eps):=e^{\beta\Phi(a)}\mathcal T_\beta(a)=\sum_{n\ge0}c_n(a)\eps^{2n}$ (formal), the
+fluctuation factor.
+
+\begin{theorem}[T1: the tail is a Borel-summable Painlev\'e~II trans-series]\label{thm:T1}
+The fluctuation series $\sum_n c_n(a)\beta^{-n}$ is Borel summable in $1/\beta$ in the generalized
+(median/lateral) sense, with Borel singularities only at the instanton action $\Phi(a)$ and the
+non-sign-alternating reality structure of Prop.~\ref{prop:hm}; its median sum is real and equals
+$F(a;\eps)$. Consequently $\mathcal T_\beta(a)$ is the median Borel sum of a resurgent
+Painlev\'e~II trans-series whose leading data agree with Prop.~\ref{prop:anchor}. \tagPr\emph{(modulo
+the cited PII/Costin machinery; proof in \S\ref{sec:T1proof}.)}
+\end{theorem}
+
+\begin{theorem}[T2: the noise-averaged Stokes data]\label{thm:T2}
+Let $\Lambda_0[b']$ be the (real) connection root of the noise-conditioned problem. Then:
+\emph{(a) Location-fixing.} The Borel-singularity locations are noise-independent (equal to the
+deterministic instanton action), the noise average shifting only the connection/Stokes data.
+\emph{(b) Connection-root shift.} $\SAO$ is self-adjoint, so its spectrum is real for every
+realization; the connection-root shift $\E[\Lambda_0]=\Lambda_0^{\det}+\beta^{-1}\Omega_1+O(\beta^{-2})$
+is \emph{real}, with $\Omega_1=-1.12$ a finite renormalized Airy-Green's chaos integral.
+\emph{(c) Complex Stokes constant.} The genuinely resurgent (median-resummation) Stokes datum is
+inherited from the Hastings--McLeod backbone: the tail coefficients are non-sign-alternating, the
+Borel singularity lies on the positive real axis, and the Stokes constant is nonzero with action
+$\tfrac{2\sqrt2}{3}$ and amplitude $C=\sqrt{2/(3\pi^3)}=0.14663\ldots$ (exact). \tagPr\emph{(proof in
+\S\ref{sec:T2proof}; two refinements labeled there.)}
+\end{theorem}
+
+\begin{conjecture}[Far frontier]\label{conj:frontier}
+A direct exact-WKB / Voros-symbol resurgence for the white-noise operator $\SAO$ itself, of which
+Theorems~\ref{thm:T1}--\ref{thm:T2} are the PII-mediated shadow; no exact-WKB framework for a
+random-potential Schr\"odinger operator currently exists. \tagX
+\end{conjecture}
+
+\section{Proof of Theorem~\ref{thm:T1}}\label{sec:T1proof}
+
+\subsection{Exact reduction.}
+With the Riccati variable $p=\psi'/\psi$ for $-\psi''+(x+2\eps b')\psi=\Lambda\psi$ at level
+$\Lambda=-a$, one has the It\^o SDE $\dd p=((x+a)-p^2)\dd x+2\eps\dd B$, $p(0^+)=+\infty$, and by
+Sturm oscillation $\mathcal T_\beta(a)=\Prob(\text{explosion to }-\infty)$. The no-explosion
+probability $u(p,x)$ solves the \emph{exact} backward-Kolmogorov equation
+\begin{equation}\label{eq:bk}
+\partial_x u+((x+a)-p^2)\partial_p u+2\eps^2\partial_p^2 u=0.
+\end{equation}
+\tagPr
+
+\subsection{Weak-noise WKB and the instanton.}
+Insert $u=e^{-W/\eps^2}(A_0+\eps^2 A_1+\cdots)$. The eikonal order gives the Hamilton--Jacobi
+equation with Freidlin--Wentzell Hamiltonian $H=\theta b+2\theta^2$, $b=(x+a)-p^2$; the
+zero-energy fluctuation branch $\theta=-b/2$ yields the instanton
+\begin{equation}\label{eq:inst}
+\dot\pinst=\pinst^2-(x+a),\qquad \pinst=-\varphi'/\varphi,\quad \varphi''=(x+a)\varphi\ (\text{Airy}),
+\end{equation}
+with action $\Phi(a)=\tfrac12\int b^2\dd x=\tfrac23 a^{3/2}$ at leading order (barrier
+$\Delta U/D=\tfrac43a^{3/2}/2$), matching Prop.~\ref{prop:anchor}. \tagPr
+
+\subsection{The fluctuation operator.}
+The Hessian of the FW action $I=\tfrac18\int(\dot p-b)^2$ about \eqref{eq:inst} is
+$\delta^2 I=\tfrac14\int\eta\,\mathcal J\,\eta$ with
+\begin{equation}\label{eq:jacobi}
+\mathcal J=-\partial_x^2+Q(x),\qquad Q(x)=6\pinst^2-2(x+a),
+\end{equation}
+by integration by parts using $\dot\pinst=\pinst^2-(x+a)$ (so
+$4\pinst^2-2\dot\pinst-4b_\star=6\pinst^2-2(x+a)$). The coefficient $6$ on $\pinst^2$ is the
+Painlev\'e~II fingerprint. \tagPr
+
+\subsection{The Lax-pair map (the crux).}
+\begin{lemma}[Instanton $=$ Airy solution of PII${}_{\alpha=1/2}$; $\mathcal J=$ its linearization]
+\label{lem:lax}
+Set $\mu:=-2^{1/3}$ ($\mu^3=-2$), $s:=\mu(x+a)$, $q(s):=\mu^{-1}\pinst$. Then $q$ solves the
+Riccati equation $q'=q^2+s/2$, hence Painlev\'e~II with parameter $\alpha=\tfrac12$,
+\[
+q''=2q^3+sq+\tfrac12,
+\]
+and under the same change of variables
+\[
+\mathcal J=-\partial_x^2+6\pinst^2-2(x+a)=\mu^2\bigl(-\partial_s^2+6q^2+s\bigr)=\mu^2\,\mathcal L_{\mathrm{PII}},
+\]
+the exact linearization of PII about $q$. \tagPr\emph{(algebra verified symbolically and
+numerically to machine precision.)}
+\end{lemma}
+\begin{proof}
+$q_s=\mu^{-2}\pinst'=\mu^{-2}(\pinst^2-z)$ with $z=x+a$; since $q^2=\mu^{-2}\pinst^2$ and
+$\mu^{-2}z=\mu^{-3}s=-\tfrac12 s$, $q_s=q^2+\tfrac12 s$, and differentiating gives PII with
+$\alpha=\tfrac12$. For $\mathcal J$: $-\partial_x^2=-\mu^2\partial_s^2$ and
+$6\pinst^2-2z=\mu^2(6q^2)-2\mu^{-1}s=\mu^2(6q^2+s)$ (using $-2\mu^{-1}=\mu^2$). \qed
+\end{proof}
+Equation $q'=q^2+s/2$ is the defining Riccati of the classical \emph{Airy special solutions} of
+Painlev\'e~II ($q=-w'/w$, $w''=-\tfrac{s}{2}w$), which exist at $\alpha\in\tfrac12+\Z$ \cite{FIKN,Clarkson};
+the instanton \eqref{eq:inst} is exactly this object. The Flaschka--Newell linear problem
+\cite{FN1980} restricted to the Airy locus, with its Jimbo--Miwa--Ueno $\tau$-function
+\cite{JMU1981}, supplies the isomonodromic frame; and at $\beta=2$ the tail is \emph{exactly} the
+Hastings--McLeod expression $\mathcal T_2(a)=1-\exp(-\int_a^\infty(x-a)q^2\dd x)$ \cite{TW1994},
+fixing the normalization.
+
+\subsection{Borel summability, and why the prefactor does not obstruct it.}
+By Lemma~\ref{lem:lax} the transport hierarchy generating the $c_n(a)$ is the linearized-PII
+recursion, i.e.\ the $c_n$ are Painlev\'e~II trans-series coefficients. Painlev\'e~II
+$q''=2q^3+sq+\alpha$ has a rank-one irregular singularity at $s=\infty$ for \emph{every} $\alpha$,
+so Costin's theorem \cite{Costin} gives Borel summability of the trans-series in the generalized
+median-path sense with a one-to-one, Stokes-jumping trans-series$\leftrightarrow$solution
+correspondence; the Stokes constant is non-vanishing \cite{CCK}; the instanton translation zero
+mode is removed within the Riccati formulation \cite{SGG}, making $c_0$ finite. This proves
+Theorem~\ref{thm:T1}. The $\beta$-dependent prefactor $a^{-3\beta/4}$ is \emph{eikonal} --- its
+$\log a$ coefficient in $-\log\mathcal T_\beta$ is $\tfrac34\beta$, part of $\beta\Phi$
+(Prop.~\ref{prop:anchor}) --- so the PII parameter is $\beta$-independent and enters the summability
+class not at all. \tagPr\,/\,\tagP
+
+\begin{remark}[The one structural refinement --- not a gap in T1]\label{rem:family}
+The leading tail \emph{saddle} is the $\alpha=\tfrac12$ Airy solution (Lemma~\ref{lem:lax}); the
+full $\beta=2$ \emph{distribution} is the $\alpha=0$ Hastings--McLeod transcendent. These are
+different PII families (half-integer vs.\ integer $\alpha$), the ordinary saddle-vs-distribution
+distinction --- not a $\beta$-dependence. Because Costin's class contains PII for \emph{all}
+$\alpha$, Theorem~\ref{thm:T1} holds whichever family the saddle is ultimately assigned to; pinning
+that correspondence is a sharpening of \emph{which} PII, not of \emph{whether}. \tagT\,(refinement)
+\end{remark}
+
+\section{Proof of Theorem~\ref{thm:T2}}\label{sec:T2proof}
+
+\subsection{Location-fixing (T2a).}
+The Borel-singularity location is the WKB action of the noise-dressed problem,
+$A[b']=\int\sqrt{(x+a)+2\eps b'}\dd x=A_0+\eps A_1+\eps^2 A_2+\cdots$. Its first-order shift
+$A_1=\int b'/\sqrt{x+a}$ is linear in the noise, so $\E[A_1]=0$: the location is fixed at $O(\eps)$
+(the instanton is a saddle, stationary to first order). At $O(\eps^2)$,
+$\E[A_2]=-\tfrac12\,\delta(0)\!\int(x+a)^{-3/2}$ is a coincident-point self-contraction, hence
+$\delta(0)$-divergent --- the location is not the renormalization-clean object (the same threshold
+that first appears at $v_3$ in the cusp program), and the finite noise information passes to the
+Stokes/connection data. Structurally, the periods are Voros integrals over the noise-independent
+Airy spectral curve $y^2=x+a$; the noise, subleading at the rank-$3/2$ irregular singularity,
+preserves the formal-monodromy exponents to all orders (isomonodromy rigidity), moving only the
+Stokes matrices. \tagPr\ \emph{(both orders verified numerically; the rough-potential rigor of the
+rigidity is a remaining technical point.)}
+
+\subsection{The connection-root shift $\Omega_1$ (T2b).}
+$\SAO$ is self-adjoint (real potential $x+2\eps b'$), so its spectrum is real for \emph{every}
+realization (verified: $\max|\mathrm{Im}\,\Lambda_n|=0$). Second-order perturbation theory with
+$W=2\eps b'$ (the first-order mean vanishing since $\E[b']=0$) gives
+\begin{equation}\label{eq:om1}
+\E[\Lambda_0]=\Lambda_0^{\det}+\eps^2\Omega_1+O(\eps^4),\qquad
+\Omega_1=4\!\sum_{n\ge1}\frac{\langle\psi_0^2\,|\,\psi_n^2\rangle}{\Lambda_0-\Lambda_n}
+=-4\!\int_0^\infty\!\psi_0^2\,G_{\mathrm{red}}(x,x)\dd x,
+\end{equation}
+finite because the energy denominator (Airy Green's function) spreads the $\delta(0)$ contraction
+(the summand decays as $n^{-4/3}$). Two independent evaluations agree:
+$\Omega_1=-1.121$ (sum-over-states) and $-1.128\pm0.009$ (direct-diagonalization Monte Carlo,
+$\eps$-independent), so $\Omega_1=-1.12\pm0.01$ and $\E[\Lambda_0]=2.3381-1.12/\beta+O(\beta^{-2})$.
+\tagPr
+
+\subsection{The complex Stokes constant (T2c).}
+By self-adjointness the connection-root shift is real (\S5.2); the genuinely resurgent complex
+datum is therefore \emph{not} a resonance shift (contrast the cusp, whose unbounded-below Weber
+operator has a complex resonance $\lambda_0=0.8896(1-i)$ and complex $\Omega_2=-0.451+0.352i$). It
+lives in the median resummation of the divergent tail series, and by Theorem~\ref{thm:T1} it is the
+Hastings--McLeod datum, computed here directly: the $s\to-\infty$ coefficients
+$q\sim\sqrt{-s/2}(1-\tfrac18(-s)^{-3}-\tfrac{73}{128}(-s)^{-6}-\cdots)$ are
+\emph{non-sign-alternating}, so the Borel singularity is on the positive real axis, the lateral
+sums differ by an imaginary amount, and the median is the real tail. The growth is
+$a_k\sim -C\,\Gamma(2k+\gamma)(9/8)^k$ with, from an exact rational recursion for the $a_k$
+($a_0{=}1$, $a_1{=}-\tfrac18$, $a_2{=}-\tfrac{73}{128}$, \dots; \S\ref{sec:T1proof}) carried to $120$
+orders and Richardson-extrapolated,
+\[
+  \gamma=-\tfrac12\ \text{(to $25$ digits)},\qquad
+  C=\sqrt{\tfrac{2}{3\pi^3}}=\tfrac1\pi\sqrt{\tfrac{2}{3\pi}}=0.146632271193848478\ldots\ \text{(to $28$ digits)},
+\]
+which fixes the action $A=\tfrac{2\sqrt2}{3}$ (Borel singularity at $\xi=A$, $9/8=1/A^2$) and a nonzero
+Stokes constant. The value equals the published Hastings--McLeod Stokes constant
+\cite{Dunne2025,KapaevHM,BothnerRHP}, and \emph{refutes} the naive guess $C\stackrel?=1/(4\sqrt\pi)$
+(which is $3.8\%$ too small). Independent cross-checks: a Borel-space branch-exponent extraction
+(the transform $\sum a_k\xi^{2k}/(2k)!$ has a bounded $(A^2-\xi^2)^{1/2}$ branch at $\xi=A$) and direct
+high-precision integration of the true Hastings--McLeod transcendent, whose optimally-truncated series
+remainder decays at the rate $e^{-A(-s)^{3/2}}$. \tagPr
+
+\begin{remark}[The two refinements, not blocking T2]\label{rem:t2refine}
+(i) The \emph{$a$-dependence} of the tail-specific Stokes constant is \emph{algebraic} (eikonal), not
+a new transcendental. Under $p=\sqrt a\,P$ the backward-Kolmogorov PDE reduces to an $a$-independent
+cubic-barrier escape in the single variable $g=\beta a^{3/2}$ (verified symbolically), so
+$S(a)=S_0\,a^{p}$ with $S_0$ an $a$-independent number; the reduced escape rate
+$R(g)=\tfrac1\pi e^{-\frac23 g}/\tilde Q(2/g)^2$, $\tilde q_j=(6j)!/(576^j(3j)!(2j)!)$, has the
+closed-form Stokes constant $S_0=1/\pi$ ($d_m\sim-\tfrac1\pi\Gamma(m)(3/2)^m$, certified to $25$
+digits). The full HM constant is $C=\tfrac1\pi\sqrt{2/(3\pi)}$ (the factored form of \cite{Dunne2025}
+eq.~2.16, matched to the $-17/72$ subleading coefficient to $16$ digits): the frozen datum
+$(S_0{=}1/\pi,\ \gamma'{=}0)$ is promoted to $(C,\ \gamma{=}-\tfrac12)$ by a \emph{single joint shift}
+--- constant $\times\sqrt{2/(3\pi)}=\sqrt{A_g/\pi}$ (the $x$-translation zero-mode Jacobian, $A_g=\tfrac23$
+the action) and index $-\tfrac12$ --- the one-zero-mode signature of the $x$-direction (the same
+translation mode whose removal gives the $a^{-3\beta/4}$ prefactor). That Jacobian is derived in
+closed form: the reduced escape instanton is the tanh kink $P_\star=-\tanh\tau$, its zero mode
+$\psi_0=-\operatorname{sech}^2\tau$ has $\lVert\psi_0\rVert^2=\int\operatorname{sech}^4=\tfrac43=\Delta V=2A_g$
+(virial), so $\sqrt{\lVert\psi_0\rVert^2/2\pi}=\sqrt{2/(3\pi)}$ and
+$C=\tfrac1\pi\sqrt{2/(3\pi)}=\sqrt{2/(3\pi^3)}$ to $40$ digits. (ii) The rough-potential rigor of the isomonodromy rigidity
+(\S5.1). Neither affects the established statements (a)--(c). \tagT
+\end{remark}
+
+\begin{center}
+\small
+\begin{tabular}{lll}
+\hline\noalign{\smallskip}
+Ingredient & Machinery & Status\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+Exact reduction \eqref{eq:bk}        & Riccati / Sturm / backward Kolmogorov      & \textsf{established here}\\
+Instanton, rate $\tfrac23a^{3/2}$    & FW WKB \eqref{eq:inst}                     & \textsf{established here}\\
+Jacobi op.; instanton $=$ PII${}_{1/2}$ & \eqref{eq:jacobi}, Lemma~\ref{lem:lax}, \cite{FN1980,FIKN} & \textsf{established here}\\
+Borel summability of $c_n$ (T1)      & Costin \cite{Costin}, \cite{CCK,SGG}      & \textsf{turnkey}\\
+T2a location-fixing                  & action expansion; isomonodromy rigidity   & \textsf{established here}\\
+T2b $\Omega_1=-1.12$                 & Airy Green's fn; MC cross-check \cite{Viens} & \textsf{computed (2 methods)}\\
+T2c Stokes constant; exact $C$ & HM median resummation \cite{CleriDunne,Dunne2025} & \textsf{$C=\sqrt{2/(3\pi^3)}$}\\
+$a$-dependence of $\mathsf S(a)$      & transport hierarchy; \cite{FIKN}    & \textsf{refinement (not blocking)}\\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Honest ledger and positioning}
+
+\emph{Established here (modulo cited machinery):} \textbf{Theorem~\ref{thm:T1}} --- the $\TW$ tail is
+a Borel-summable Painlev\'e~II trans-series --- via the exact reduction \eqref{eq:bk}, the instanton
+\eqref{eq:inst}, the Jacobi operator \eqref{eq:jacobi}, and the Lax-pair map (Lemma~\ref{lem:lax})
+turning the fluctuation operator into a PII linearization, whereupon Costin \cite{Costin} closes
+summability; and \textbf{Theorem~\ref{thm:T2}} --- location-fixing (T2a, action expansion $+$
+isomonodromy rigidity), the real connection-root shift $\Omega_1=-1.12$ (T2b, Airy Green's function,
+two independent evaluations), and the complex median-resummation Stokes constant (T2c, inherited from
+Hastings--McLeod: non-alternating coefficients, action $\tfrac{2\sqrt2}{3}$). \emph{Cited (turnkey):}
+\cite{RRV,DV,CLDS,CleriDunne,Costin,CCK,SGG,TW1994,FN1980,JMU1981,AnicetoCrew,Viens}.
+\emph{Refinements (not blocking):} the $\alpha=\tfrac12$/$\alpha=0$ family assignment
+(Rem.~\ref{rem:family}); the $a$-dependence of $\mathsf S(a)$ and exact $C$, and the rough-potential
+rigidity rigor (Rem.~\ref{rem:t2refine}). \emph{Open frontier:} Conjecture~\ref{conj:frontier}.
+
+\paragraph{Positioning.} This is, to our knowledge, the first Borel-summable resurgent trans-series
+for a random-operator edge law, now with both theorems in hand. It is the theorem-grade sibling of
+the cusp companion: there the absence of a Painlev\'e reduction forces a numerical partial resurgent
+representation; here the Airy/PII backbone makes the analogous statement a theorem, and a clean
+structural dichotomy emerges --- the cusp's complexity is a \emph{resonance} (non-self-adjoint,
+unbounded-below) phenomenon, whereas $\mathrm{TW}_\beta$'s is a \emph{trans-series}
+(self-adjoint, median-resummation) one. The one genuinely open piece common to both is
+Conjecture~\ref{conj:frontier}: a direct exact-WKB of the random operator.
+
+\begin{thebibliography}{99}
+
+\bibitem{RRV} J.~Ram\'irez, B.~Rider, B.~Vir\'ag, \emph{Beta ensembles, stochastic Airy spectrum,
+and a diffusion}, J. Amer. Math. Soc. \textbf{24} (2011) 919--944; arXiv:math/0607331.
+
+\bibitem{DV} L.~Dumaz, B.~Vir\'ag, \emph{The right tail exponent of the Tracy--Widom-$\beta$
+distribution}, Ann. Inst. H. Poincar\'e Probab. Statist. \textbf{49} (2013) 915--933;
+arXiv:1102.4818.
+
+\bibitem{BorotNadal} G.~Borot, C.~Nadal, \emph{Right tail expansion of Tracy--Widom beta laws},
+Random Matrices Theory Appl. \textbf{1} (2012) 1250006; arXiv:1111.2761.
+
+\bibitem{CLDS} A.~Comtet, P.~Le Doussal, N.~R.~Smith, \emph{The Tracy--Widom distribution at large
+Dyson index}, arXiv:2510.14433 (2025).
+
+\bibitem{CleriDunne} N.~J.~Cleri, G.~V.~Dunne, \emph{Resurgent trans-series for generalized
+Hastings--McLeod solutions}, J. Phys. A: Math. Theor. \textbf{53} (2020) 305201; arXiv:2002.06270.
+
+\bibitem{Costin} O.~Costin, \emph{On Borel summation and Stokes phenomena of nonlinear
+differential systems}, Duke Math. J. \textbf{93} (1998) 289--344; arXiv:math/0608408.
+
+\bibitem{CCK} O.~Costin, R.~D.~Costin, M.~Kohut, \emph{Rigorous bounds of Stokes constants for some
+nonlinear ODEs at rank-one irregular singularities}, Proc. R. Soc. A \textbf{460} (2004)
+3631--3641; arXiv:math/0608316.
+
+\bibitem{SGG} T.~Schorlepp, T.~Grafke, R.~Grauer, \emph{Symmetries and zero modes in sample path
+large deviations}, J. Stat. Phys. \textbf{190} (2023) 50; arXiv:2208.08413.
+
+\bibitem{Viens} F.~G.~Viens, \emph{Stein's lemma, Malliavin calculus, and tail bounds, with
+application to polymer fluctuation exponent}, Stochastic Process. Appl. \textbf{119} (2009)
+3671--3698; arXiv:0901.0383.
+
+\bibitem{Nikolaev} N.~Nikolaev, \emph{Geometry and resurgence of WKB solutions of Schr\"odinger
+equations}, arXiv:2410.17224 (2024).
+
+\bibitem{AnicetoCrew} I.~Aniceto, S.~Crew, \emph{An algebraic study of parametric Stokes
+phenomena}, arXiv:2410.13690 (2024).
+
+\bibitem{TW1994} C.~A.~Tracy, H.~Widom, \emph{Level-spacing distributions and the Airy kernel},
+Comm. Math. Phys. \textbf{159} (1994) 151--174.
+
+\bibitem{FN1980} H.~Flaschka, A.~C.~Newell, \emph{Monodromy- and spectrum-preserving deformations.
+I}, Comm. Math. Phys. \textbf{76} (1980) 65--116.
+
+\bibitem{JMU1981} M.~Jimbo, T.~Miwa, K.~Ueno, \emph{Monodromy preserving deformation of linear
+ordinary differential equations with rational coefficients. I. General theory and $\tau$-function},
+Physica D \textbf{2} (1981) 306--352.
+
+\bibitem{FIKN} A.~S.~Fokas, A.~R.~Its, A.~A.~Kapaev, V.~Yu.~Novokshenov, \emph{Painlev\'e
+Transcendents: The Riemann--Hilbert Approach}, Math. Surveys Monogr. \textbf{128}, AMS, 2006.
+
+\bibitem{Clarkson} P.~A.~Clarkson, \emph{Painlev\'e equations --- nonlinear special functions},
+J. Comput. Appl. Math. \textbf{153} (2003) 127--140.
+
+\bibitem{Dunne2025} G.~V.~Dunne, \emph{Introductory lectures on resurgence}, arXiv:2511.15528
+(2025). [HM Stokes constant $S=\sqrt{2/(3\pi^3)}$, eq.~(2.16).]
+
+\bibitem{KapaevHM} A.~A.~Kapaev, \emph{Quasi-linear Stokes phenomenon for the Hastings--McLeod
+solution of the second Painlev\'e equation}, arXiv:nlin/0411009 (2004).
+
+\bibitem{BothnerRHP} T.~Bothner, \emph{On the origins of Riemann--Hilbert problems in mathematics},
+Nonlinearity \textbf{34} (2021) R1--R73; arXiv:2003.14374.
+
+\end{thebibliography}
+
+\end{document}

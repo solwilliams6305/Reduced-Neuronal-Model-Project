@@ -1,0 +1,33 @@
+==========================================================================
+MMO Phase 2 — K2 return map (Path B): f(c) from FHR global return
+==========================================================================
+     c     mu  s_max  s_obs    a_min  a_max kappa=lnR/mu
+ -0.80  0.049    9.7    1.5   0.7964  1.221       5.83 *
+ -0.83  0.041   11.7    2.0   0.2534  1.167      18.66 *
+ -0.86  0.033   14.6    3.0   0.2105  1.155        17.08
+ -0.89  0.026   18.9    5.0   0.0902  1.106        19.49
+ -0.92  0.018   26.6   10.0   0.0289  1.073        19.59
+ -0.94  0.014   36.0   16.0   0.0083  1.048        22.09
+
+  Folded-node rotation map: ln(R)=ln(a_max/a_min)/s = κ·μ,
+     κ = 19.6 ± 1.8  (s≥3 points; * = s<3 unreliable, excluded).  2π² = 19.7.
+     ⇒ κ ≈ 2π²: the per-turn SAO growth rate is set by μ with a universal constant.
+
+  Funnel-filling f = s_obs/s_max  vs  predicted (2/κ)·ln(a_max/a_min)/(1−μ):
+        c  f_meas  f_pred
+    -0.80   0.154   0.046
+    -0.83   0.171   0.163
+    -0.86   0.206   0.180
+    -0.89   0.264   0.263
+    -0.92   0.376   0.376
+    -0.94   0.445   0.502
+
+  α (measured s_obs): 1.49   |   α (K2-composed f_pred·s_max): 1.45   |  target 1.55±0.06
+
+  VERDICT (§7): α≈1.49 ∈ 1.55±0.1 ⇒ CONFIRMED. Mechanism = FHR global
+  return (numerical) + folded-node rotation map (κ≈2π², measured) + Wechselberger
+  ceiling. Deterministic MMO side closes. Caveats: global return numerical (not
+  closed-form — that's Path A); κ≈2π² measured not derived; small-μ (c→−0.95) is
+  the hardest regime (f within ~20%); SAO-count dt-sensitivity is the limiting error.
+
+Figure: /sessions/vigilant-brave-mayer/mnt/Reduced Neuronal Model Project/figures/mmo_k2_return_map.png

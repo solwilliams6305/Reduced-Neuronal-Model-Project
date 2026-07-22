@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The two channels &mdash; normal form, Morris&ndash;Lecar, and the &alpha;-dichotomy</title>
+<style>
+  :root{--bg:#fbfaf8;--panel:#fff;--ink:#20242b;--sec:#5c6470;--line:#e3e0da;
+    --blue:#2f6fb0;--red:#d84b3f;--grn:#1f9d63;--amb:#d9851f;--pur:#7a5cc0;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45;}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 18px 40px;}
+  h1{font-size:21px;margin:0 0 2px;}
+  .sub{color:var(--sec);font-size:13.5px;margin:0 0 16px;}
+  .tag{font-weight:600;} .tag.p{color:var(--grn);} .tag.a{color:var(--amb);}
+  .bridge{display:flex;gap:10px;margin-bottom:16px;font-size:12.5px;}
+  .bridge .cell{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff;}
+  .bridge .cell b{display:block;margin-bottom:2px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:16px;}
+  .panel h2{font-size:13px;margin:0 0 8px;}
+  .panel .cap{font-size:12px;color:var(--sec);margin-top:8px;}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;}
+  .controls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px;}
+  .controls .blk{display:flex;align-items:center;gap:9px;font-size:13px;}
+  input[type=range]{width:128px;accent-color:var(--amb);}
+  button{font:inherit;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer;}
+  button:hover{background:#f3f1ec;} button.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  button:disabled{opacity:.4;cursor:not-allowed;}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .seg button{border:0;border-radius:0;} .seg button+button{border-left:1px solid var(--line);}
+  .val{font-variant-numeric:tabular-nums;font-weight:600;min-width:30px;display:inline-block;}
+  .foot{font-size:12px;color:var(--sec);margin-top:4px;}
+  code{background:#f3f1ec;padding:1px 5px;border-radius:5px;font-size:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>The two channels &mdash; normal form, Morris&ndash;Lecar, and the &alpha;-dichotomy</h1>
+  <p class="sub">Escape is now the real inner Riccati, so the peel-off statistics are faithful: most escapes land <em>after</em> the fold.</p>
+
+  <div class="bridge">
+    <div class="cell" style="border-left:3px solid var(--grn)"><b style="color:var(--grn)">SNIC &harr; ML Type-I</b>Dies at infinite period; bottleneck = phase singularity, &omega;,D&sim;&sigma;<sup>2/3</sup>.</div>
+    <div class="cell" style="border-left:3px solid var(--amb)"><b style="color:var(--amb)">Fold of cycles &harr; ML Type-II</b>Dies at finite period; amplitude channel (Tracy&ndash;Widom). Phase sets G(&theta;).</div>
+  </div>
+
+  <div class="controls">
+    <div class="blk"><label for="noise">noise &eta;</label><input id="noise" type="range" min="0.05" max="2.4" step="0.01" value="0.6"><span class="val" id="noiseVal">0.60</span></div>
+    <div class="blk">bifurcation:<span class="seg"><button id="foldBtn" class="on">Fold / Type-II</button><button id="snicBtn">SNIC / Type-I</button></span></div>
+    <div class="blk">phase speed:<span class="seg"><button id="a2Btn" class="on">&alpha;=2 (freeze &theta;)</button><button id="a1Btn">&alpha;=1 (fast &theta;)</button></span></div>
+    <div class="blk"><label for="thetaStar">&theta;*</label><input id="thetaStar" type="range" min="0" max="6.2832" step="0.01" value="0"><span class="val" id="thetaStarVal">0.00&pi;</span></div>
+    <div class="blk"><label for="drive">drive I</label><input id="drive" type="range" min="30" max="120" step="0.5" value="108"><span class="val" id="driveVal">108</span><button id="sweepBtn" class="on">&#8635; sweep</button></div>
+    <div class="blk"><button id="play" class="on">Pause</button><button id="reset">Reset</button></div>
+    <div class="blk" style="color:var(--sec)">peel-offs: <span class="val" id="escCount">0</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="panel" style="margin-bottom:0">
+      <h2>Normal form &mdash; one orbit, two directions</h2>
+      <canvas id="stage" width="540" height="470"></canvas>
+      <div class="cap">Noise &rarr; <span class="tag p">green (phase)</span> + <span class="tag a">orange (amplitude)</span>. Dashed red separatrix descends to the cycle as the fold nears (Y&rarr;0); the peel-off (driven by the panel below) then fires &mdash; usually <em>after</em> it has closed.</div>
+    </div>
+    <div class="panel" style="margin-bottom:0">
+      <h2 id="mlTitle">Morris&ndash;Lecar neuron &mdash; (V, w) phase plane</h2>
+      <canvas id="ml" width="470" height="470"></canvas>
+      <div class="cap" id="mlCap"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel" style="margin-bottom:0">
+      <h2 style="color:var(--amb)">Amplitude channel &mdash; the real Riccati & where escapes land</h2>
+      <canvas id="amp" width="470" height="250"></canvas>
+      <div class="cap">dR=(R&sup2;&minus;Y)dT+&eta;dB, Y sweeps down. The trajectory rides the <span style="color:var(--grn)">canard</span> and peels off at Y<sub>node</sub>. Histogram: most land <b>after</b> the fold (amber, Y&lt;0, near a&#8321;); early escapes (red, Y&gt;0) are the rare TW tail &mdash; <b>raise &eta;</b> to see more.</div>
+    </div>
+    <div class="panel" style="margin-bottom:0">
+      <h2 style="color:var(--grn)">Phase channel &mdash; timing of the oscillator</h2>
+      <canvas id="phase" width="470" height="250"></canvas>
+      <div class="cap" id="phaseCap"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>The part phase plays in the amplitude channel &mdash; &alpha;=2 (frozen) vs &alpha;=1 (fast)</h2>
+    <canvas id="gpanel" width="940" height="190"></canvas>
+    <div class="cap" id="gCap"></div>
+  </div>
+
+  <p class="foot">Verified: peel-off mean &rarr; a&#8321;&asymp;&minus;2.34 as &eta;&rarr;0; early fraction (Y&gt;0) rises 0&rarr;~17% over &eta;=0.6&rarr;1.8 (TW tail). ML by continuation: Type-I period diverges (&rarr;&infin; SNIC); Type-II dies finite (~118 ms, fold). G(&theta;)=&radic;(a&middot;c)/b.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var C={ink:"#20242b",sec:"#5c6470",line:"#e3e0da",blue:"#2f6fb0",red:"#d84b3f",grn:"#1f9d63",amb:"#d9851f",pur:"#7a5cc0"};
+  function setup(id){var cv=document.getElementById(id),dpr=Math.max(1,window.devicePixelRatio||1);
+    var w=cv.width,h=cv.height;cv.width=w*dpr;cv.height=h*dpr;var ctx=cv.getContext("2d");ctx.scale(dpr,dpr);return {ctx:ctx,w:w,h:h};}
+  var S=setup("stage"),M=setup("ml"),A=setup("amp"),P=setup("phase"),Gp=setup("gpanel");
+  function gauss(){var u1=Math.random()||1e-12,u2=Math.random();return Math.sqrt(-2*Math.log(u1))*Math.cos(6.283185307*u2);}
+  function arrow(x,x1,y1,x2,y2,col,w){x.strokeStyle=col;x.fillStyle=col;x.lineWidth=w;
+    x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();
+    if((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)<9)return;var ang=Math.atan2(y2-y1,x2-x1),h=5+w;
+    x.beginPath();x.moveTo(x2,y2);x.lineTo(x2-h*Math.cos(ang-0.4),y2-h*Math.sin(ang-0.4));x.lineTo(x2-h*Math.cos(ang+0.4),y2-h*Math.sin(ang+0.4));x.closePath();x.fill();}
+
+  var ABS=4, MLS=8, sweepFrames=3600, ampSub=5, ampDT=0.006;
+  var eta=0.60, regime="fold", alpha=2, thetaStar=0.0, running=true;
+  var theta=0,omega0=1.3,snicRate=0.95,trail=[],flash=0,refTheta=0;
+  var kick={gp:0,ga:0},kickTimer=0,rotTimes=[],simT=0,omegaEst=0;
+
+  // ---- amplitude: the real inner Riccati ----
+  var Ymin=-3.0,Ymax=2.6,Rmin=-2.8,Rmax=3.3,Y0=2.4;
+  var Yy=Y0,Rr=-Math.sqrt(Y0),ampEsc=false,escR=0,ampTrail=[],ynodes=[],escCount=0;
+  var canardYR=(function(){var Y=Y0,R=-Math.sqrt(Y0),arr=[],dt=0.003;
+    while(Y>-2.36&&R<6){arr.push([Y,R]);R+=(R*R-Y)*dt;Y-=dt;}return arr;})();
+  function ampReset(){Yy=Y0;Rr=-Math.sqrt(Y0);ampEsc=false;escR=0;ampTrail=[];}
+  function updEsc(){document.getElementById("escCount").textContent=String(escCount);}
+  function ampStep(dt){
+    if(!ampEsc){
+      Yy-=dt; Rr+=(Rr*Rr-Yy)*dt+eta*Math.sqrt(dt)*gauss();
+      if(!isFinite(Rr)||Rr>3.2||Yy<Ymin){ampEsc=true;escR=0;
+        ynodes.push(Math.max(Yy,Ymin));if(ynodes.length>140)ynodes.shift();escCount++;updEsc();}
+      else {ampTrail.push([Yy,Rr]);if(ampTrail.length>170)ampTrail.shift();}
+    } else {escR+=dt*1.4;if(escR>0.8){ampReset();flash=1;}}
+  }
+  function seedHist(){ynodes=[];for(var n=0;n<45;n++){var Y=Y0,R=-Math.sqrt(Y0);
+    for(var s=0;s<6000;s++){Y-=ampDT;R+=(R*R-Y)*ampDT+eta*Math.sqrt(ampDT)*gauss();
+      if(R>3.2||Y<Ymin){ynodes.push(Math.max(Y,Ymin));break;}}}}
+
+  // ---- geometry G(theta) ----
+  function Gf(t){var a=1+0.45*Math.cos(t),b=1+0.35*Math.sin(t),c=1+0.30*Math.cos(t+1.0);return Math.sqrt(a*c)/b;}
+  var Gavg=(function(){var s=0,N=400;for(var i=0;i<N;i++)s+=Gf(6.283185307*i/N);return s/N;})();
+  function Gn(t){return Gf(t)/Gavg;}
+
+  // ---- Morris-Lecar ----
+  var ML_I=[-1.2,18,12,17.4,4.0,8,2,120,-84,-60,20,1/15],ML_II=[-1.2,18,2,30,4.4,8,2,120,-84,-60,20,0.04];
+  var mlPar=ML_II,mlI=108,mlIhi=108,mlIlo=86,mlDeath=88.5,autoSweep=true,Vml=-60,wml=0.01,mlTrail=[],Vhist=[];
+  function minf(V,p){return 0.5*(1+Math.tanh((V-p[0])/p[1]));}
+  function winf(V,p){return 0.5*(1+Math.tanh((V-p[2])/p[3]));}
+  function mlStep(dt){var p=mlPar,tw=1/Math.cosh((Vml-p[2])/(2*p[3]));
+    var dV=(mlI-p[6]*(Vml-p[9])-p[4]*minf(Vml,p)*(Vml-p[7])-p[5]*wml*(Vml-p[8]))/p[10];
+    Vml+=dV*dt+eta*2.2*Math.sqrt(dt)*gauss();wml+=p[11]*(winf(Vml,p)-wml)/tw*dt;
+    if(Vml<-90)Vml=-90;if(Vml>60)Vml=60;if(wml<-0.1)wml=-0.1;if(wml>0.7)wml=0.7;}
+  function syncDrive(){var d=document.getElementById("drive");if(d){d.value=mlI;document.getElementById("driveVal").textContent=mlI.toFixed(0);}}
+  function applyRegime(){
+    if(regime==="snic"){mlPar=ML_I;mlIhi=60;mlIlo=39;mlDeath=40.5;}else{mlPar=ML_II;mlIhi=108;mlIlo=86;mlDeath=88.5;}
+    mlI=mlIhi;Vml=-60;wml=0.01;mlTrail=[];Vhist=[];theta=0;rotTimes=[];simT=0;ampReset();syncDrive();
+    var dis=(regime!=="fold");document.getElementById("a2Btn").disabled=dis;document.getElementById("a1Btn").disabled=dis;
+    document.getElementById("thetaStar").disabled=dis||alpha!==2;
+  }
+  function resetAll(){theta=0;trail=[];flash=0;refTheta=0;rotTimes=[];simT=0;omegaEst=0;Vml=-60;wml=0.01;mlTrail=[];Vhist=[];escCount=0;ampReset();seedHist();updEsc();}
+
+  // ---- phase step ----
+  function step(dt){
+    simT+=dt;
+    if(regime==="fold"){if(alpha===2){theta=thetaStar;}else{theta+=omega0*dt+eta*Math.sqrt(dt)*gauss();}}
+    else{theta+=snicRate*(1-Math.cos(theta))*dt+eta*Math.sqrt(dt)*gauss();}
+    refTheta+=omega0*dt;
+    while(theta>=6.283185307){theta-=6.283185307;rotTimes.push(simT);}
+    while(theta<0){theta+=6.283185307;rotTimes.push(simT);}
+    while(refTheta>=6.283185307)refTheta-=6.283185307;
+    while(rotTimes.length&&simT-rotTimes[0]>14)rotTimes.shift();
+    omegaEst=rotTimes.length>=2?6.283185307*(rotTimes.length-1)/(simT-rotTimes[0]):0;
+  }
+
+  // ---- draw stage ----
+  function drawStage(){
+    var x=S.ctx,cx=S.w*0.46,cy=S.h*0.52,RC=Math.min(S.w,S.h)*0.27,ASCALE=RC*0.62,sepK=RC*0.28;
+    x.clearRect(0,0,S.w,S.h);
+    var Gf2=(regime==="fold"&&alpha===2)?Gn(thetaStar):1.0;
+    var RS=RC+Math.sqrt(Math.max(Yy,0))*sepK*Gf2;
+    x.beginPath();x.arc(cx,cy,Math.min(S.w,S.h)*0.49,0,6.2832);x.arc(cx,cy,RS,0,6.2832,true);x.fillStyle="rgba(216,75,63,0.05)";x.fill("evenodd");
+    x.setLineDash([6,5]);x.lineWidth=2;x.strokeStyle=C.red;x.beginPath();x.arc(cx,cy,RS,0,6.2832);x.stroke();x.setLineDash([]);
+    x.fillStyle=C.red;x.font="12px sans-serif";x.textAlign="left";x.fillText("separatrix",cx+RS*0.66+4,cy-RS*0.72);
+    x.lineWidth=3;x.strokeStyle=C.blue;x.beginPath();x.arc(cx,cy,RC,0,6.2832);x.stroke();
+    x.fillStyle=C.blue;x.fillText("attracting cycle",cx-RC*0.5,cy+RC+18);
+    for(var i=0;i<trail.length;i++){var tp=trail[i],al=i/trail.length;x.beginPath();x.arc(tp.x,tp.y,1.8,0,6.2832);x.fillStyle="rgba(217,133,31,"+(0.05+0.3*al)+")";x.fill();}
+    var rr=RC+(ampEsc?escR*ASCALE*1.9:0);
+    var dx=cx+rr*Math.cos(theta),dy=cy+rr*Math.sin(theta);
+    trail.push({x:dx,y:dy});if(trail.length>70)trail.shift();
+    if(!ampEsc){var tx=-Math.sin(theta),ty=Math.cos(theta),nx=Math.cos(theta),ny=Math.sin(theta);
+      var L=42*Math.min(1.4,eta+0.25),gp=kick.gp,ga=kick.ga;
+      arrow(x,dx,dy,dx+(gp*tx+ga*nx)*L,dy+(gp*ty+ga*ny)*L,"rgba(92,100,112,0.85)",1.6);
+      arrow(x,dx,dy,dx+gp*tx*L,dy+gp*ty*L,C.grn,2.4);arrow(x,dx,dy,dx+ga*nx*L,dy+ga*ny*L,C.amb,2.4);
+      x.font="11.5px sans-serif";x.fillStyle=C.grn;x.fillText("phase",dx+gp*tx*L+4*tx,dy+gp*ty*L+4*ty);
+      x.fillStyle=C.amb;x.fillText("amplitude",dx+ga*nx*L+5*nx,dy+ga*ny*L+5*ny);}
+    x.beginPath();x.arc(dx,dy,6.5,0,6.2832);x.fillStyle=ampEsc?C.red:C.ink;x.fill();x.lineWidth=1.5;x.strokeStyle="#fff";x.stroke();
+    if(regime==="fold"&&alpha===2){x.fillStyle=C.grn;x.font="600 11.5px sans-serif";x.textAlign="left";x.fillText("phase frozen at θ* (α=2)",14,20);}
+    if(flash>0){x.beginPath();x.arc(cx,cy,RC,0,6.2832);x.strokeStyle="rgba(216,75,63,"+flash+")";x.lineWidth=4;x.stroke();flash-=0.04;if(flash<0)flash=0;}
+    if(ampEsc){x.fillStyle=C.red;x.font="600 13px sans-serif";x.textAlign="center";x.fillText("PEEL-OFF",dx,dy-12);x.textAlign="left";}
+  }
+
+  // ---- draw amplitude (Y,R) + histogram ----
+  function drawAmp(){
+    var x=A.ctx;x.clearRect(0,0,A.w,A.h);
+    var padL=40,padR=14,top=18,plotB=170,plotW=A.w-padL-padR,plotH=plotB-top;
+    function XY(Y){return padL+(Ymax-Y)/(Ymax-Ymin)*plotW;}
+    function YR(R){return top+(Rmax-R)/(Rmax-Rmin)*plotH;}
+    x.fillStyle="rgba(31,157,99,0.05)";x.fillRect(XY(0),top,A.w-padR-XY(0),plotH);
+    x.strokeStyle=C.line;x.lineWidth=1;x.strokeRect(padL,top,plotW,plotH);
+    x.strokeStyle=C.sec;x.lineWidth=1.3;x.beginPath();x.moveTo(XY(0),top);x.lineTo(XY(0),plotB);x.stroke();
+    x.fillStyle=C.sec;x.font="10.5px sans-serif";x.textAlign="center";x.fillText("fold Y=0",XY(0),top-5);
+    x.strokeStyle="rgba(92,100,112,0.55)";x.setLineDash([3,3]);x.beginPath();x.moveTo(XY(-2.338),top);x.lineTo(XY(-2.338),plotB);x.stroke();x.setLineDash([]);
+    x.fillText("a₁",XY(-2.338),top-5);
+    x.strokeStyle=C.blue;x.lineWidth=2;x.beginPath();var f=false;
+    for(var Y=0;Y<=Ymax;Y+=0.05){var px=XY(Y),py=YR(-Math.sqrt(Y));if(!f){x.moveTo(px,py);f=true;}else x.lineTo(px,py);}x.stroke();
+    x.strokeStyle=C.red;x.setLineDash([5,4]);x.lineWidth=2;x.beginPath();f=false;
+    for(var Y2=0;Y2<=Ymax;Y2+=0.05){var p2=XY(Y2),q2=YR(Math.sqrt(Y2));if(!f){x.moveTo(p2,q2);f=true;}else x.lineTo(p2,q2);}x.stroke();x.setLineDash([]);
+    x.strokeStyle=C.grn;x.lineWidth=2.4;x.beginPath();var cs=false;
+    for(var i=0;i<canardYR.length;i++){var c=canardYR[i];if(c[0]<Ymin||c[0]>Ymax||c[1]>Rmax+0.4){cs=false;continue;}
+      var ccx=XY(c[0]),ccy=YR(Math.min(c[1],Rmax));if(!cs){x.moveTo(ccx,ccy);cs=true;}else x.lineTo(ccx,ccy);}x.stroke();
+    x.fillStyle=C.blue;x.textAlign="left";x.font="10.5px sans-serif";x.fillText("−√Y",XY(2.5),YR(-1.55));
+    x.fillStyle=C.red;x.fillText("+√Y",XY(2.5),YR(1.6));x.fillStyle=C.grn;x.fillText("canard",XY(-0.55),YR(2.4));
+    for(var t=0;t<ampTrail.length;t++){var tp=ampTrail[t],al=t/ampTrail.length;x.beginPath();x.arc(XY(tp[0]),YR(Math.min(tp[1],Rmax)),1.5,0,6.2832);x.fillStyle="rgba(32,36,43,"+(0.05+0.4*al)+")";x.fill();}
+    x.beginPath();x.arc(XY(Math.max(Yy,Ymin)),YR(Math.min(Rr,Rmax)),5,0,6.2832);x.fillStyle=ampEsc?C.red:C.ink;x.fill();x.lineWidth=1.3;x.strokeStyle="#fff";x.stroke();
+    x.fillStyle=C.sec;x.font="11px sans-serif";x.textAlign="center";x.fillText("slow variable Y  (sweeps →)",padL+plotW/2,plotB+14);
+    // histogram
+    var hT=196,hB=A.h-8;
+    var NB=30,bins=new Array(NB);for(var b=0;b<NB;b++)bins[b]=0;
+    for(var k=0;k<ynodes.length;k++){var bi=Math.floor((Ymax-ynodes[k])/(Ymax-Ymin)*NB);if(bi<0)bi=0;if(bi>=NB)bi=NB-1;bins[bi]++;}
+    var mxb=1;for(var b2=0;b2<NB;b2++)mxb=Math.max(mxb,bins[b2]);
+    var bw=plotW/NB;
+    for(var b3=0;b3<NB;b3++){var bh=(bins[b3]/mxb)*(hB-hT-4),bx=padL+b3*bw,yc=Ymax-(b3+0.5)/NB*(Ymax-Ymin);
+      x.fillStyle=yc<0?"rgba(217,133,31,0.85)":"rgba(216,75,63,0.85)";x.fillRect(bx+1,hB-bh,bw-2,bh);}
+    x.strokeStyle=C.sec;x.setLineDash([2,3]);x.beginPath();x.moveTo(XY(0),hT-2);x.lineTo(XY(0),hB);x.stroke();x.setLineDash([]);
+    var early=0;for(var k2=0;k2<ynodes.length;k2++)if(ynodes[k2]>0)early++;var late=ynodes.length-early,nn=ynodes.length||1;
+    x.fillStyle=C.sec;x.font="10.5px sans-serif";x.textAlign="left";x.fillText("Y_node histogram",padL,hT-4);
+    x.textAlign="right";x.font="600 11px sans-serif";
+    x.fillStyle=C.amb;x.fillText("after fold "+Math.round(100*late/nn)+"%",A.w-padR-78,hT-4);
+    x.fillStyle=C.red;x.fillText("early "+Math.round(100*early/nn)+"%",A.w-padR,hT-4);
+  }
+
+  // ---- draw ML ----
+  var Vmn=-68,Vmx=46,wmn=-0.03,wmx=0.56;
+  function drawML(){
+    var x=M.ctx;x.clearRect(0,0,M.w,M.h);var L=44,R=14,top=22,ppB=336,pw=M.w-L-R,ph=ppB-top;
+    function PX(V){return L+(V-Vmn)/(Vmx-Vmn)*pw;}function PY(w){return top+(1-(w-wmn)/(wmx-wmn))*ph;}
+    x.strokeStyle=C.line;x.lineWidth=1;x.beginPath();x.moveTo(L,top);x.lineTo(L,ppB);x.lineTo(M.w-R,ppB);x.stroke();
+    x.fillStyle=C.sec;x.font="11px sans-serif";x.textAlign="center";x.fillText("V (mV)",L+pw/2,ppB+15);
+    x.save();x.translate(13,top+ph/2);x.rotate(-Math.PI/2);x.fillText("recovery w",0,0);x.restore();
+    x.strokeStyle=C.blue;x.lineWidth=2;x.beginPath();var st=false;
+    for(var V=Vmn;V<=Vmx;V+=1){var wv=(mlI-mlPar[6]*(V-mlPar[9])-mlPar[4]*minf(V,mlPar)*(V-mlPar[7]))/(mlPar[5]*(V-mlPar[8]));
+      if(wv<wmn-0.2||wv>wmx+0.2){st=false;continue;}var px=PX(V),py=PY(wv);if(!st){x.moveTo(px,py);st=true;}else x.lineTo(px,py);}x.stroke();
+    x.strokeStyle=C.pur;x.lineWidth=2;x.beginPath();
+    for(var V2=Vmn;V2<=Vmx;V2+=1){var p2x=PX(V2),p2y=PY(winf(V2,mlPar));if(V2===Vmn)x.moveTo(p2x,p2y);else x.lineTo(p2x,p2y);}x.stroke();
+    x.fillStyle=C.blue;x.textAlign="left";x.fillText("V-nullcline",PX(8),PY(wmx)+12);x.fillStyle=C.pur;x.fillText("w-nullcline",PX(-2),PY(0.5));
+    if(regime==="snic"){var bx=PX(-37),by=PY(0.035);x.fillStyle="rgba(31,157,99,0.16)";x.beginPath();x.ellipse(bx,by,Math.abs(PX(-26)-PX(-48))/2,20,0,0,6.2832);x.fill();
+      x.fillStyle=C.grn;x.font="600 11px sans-serif";x.textAlign="center";x.fillText("bottleneck → σ^(2/3)",bx,by-26);}
+    for(var i=0;i<mlTrail.length;i++){var tp=mlTrail[i],al=i/mlTrail.length;x.beginPath();x.arc(PX(tp[0]),PY(tp[1]),1.5,0,6.2832);x.fillStyle="rgba(217,133,31,"+(0.06+0.34*al)+")";x.fill();}
+    x.beginPath();x.arc(PX(Vml),PY(wml),6,0,6.2832);x.fillStyle=Vml>0?C.red:C.ink;x.fill();x.lineWidth=1.4;x.strokeStyle="#fff";x.stroke();
+    x.textAlign="right";x.font="600 12px sans-serif";x.fillStyle=C.sec;x.fillText("I = "+mlI.toFixed(0),M.w-R,13);
+    var near=mlI<mlDeath+(mlIhi-mlIlo)*0.18,dead=mlI<mlDeath;x.textAlign="left";x.font="600 11.5px sans-serif";
+    if(regime==="snic"){x.fillStyle=C.grn;x.fillText(dead?"PHASE trapped — period →∞":(near?"bottleneck lengthening":"phase channel governs (σ^2/3)"),L,13);}
+    else{x.fillStyle=C.amb;x.fillText(dead?"fold: amplitude collapsed (finite period)":(near?"cycle shrinking → fold":"amplitude channel governs (TW)"),L,13);}
+    var sT=358,sB=M.h-8,sL=L,sR=M.w-R;x.strokeStyle=C.line;x.lineWidth=1;x.beginPath();x.moveTo(sL,sB);x.lineTo(sR,sB);x.stroke();
+    var thrY=sT+(1-(0-Vmn)/(Vmx-Vmn))*(sB-sT);x.setLineDash([3,3]);x.strokeStyle="rgba(216,75,63,0.5)";x.beginPath();x.moveTo(sL,thrY);x.lineTo(sR,thrY);x.stroke();x.setLineDash([]);
+    x.fillStyle=C.sec;x.font="10.5px sans-serif";x.textAlign="left";x.fillText("V(t)",sL,sT+2);
+    x.strokeStyle=C.ink;x.lineWidth=1.6;x.beginPath();
+    for(var j=0;j<Vhist.length;j++){var qx=sL+(sR-sL)*(j/359),vv=Math.max(Vmn,Math.min(Vmx,Vhist[j])),qy=sT+(1-(vv-Vmn)/(Vmx-Vmn))*(sB-sT);if(j===0)x.moveTo(qx,qy);else x.lineTo(qx,qy);}x.stroke();
+  }
+
+  // ---- draw phase ----
+  function drawPhase(){
+    var x=P.ctx;x.clearRect(0,0,P.w,P.h);var cx=P.w*0.5,cy=P.h*0.46,R=Math.min(P.w,P.h)*0.30;
+    x.strokeStyle=C.line;x.lineWidth=10;x.beginPath();x.arc(cx,cy,R,0,6.2832);x.stroke();
+    if(regime==="snic"){x.strokeStyle="rgba(31,157,99,0.22)";x.lineWidth=10;x.beginPath();x.arc(cx,cy,R,-0.55,0.55);x.stroke();
+      x.fillStyle=C.grn;x.font="11px sans-serif";x.textAlign="center";x.fillText("bottleneck",cx+R,cy-R*0.9);x.beginPath();x.arc(cx+R,cy,3,0,6.2832);x.fillStyle=C.grn;x.fill();}
+    else{var rx=cx+R*Math.cos(refTheta),ry=cy+R*Math.sin(refTheta);x.beginPath();x.arc(rx,ry,5,0,6.2832);x.fillStyle="#fff";x.strokeStyle=C.sec;x.lineWidth=1.6;x.fill();x.stroke();
+      x.fillStyle=C.sec;x.font="10.5px sans-serif";x.textAlign="center";x.fillText("ideal clock",rx,ry-9);}
+    var nx=cx+R*Math.cos(theta),ny=cy+R*Math.sin(theta);x.beginPath();x.arc(nx,ny,6.5,0,6.2832);x.fillStyle=C.grn;x.fill();x.lineWidth=1.5;x.strokeStyle="#fff";x.stroke();
+    x.fillStyle=C.ink;x.font="600 12.5px sans-serif";x.textAlign="center";x.fillText("rotation ω ≈ "+omegaEst.toFixed(2)+"   (spread = D)",cx,P.h-9);
+  }
+
+  // ---- draw G(theta) ----
+  function drawG(){
+    var x=Gp.ctx;x.clearRect(0,0,Gp.w,Gp.h);var L=58,R=20,top=30,bot=Gp.h-26,pw=Gp.w-L-R,ph=bot-top,gmin=0.5,gmax=1.5;
+    function GX(t){return L+t/6.283185307*pw;}function GY(g){return bot-(g-gmin)/(gmax-gmin)*ph;}
+    x.strokeStyle=C.line;x.lineWidth=1;x.beginPath();x.moveTo(L,top);x.lineTo(L,bot);x.lineTo(Gp.w-R,bot);x.stroke();
+    x.strokeStyle="rgba(92,100,112,0.35)";x.setLineDash([4,4]);x.beginPath();x.moveTo(L,GY(1));x.lineTo(Gp.w-R,GY(1));x.stroke();x.setLineDash([]);
+    x.fillStyle=C.sec;x.font="10.5px sans-serif";x.textAlign="right";x.fillText("⟨G⟩",L-5,GY(1)+3);
+    x.strokeStyle=C.amb;x.lineWidth=2.6;x.beginPath();for(var t=0;t<=6.2832;t+=0.03){var px=GX(t),py=GY(Gn(t));if(t===0)x.moveTo(px,py);else x.lineTo(px,py);}x.stroke();
+    x.fillStyle=C.sec;x.font="11px sans-serif";x.textAlign="center";x.fillText("oscillator phase θ   (0 → 2π)",L+pw/2,bot+16);
+    x.save();x.translate(16,top+ph/2);x.rotate(-Math.PI/2);x.fillText("escape geometry  G(θ)/⟨G⟩",0,0);x.restore();
+    x.textAlign="left";x.font="600 12px sans-serif";
+    if(regime!=="fold"){x.fillStyle=C.sec;x.fillText("α acts on the amplitude channel — switch to Fold / Type-II to compare frozen vs fast phase",L,20);return;}
+    if(alpha===2){var ts=((thetaStar%6.2832)+6.2832)%6.2832,gx=GX(ts),gy=GY(Gn(thetaStar));
+      x.strokeStyle=C.grn;x.lineWidth=1.6;x.setLineDash([4,3]);x.beginPath();x.moveTo(gx,bot);x.lineTo(gx,gy);x.stroke();x.setLineDash([]);
+      x.beginPath();x.arc(gx,gy,5.5,0,6.2832);x.fillStyle=C.grn;x.fill();
+      x.fillStyle=C.grn;x.fillText("α=2 (frozen θ*): escape uses G(θ*) = "+Gn(thetaStar).toFixed(2)+"·⟨G⟩    →    σ* tracks this point; TW shape unchanged",L,20);}
+    else{x.strokeStyle=C.grn;x.lineWidth=2.6;x.beginPath();x.moveTo(L,GY(1));x.lineTo(Gp.w-R,GY(1));x.stroke();
+      x.fillStyle=C.grn;x.fillText("α=1 (fast θ): escape uses ⟨G⟩ — phase-averaged, flat in θ    →    σ* independent of phase",L,20);}
+  }
+
+  function updateCaps(){
+    var pc=document.getElementById("phaseCap"),mc=document.getElementById("mlCap"),mt=document.getElementById("mlTitle"),gc=document.getElementById("gCap");
+    if(regime==="fold"){
+      pc.innerHTML="<b>Fold of cycles</b>: phase regular, D&sim;&sigma;&sup2;. With α=2 it is frozen at θ*; the amplitude channel does the work.";
+      mt.innerHTML="Morris&ndash;Lecar <b style='color:#d9851f'>Type-II (Hopf)</b> &mdash; (V, w) phase plane";
+      mc.innerHTML="Sweep I down: cycle dies at a <b>fold of limit cycles</b> at <b>finite</b> period. Phase only sets G(&theta;).";
+    } else {
+      pc.innerHTML="<b>SNIC</b>: phase sticks at the bottleneck then noise whips it round &mdash; <b>singular</b>, &omega;,D&sim;&sigma;<sup>2/3</sup>.";
+      mt.innerHTML="Morris&ndash;Lecar <b style='color:#1f9d63'>Type-I (SNIC)</b> &mdash; (V, w) phase plane";
+      mc.innerHTML="Sweep I down: bottleneck lengthens, period <b>diverges</b>. The cycle dies <em>in the phase</em>.";
+    }
+    gc.innerHTML="&alpha; is how fast the phase moves during one peel-off. <b>&alpha;=2</b>: &theta; frozen, escape samples one phase &amp; its G(&theta;*) &mdash; drag &theta;* and the separatrix breathes, yet the standardised law stays <b>Tracy&ndash;Widom</b>. <b>&alpha;=1</b>: &theta; races through every phase, escape feels only &langle;G&rangle;. Shape is TW either way; only the scale &sigma;*&prop;G changes.";
+  }
+
+  function frame(){
+    if(running){
+      kickTimer--;if(kickTimer<=0){kick.gp=gauss();kick.ga=gauss();kickTimer=18;}
+      for(var i=0;i<ABS;i++)step(0.022);
+      for(var s=0;s<ampSub;s++)ampStep(ampDT);
+      if(autoSweep){mlI-=(mlIhi-mlIlo)/sweepFrames;if(mlI<=mlIlo){mlI=mlIhi;}syncDrive();}
+      for(var j=0;j<MLS;j++)mlStep(0.1);
+      mlTrail.push([Vml,wml]);if(mlTrail.length>520)mlTrail.shift();
+      Vhist.push(Vml);if(Vhist.length>360)Vhist.shift();
+    }
+    drawStage();drawML();drawAmp();drawPhase();drawG();requestAnimationFrame(frame);
+  }
+
+  var noise=document.getElementById("noise"),noiseVal=document.getElementById("noiseVal");
+  noise.addEventListener("input",function(){eta=parseFloat(noise.value);noiseVal.textContent=eta.toFixed(2);rotTimes=[];simT=0;seedHist();});
+  document.getElementById("play").addEventListener("click",function(){running=!running;this.textContent=running?"Pause":"Play";this.classList.toggle("on",running);});
+  document.getElementById("reset").addEventListener("click",resetAll);
+  var drive=document.getElementById("drive"),driveVal=document.getElementById("driveVal"),sweepBtn=document.getElementById("sweepBtn");
+  drive.addEventListener("input",function(){autoSweep=false;sweepBtn.classList.remove("on");mlI=parseFloat(drive.value);driveVal.textContent=mlI.toFixed(0);});
+  sweepBtn.addEventListener("click",function(){autoSweep=!autoSweep;this.classList.toggle("on",autoSweep);if(autoSweep&&mlI<=mlIlo)mlI=mlIhi;});
+  var fb=document.getElementById("foldBtn"),sb=document.getElementById("snicBtn");
+  fb.addEventListener("click",function(){regime="fold";fb.classList.add("on");sb.classList.remove("on");applyRegime();updateCaps();});
+  sb.addEventListener("click",function(){regime="snic";sb.classList.add("on");fb.classList.remove("on");applyRegime();updateCaps();});
+  var a2=document.getElementById("a2Btn"),a1=document.getElementById("a1Btn"),tS=document.getElementById("thetaStar"),tSV=document.getElementById("thetaStarVal");
+  a2.addEventListener("click",function(){alpha=2;a2.classList.add("on");a1.classList.remove("on");tS.disabled=(regime!=="fold");});
+  a1.addEventListener("click",function(){alpha=1;a1.classList.add("on");a2.classList.remove("on");tS.disabled=true;});
+  tS.addEventListener("input",function(){thetaStar=parseFloat(tS.value);tSV.textContent=(thetaStar/Math.PI).toFixed(2)+"π";});
+
+  seedHist();applyRegime();updateCaps();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

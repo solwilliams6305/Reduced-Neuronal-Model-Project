@@ -1,0 +1,418 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\Ynode}{Y_{\mathrm{node}}}
+\newcommand{\Ypeel}{Y_{\mathrm{peel}}}
+\newcommand{\TW}{\mathrm{TW}}
+\newcommand{\Pearly}{P_{\mathrm{early}}}
+\newcommand{\Lamdet}{\Lambda_0^{\mathrm{det}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\eqd}{\stackrel{d}{=}}
+
+\title{\textbf{The inner exit measure of the noisy folded limit cycle is Tracy--Widom}\\[2pt]
+\large Path~A endgame: reduction, the prefactor, the rate constant, and the uniform bounds}
+\author{Solomon Williams \\ \small (supervisor: N.\ Popovi\'c) \\ \small University of Edinburgh}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We push degenerate additive noise through the geometric blow-up of a folded limit
+cycle---the one un-noised member of the slow--fast fold family. The deterministic
+backbone is Jelbart--Kuehn--Kuntz (JKK, 2024); the rigorous Channel-A inner core
+(Airy inner solution, Freidlin--Wentzell barrier $V(Y)=\tfrac83Y^{3/2}$, closed-form
+integrated hazard $H(\eta)=\eta^2/4\pi$, hence $C_q=2\sqrt\pi$) was established
+earlier. This note records the \emph{endgame}: the inner exit measure (the noisy
+``Airy'' peel-off law) is identified, via an exact Cole--Hopf linearisation, with the
+ground state of the \emph{stochastic Airy operator}, and hence with the Tracy--Widom
+distribution $\TW_\beta$ at the dictionary $\eta=2/\sqrt\beta$. Four consequences:
+(i)~the canonical early-escape probability equals the exact tail mass $1-F_\beta(0)$;
+(ii)~the Cole--Hopf is an \emph{exact It\^o identity} (no It\^o/Stratonovich
+correction); (iii)~the early-escape rate $c$ in $\Pearly\sim e^{-c/\eta^2}$ is the
+action of an $\alpha=0$ Painlev\'e~II transcendent, $c=5.443902\ldots$ (\emph{not}
+$2\pi$); and (iv)~a previously confusing inequality $P_{\mathrm{esc}}\ll\eta^2/4\pi$
+is resolved---$\eta^2/4\pi$ is a \emph{different} (saddle-crossing) observable that
+correctly sets $\sigma_*^A$. The global noisy chart-matching rests on a
+$\theta$-uniformity lemma, here proved. Everything is graded honestly as
+\emph{proved}, \emph{numerically confirmed}, or \emph{open}.
+\end{abstract}
+
+\section{Setup and standing results}\label{sec:setup}
+
+\paragraph{Normal form.} In the rescaling chart $K_2$ of the JKK blow-up the inner
+dynamics is the canonical noisy Riccati
+\begin{equation}\label{eq:riccati}
+  \dd R = (R^2 - Y)\dd T + \eta \dd B, \qquad Y = Y_0 - T,
+\end{equation}
+with effective noise $\eta=\sigma/\sqrt{\varepsilon_2}$ and $B$ a standard Brownian
+motion. ($a(\theta),b(\theta),c(\theta)$ are the smooth, $1$-periodic, strictly
+positive normal-form coefficients; \eqref{eq:riccati} is written at $a=b=1$, the
+general case entering through $\sqrt{ac/b}$.)
+
+\paragraph{Deterministic inner $=$ Airy.} The Riccati substitution $R=-u'/u$
+linearises $\dd R/\dd T=R^2-Y$ to $u''=Yu$, the Airy equation; the canard is
+$R(Y)=\mathrm{Ai}'(Y)/\mathrm{Ai}(Y)$ and escapes at the first Airy zero
+$Y=a_1\approx-2.3381$ (JKK's $\Omega_0$).
+
+\paragraph{Channel-A core (standing, rigorous).} At frozen $Y$ the drift is the
+gradient of $U(R)=YR-R^3/3$ with well $R=-\sqrt Y$, saddle $R=+\sqrt Y$, barrier
+$\Delta U=\tfrac43 Y^{3/2}$, quasipotential $V(Y)=2\Delta U=\tfrac83Y^{3/2}$ and
+Kramers rate $\lambda(Y)=(\sqrt Y/\pi)\,e^{-V(Y)/\eta^2}$. The integrated hazard is
+\emph{closed-form},
+\begin{equation}\label{eq:hazard}
+  H(\eta)=\int_0^\infty\lambda(Y)\dd Y
+        =\frac1\pi\int_0^\infty\!\sqrt Y\,e^{-8Y^{3/2}/3\eta^2}\dd Y
+        =\frac{\eta^2}{4\pi},
+\end{equation}
+giving escape ($H\sim1$) at $\eta_*=2\sqrt\pi$, hence the critical-noise law
+\begin{equation}\label{eq:sigmastar}
+  \boxed{\;\sigma_*^A = C_q\,\sqrt{\varepsilon_2}\,\sqrt{ac/b},\qquad C_q=2\sqrt\pi\approx3.545\;}
+\end{equation}
+proved to exponential order, uniformly in $\theta$. The remaining gap was the
+\emph{inner exit measure}---the law of the noisy peel-off near the fold
+$Y\lesssim\eta^{4/3}$---which fixes the sub-exponential prefactor. That gap is the
+subject of this note.
+
+\section{The reduction: inner exit measure $=$ Tracy--Widom}\label{sec:reduction}
+
+\paragraph{(a) Cole--Hopf (exact).} Under $R=-u'/u$, \eqref{eq:riccati} becomes the
+linear stochastic Schr\"odinger equation
+\begin{equation}\label{eq:colehopf}
+  u'' = \bigl(Y-\eta\,\xi\bigr)u,\qquad \xi=\dd B/\dd T,
+\end{equation}
+and a finite-time blow-up $R\to+\infty$ is \emph{exactly} a simple zero (node) of
+$u$. Thus the peel-off level $\Ypeel=\Ynode$ is the first node of $u$ swept from
+$Y_0$ downward.
+
+\paragraph{(b) Stochastic Airy operator.} Writing $x=T$, \eqref{eq:colehopf}
+rearranges to the eigen-equation of the \emph{stochastic Airy operator}
+\begin{equation}\label{eq:sao}
+  H_\beta = -\frac{\dd^2}{\dd x^2} + x + \frac{2}{\sqrt\beta}\,b'(x),
+  \qquad \eta=\frac{2}{\sqrt\beta}\ \ (\beta=4/\eta^2),
+\end{equation}
+whose eigenvalues Ram\'irez--Rider--Vir\'ag (RRV, 2011) characterise by a Riccati
+diffusion that \emph{is} \eqref{eq:riccati}. The first node of $u$ is the ground-state
+eigenvalue: $\Ynode=-\Lambda_0(\beta)$, and $-\Lambda_0(\beta)\eqd\TW_\beta$.
+
+\begin{proposition}[Reduction]\label{prop:reduction}
+Conditional on (a) and (b), the inner exit measure is $\TW_\beta$ with $\beta=4/\eta^2$.
+In particular the canonical early-escape probability is
+\begin{equation}\label{eq:Pearly}
+  \boxed{\;\Pearly(\eta)=\mathbb P(\Ynode>0)=\mathbb P\bigl(\Lambda_0(4/\eta^2)<0\bigr)=1-F_\beta(0)\;}
+\end{equation}
+where $F_\beta$ is the Tracy--Widom$_\beta$ CDF.
+\end{proposition}
+
+\paragraph{Validation, bulk \emph{and} tail.}
+\emph{Bulk:} $\Ynode=a_1+O(\eta)$ Gaussian, measured $\mathrm{std}=0.644\,\eta$, mean
+$\to a_1=-2.3381$. \emph{Full shape:} skewness/kurtosis match $\TW_1,\TW_2,\TW_4$, and
+the \emph{exact} $\TW_1,\TW_2$ densities (Painlev\'e~II / Hastings--McLeod) overlay
+the raw histograms parameter-free at $\beta=1,2$. \emph{Tail:}
+\[
+  \begin{array}{lll}
+   \beta=2\ (\eta=\sqrt2): & \text{MC }0.0298 & \text{vs.}\ \ 1-F_2(0)=0.0306,\\
+   \beta=1\ (\eta=2):      & \text{MC }0.1644 & \text{vs.}\ \ 1-F_1(0)=0.1681.
+  \end{array}
+\]
+The identification therefore holds in the tail, where the prefactor lives.
+
+\section{Lemma 0: the Cole--Hopf is an exact It\^o identity}\label{sec:ito}
+
+A natural worry is that $R=-u'/u$, applied with the ordinary chain rule, is a
+\emph{Stratonovich} identity needing an It\^o correction against the (It\^o) operator
+\eqref{eq:sao}. It does not.
+
+\begin{lemma}[No It\^o/Stratonovich correction]\label{lem:ito}
+The It\^o Riccati \eqref{eq:riccati}, the linear system $\dd u=v\dd T,\ \dd
+v=(Yu)\dd T-\eta u\dd B$, and the spectral problem \eqref{eq:colehopf} are
+pathwise-equivalent with no correction term; the dictionary $\eta=2/\sqrt\beta$
+transfers unmodified.
+\end{lemma}
+
+\begin{proof}
+Three vanishing contributions compose. (i)~\eqref{eq:riccati} has \emph{additive}
+noise (constant coefficient $\eta$), so its It\^o and Stratonovich readings coincide.
+(ii)~The linear system has diffusion vector $g=(g_u,g_v)=(0,-\eta u)$; the
+Stratonovich$\to$It\^o drift is $\tfrac12(g\!\cdot\!\nabla)g=\tfrac12(-\eta
+u)\partial_v(0,-\eta u)=(0,0)$ since $g_u=0$ and $g_v$ is $v$-independent.
+(iii)~For $R=-v/u$, It\^o's formula gives $\dd R=R_u\dd u+R_v\dd v+\tfrac12
+R_{vv}(\dd v)^2$ (the $(\dd u)^2$ and $\dd u\,\dd v$ terms vanish as $\dd u$ is
+noiseless), and $R_{vv}=\partial_v^2(-v/u)=0$, leaving
+$\dd R=(R^2-Y)\dd T+\eta\dd B$ exactly.
+\end{proof}
+
+\emph{Verified two ways:} three independent schemes (Heun/Stratonovich and
+Euler--Maruyama/It\^o on the $u$-system; Euler--Maruyama/It\^o on the Riccati) agree
+in the first-passage mean/std at $\eta=1$ (the two It\^o schemes to $5\cdot10^{-4}$);
+and pathwise with common noise $\mathrm{RMS}\,|R-(-v/u)|=4.5,2.7,1.2\times10^{-4}$ at
+$\dd t=4,2,1\times10^{-4}$, shrinking linearly in $\dd t$. The $O(\eta^2)$ drift of
+$\langle\Ynode\rangle$ is therefore the genuine second-order shift of the stochastic
+Airy ground state, not a calculus artefact.
+
+\section{Theorem 1: the swept--spectral matching}\label{sec:matching}
+
+Proposition~\ref{prop:reduction}(b) identifies the swept first-node law with the
+\emph{fixed} half-line SAO ground state. We establish this to the level of an exact
+duality, a classical deterministic identity, and one reduced analytic claim whose
+decisive consequence is confirmed two independent ways.
+
+\paragraph{($\alpha$) Exact energy--sweep duality.} With $x=T$,
+\eqref{eq:colehopf} reads $H_\beta u=Y_0\,u$: the swept solution \emph{is} the SAO
+eigen-equation at ``energy'' $Y_0$ (exact).
+
+\paragraph{($\beta$) Oscillation reduction.} For each noise path the ODE is regular
+Sturm--Liouville, so $\Ynode=Y_0-x_{\mathrm{node}}$ with $x_{\mathrm{node}}$ the first
+conjugate point of the canard solution---a measurable functional of the noise.
+
+\paragraph{($\gamma$) Deterministic identity (exact).} With $\xi\equiv0$ the recessive
+solution is $u=\mathrm{Ai}(Y_0-x)$, first node at $Y_0-x=a_1$, so $\Ynode=a_1$. The
+half-line Airy operator's ground state satisfies $\mathrm{Ai}(-\Lamdet)=0$, i.e.\
+$\Lamdet=-a_1$; hence
+\begin{equation}\label{eq:detmatch}
+  \Ynode=-\Lamdet \quad\text{(exactly).}
+\end{equation}
+
+\begin{theorem}[Shooting characterisation]\label{thm:shoot}
+$\Ynode\eqd-\Lambda_0(\beta)$ with $\eta=2/\sqrt\beta$; equivalently
+$\Ynode\eqd\TW_\beta$.
+\end{theorem}
+
+\noindent\emph{Proof strategy.} Both sides are the same functional---the first-zero
+location of the recessive solution of the noisy Airy operator on the forbidden
+half-line---in three steps.
+\begin{itemize}
+\item[\textbf{R1}] \emph{Forgetting.} As $Y_0\to\infty$ the normalised swept solution
+converges near the edge to the recessive solution $\psi_{\mathrm{rec}}$ (decaying as
+$Y\to+\infty$); the canard is attracting (contraction rate $2\sqrt Y$), so dependence
+on $Y_0$ and on the initial data is lost exponentially. Thus $\Ynode$ is the first
+descending zero of $\psi_{\mathrm{rec}}$, intrinsic. \emph{[Tool: the Berglund--Gentz
+tube, \S\ref{sec:tube}.]}
+\item[\textbf{R2}] \emph{One functional.} $\Lambda_0$ is, by the standard shooting
+characterisation of a half-line Schr\"odinger ground state, the energy at which the
+recessive-at-$+\infty$ solution vanishes at the wall $x=0$; as the wall coincides with
+the Airy zero ($\Lambda_0=-a_1$), $-\Lambda_0$ is the zero location of the recessive
+solution measured from the edge. The two boundary conditions \emph{coincide}: ``the
+recessive solution has a zero at the design point.''
+\item[\textbf{R3}] \emph{Same law.} Near its zero $\psi_{\mathrm{rec}}$ is a measurable
+functional of the white noise on the forbidden half-line; the SAO ground state is the
+same functional of the noise on $\{x\ge0\}$. The two half-line noises differ by a
+translation and a reflection---invariances of white noise in law---so the first-zero
+laws coincide. With RRV's $-\Lambda_0\eqd\TW_\beta$ the claim follows. \hfill$\square$
+\end{itemize}
+
+\paragraph{Two independent confirmations.}
+(1)~\emph{$Y_0$-independence (R1):} the $\Ynode$ law is flat in the sweep start
+($\eta=1$: mean $-2.05\pm0.01$, std $0.64$ across $Y_0=3,4,6,8$; $\eta=0.5$ similarly),
+and the histograms collapse.
+(2)~\emph{Dual computation (R2--R3):} $-\Lambda_0(\beta)$ computed as the smallest
+eigenvalue of the random-matrix discretisation of $H_\beta$ (tridiagonal, Dirichlet)
+matches $\Ynode$ from ODE shooting---methods sharing no code path:
+\[
+  \begin{array}{lll}
+   \beta=4\ (\eta=1):   & -\Lambda_0:\ -2.03/0.63/0.21 & \Ynode:\ -2.05/0.64/0.21\quad(\text{mean/std/skew})\\
+   \beta=2\ (\eta=\sqrt2):& -\Lambda_0:\ -1.74/0.89/0.26 & \Ynode:\ -1.76/0.89/0.29\\
+   \multicolumn{3}{l}{\text{deterministic check: smallest eigenvalue}=2.3382=-a_1.}
+  \end{array}
+\]
+The matrix eigenvalue knows nothing of sweeps or first nodes, so the agreement is
+non-circular.
+
+\paragraph{Now proved.} Theorem~\ref{thm:shoot} is established \emph{completely} in the
+companion note \texttt{ShootingCharacterisation\_proof}: writing the swept equation in
+$Y$ as the energy-zero problem for $M=-\partial_Y^2+Y-\eta\xi$, the exit level $\Ynode$
+is the level $\ell$ at which $M|_{[\ell,\infty)}$ (Dirichlet at $\ell$) has ground state
+$0$; that level is read off a strictly monotone spectral function $G(\ell)$, and the key
+event $\{\Ynode\le t\}=\{G(t)\ge0\}$ involves only a \emph{deterministic} translation, so
+white-noise stationarity and reflection give $\Ynode\eqd-\Lambda_0(\beta)$. The only
+heavy input is the RRV random-Schr\"odinger framework, which the statement already
+presupposes; the rest is Sturm theory and Dirichlet domain monotonicity. The random-shift
+obstruction of the earlier ``reflection'' strategy is bypassed. (R1 forgetting is the
+accompanying Gronwall/Riccati lemma.)
+
+\section{Two observables: a correction to the $\eta^2/4\pi$ story}\label{sec:two}
+
+The hazard $H=\eta^2/4\pi$ and the early-escape probability are \emph{different}
+objects (Table~\ref{tab:two}). Crossing the saddle once is necessary but not
+sufficient for a node before the fold, so $\Pearly<H$ strictly. This resolves the
+apparent puzzle $P_{\mathrm{esc}}\ll\eta^2/4\pi$: they are different observables.
+Crucially $\sigma_*^A$ \eqref{eq:sigmastar} is built from $H$ and is unaffected.
+
+\begin{table}[h]\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+observable & meaning & scaling \\
+\midrule
+$H=\eta^2/4\pi$ & integrated saddle-crossing hazard & polynomial $\propto\eta^2$ (sets $\sigma_*^A$)\\
+$\Pearly=1-F_\beta(0)$ & canonical escape (node before fold) & exponential $e^{-c/\eta^2}$ (the gap)\\
+\bottomrule
+\end{tabular}
+\caption{The two distinct escape observables.}\label{tab:two}
+\end{table}
+
+\noindent Fitting $\ln\Pearly$ over $\eta\in[1,2]$: the exponential form
+($\ln P=-0.31-6.22/\eta^2$, residual $0.05$) beats the power law ($\mathrm{res}\,0.27$)
+five-fold, confirming $\Pearly\asymp e^{-c/\eta^2}$.
+
+\section{The prefactor and the rate constant}\label{sec:prefactor}
+
+\paragraph{Sub-exponential prefactor.} By Proposition~\ref{prop:reduction} the
+prefactor the gap needed is the \emph{exact Tracy--Widom tail mass}
+$\Pearly(\eta)=1-F_{4/\eta^2}(0)$, computable to all orders via Painlev\'e~II
+(Hastings--McLeod) for $\beta=1,2,4$ and via Bloemendal--Vir\'ag for general $\beta$;
+it is a named special function, not an unknown.
+
+\paragraph{The rate constant $c$ (pinned).} By the optimal-fluctuation
+(Lifshitz/instanton) principle for the SAO lower tail,
+$\mathbb P(\Lambda_0(\beta)<0)\sim e^{-\beta A_*}$ with
+$A_*=\tfrac18\min_\psi K[\psi]^2/\!\int\psi^4$, $K[\psi]=\int_0^\infty(\psi'^2+x\psi^2)$,
+$\psi(0)=0$; hence $c=4A_*$. Optimising the $x$-scale and the shape, the minimiser
+solves the nonlinear-Airy ground state
+\begin{equation}\label{eq:nlairy}
+  -g'' + z\,g = g^3,\qquad g(0)=0,\ \ g(\infty)=0,
+\end{equation}
+and $c=2(\int g'^2)(\int z g^2)/\!\int g^4$. Two Pohozaev identities (multiply
+\eqref{eq:nlairy} by $g$ and by $z g'$) give $P=R$, $S=2P$ with $P=\int g'^2$,
+$R=\int z g^2$, $S=\int g^4$, collapsing the formula to $c=P$. Solving \eqref{eq:nlairy}
+(Pohozaev verified to $10^{-13}$, three grid resolutions agreeing):
+\begin{equation}\label{eq:cval}
+  \boxed{\;c = \int_0^\infty g'^2\dd z = 5.443902\ldots\;}\qquad(\text{not }2\pi=6.2832).
+\end{equation}
+
+\begin{remark}[No elementary closed form, likely]
+The substitution $g=\sqrt2\,s$ turns \eqref{eq:nlairy} into the \emph{defocusing
+Painlev\'e~II} equation $s''=zs-2s^3$ ($\alpha=0$); thus $c$ is the action of an
+$\alpha=0$ Painlev\'e~II transcendent on the half-line---the same family as the
+Tracy--Widom moments, none elementary. The level $0$ is a \emph{generic} point of the
+SAO lower-tail rate function $I(x)$ ($|a_1|=2.338$ below the edge); closed forms occur
+only at special points ($I=0$ at the edge, and $I(x)\sim\tfrac23|x|^{3/2}$ as
+$x\to-\infty$, the universal TW upper-tail constant). To six digits, $c=5.443902$
+matches no elementary candidate ($2\pi$, $\pi\sqrt3=5.4414$, $49/9=5.4444$,
+$a_1^2=5.4667$, $16/3$ all excluded). Exact characterisation:
+$c=\int g'^2=\int z g^2=\tfrac12\int g^4$, with $\int g^2=g'(0)^2=4.28140$.
+\end{remark}
+
+\noindent The earlier full-range fit $c\approx6.22$ was \emph{pre-asymptotic}: the
+local slope $-\dd\ln\Pearly/\dd(\eta^{-2})$ descends from ${\sim}7$ ($\eta\approx1.9$)
+toward $5.444$ as $\eta\to0$ ($5.66$ at the smallest measured $\eta$). The
+leading-order $C_q=2\sqrt\pi$ is unaffected---it rides on the saddle hazard, not on
+$c$.
+
+\section{Global noisy chart-matching: the $\theta$-uniformity lemma}\label{sec:tube}
+
+The full theorem composes the noisy transition maps
+$\Pi_1\circ\kappa_{12}\circ\Pi_2\circ\kappa_{23}\circ\Pi_3$ (entry $K_1\to$ inner
+$K_2\to$ exit $K_3$). JKK's central difficulty---that the angle $\theta$ cannot be
+localised---is resolved not by localising but by uniform bounds.
+
+\begin{lemma}[$\theta$-uniformity]\label{lem:theta}
+If $a,b,c:\,S^1\to\R$ are smooth, $1$-periodic and strictly positive, then with
+$a_-=\min_\theta a$, $a_+=\max_\theta a$ (and likewise $b,c$) every inner estimate
+holds with $\theta$-independent constants depending only on $a_\pm,b_\pm,c_\pm$.
+\end{lemma}
+
+\begin{proof}
+$S^1$ is compact and $a,b,c$ continuous and strictly positive, so each attains a
+positive min and finite max. The three inner quantities are monotone in $a,b$ and hence
+uniformly sandwiched:
+\[
+  2\sqrt{a_-b_-y_2}\le\kappa(\theta,y_2)=2\sqrt{a b\,y_2}\le2\sqrt{a_+b_+y_2},
+\]
+\[
+  \frac{\eta^2}{4\sqrt{a_+b_+y_2}}\le\mathrm{Var}(r_2)=\frac{\eta^2}{4\sqrt{a b\,y_2}}\le\frac{\eta^2}{4\sqrt{a_-b_-y_2}},
+\]
+\[
+  \tfrac83\sqrt{a_-^3/b_+}\,y_2^{3/2}\le V(\theta,y_2)=\tfrac83\sqrt{a^3/b}\,y_2^{3/2}\le\tfrac83\sqrt{a_+^3/b_-}\,y_2^{3/2},
+\]
+so $e^{-V/\eta^2}$ is squeezed between two $\theta$-independent exponentials. Every
+estimate below is built from these by operations preserving the sandwich.
+\end{proof}
+
+\emph{Verified:} the rescaled tube variance $\mathrm{Var}(r_2)\cdot4\sqrt{ab\,y_2}/\eta^2$
+collapses to $1$ across four geometries and two noise levels.
+
+\paragraph{Per-chart tubes and overlaps.} Linearising about the canard
+$r_2=-\sqrt{(a/b)y_2}$, the deviation $\delta=r_2-\gamma_2$ is Ornstein--Uhlenbeck with
+rate $\kappa=2\sqrt{ab\,y_2}$ and quasi-stationary variance $\eta^2/(4\sqrt{ab\,y_2})$;
+the Berglund--Gentz bound gives a concentration tube with the uniform constants of
+Lemma~\ref{lem:theta}. Escape is the tube reaching the separatrix at distance
+$2\sqrt{(a/b)y_2}$, recovering $V=\tfrac83Y^{3/2}$, and near the fold
+$y_2\lesssim\eta^{4/3}$ it hands off to the $\TW_\beta$ inner exit measure of
+\S\ref{sec:reduction}. The chart-overlap maps $\kappa_{12},\kappa_{23}$ are the JKK
+blow-down Jacobians, smooth and non-degenerate on the compact overlaps, hence
+uniformly bounded by Lemma~\ref{lem:theta}.
+
+\section{Status}\label{sec:status}
+
+\begin{table}[h]\centering
+\begin{tabular}{@{}p{0.52\textwidth}l@{}}
+\toprule
+item & status \\
+\midrule
+Channel-A core: barrier $V=\tfrac83Y^{3/2}$, $H=\eta^2/4\pi$, $C_q=2\sqrt\pi$ & \textbf{proved} \\
+Reduction (Prop.~\ref{prop:reduction}): inner exit measure $=\TW_\beta$, $\Pearly=1-F_\beta(0)$ & \textbf{proved} (mod.\ R1,R3); confirmed bulk+tail \\
+Cole--Hopf is an exact It\^o identity (Lemma~\ref{lem:ito}) & \textbf{proved} + verified \\
+Energy--sweep duality, oscillation, $\Ynode=-\Lamdet$ (Thm~\ref{thm:shoot}$\alpha\gamma$) & \textbf{proved} \\
+Shooting characterisation (Thm~\ref{thm:shoot}): $\Ynode\eqd-\Lambda_0(\beta)$ & \textbf{proved} (companion note); confirmed 2 independent ways \\
+Rate constant $c=5.443902$ (Painlev\'e~II; not $2\pi$) & \textbf{pinned}; instanton principle \textbf{proved} (companion note) \\
+$\theta$-uniformity (Lemma~\ref{lem:theta}) & \textbf{proved} + verified \\
+Composition error propagation $\Pi_1\!\circ\!\cdots\!\circ\!\Pi_3$ & \textbf{proved} (companion note); reduces to per-chart BG tubes + fold renewal \\
+Channel-B inner (phase) with SNIC vs.\ fold exponent & \textbf{tightened to Channel-A rigour} (companion note): SNIC $2/3$ \emph{proved} (exact MFPT + Watson), constant $\pi/J$; resolves the pre-asymptotic ``$0.83$'' \\
+Uniformity in $(\varepsilon_1,\varepsilon_2)$; blow-down to physical variables & \textbf{done} (companion note); physical-variable theorem assembled \\
+\bottomrule
+\end{tabular}
+\caption{Honest ledger. ``mod.\ R1,R3'' = modulo the two named analytic inputs.}
+\end{table}
+
+\noindent\textbf{Net effect.} Path~A's single named gap---the inner exit
+measure---is now identified and tail-validated as $\TW_\beta$, its prefactor pinned as
+the special function $1-F_\beta(0)$ and its rate constant pinned as a Painlev\'e~II
+action; the It\^o question is closed (zero); the spectral matching is now \textbf{proved}
+(companion note \texttt{ShootingCharacterisation\_proof}) and confirmed two independent
+ways; the $\theta$-uniformity on which the whole composition rests is a proved lemma; and
+the composition error propagation is now proved (companion note) modulo the standard
+per-chart Berglund--Gentz tubes; the Channel-B inner is identified (the SNIC $2/3$
+noisy saddle-node-on-circle vs the fold's regular phase); and the blow-down to physical
+$(\varepsilon_1,\varepsilon_2)$ variables is done (companion note), assembling the
+physical-variable theorem. \textbf{Path~A's structural program is now complete} modulo the
+cited per-chart Berglund--Gentz tubes: Channel~A and (now) Channel~B both have proved
+exponents and named universal inner objects; the residual is only quantitative (the
+constant $J$'s high-precision value, and the blow-down's reliance on standard
+Berglund--Gentz concentration).
+
+\paragraph{A by-product of independent interest.} The folded-limit-cycle canard escape
+lies in the \emph{Tracy--Widom / KPZ edge universality class}; to our knowledge this is
+the first identification of a fold-canard exit law with the stochastic Airy spectrum.
+
+\begin{thebibliography}{9}
+\bibitem{RRV} J.~Ram\'irez, B.~Rider, B.~Vir\'ag, \emph{Beta ensembles, stochastic
+Airy spectrum, and a diffusion}, J.\ Amer.\ Math.\ Soc.\ \textbf{24} (2011) 919--944.
+\bibitem{BV} A.~Bloemendal, B.~Vir\'ag, \emph{Limits of spiked random matrices}, (the
+general-$\beta$ soft edge / $\TW_\beta$).
+\bibitem{TW} C.~Tracy, H.~Widom, \emph{Level-spacing distributions and the Airy
+kernel}, Comm.\ Math.\ Phys.\ \textbf{159} (1994); GOE/GSE (1996).
+\bibitem{Born} F.~Bornemann, \emph{On the numerical evaluation of distributions in
+random matrix theory: a review}, Markov Process.\ Related Fields \textbf{16} (2010).
+\bibitem{FW} M.~Freidlin, A.~Wentzell, \emph{Random Perturbations of Dynamical
+Systems}, Springer.
+\bibitem{BG} N.~Berglund, B.~Gentz, \emph{Noise-Induced Phenomena in Slow--Fast
+Dynamical Systems}, Springer (2006); Berglund--Gentz--Kuehn (2012).
+\bibitem{JKK} S.~Jelbart, C.~Kuehn, N.~Kuntz, arXiv:2208.01361 (2024). --- deterministic
+backbone, charts $K_1$--$K_3$.
+\bibitem{KS} M.~Krupa, P.~Szmolyan, \emph{Extending GSPT to nonhyperbolic points}, SIAM
+J.\ Math.\ Anal.\ \textbf{33} (2001).
+\end{thebibliography}
+
+\end{document}

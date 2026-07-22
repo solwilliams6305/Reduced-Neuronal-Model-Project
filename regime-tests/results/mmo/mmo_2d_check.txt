@@ -1,0 +1,27 @@
+========================================================================
+MMO Phase 1a — is there an L^a S^b devil's staircase in 2D FHN?
+========================================================================
+
+ε=0.040  I_H1=0.3116  (canard window ~ I_H1 + O(ε))
+   I with steady-state L AND S coexisting (true MMO): 0 of 18
+      I=0.2916        FP  ptp(v)= 0.00  amp_cv=0.000
+      I=0.3245    25L/0S  ptp(v)= 3.89  amp_cv=0.000
+      I=0.3575    26L/0S  ptp(v)= 3.90  amp_cv=0.000
+      I=0.3904    27L/0S  ptp(v)= 3.90  amp_cv=0.000
+      I=0.4233    28L/0S  ptp(v)= 3.91  amp_cv=0.000
+
+ε=0.080  I_H1=0.3313  (canard window ~ I_H1 + O(ε))
+   I with steady-state L AND S coexisting (true MMO): 0 of 18
+      I=0.3113    0L/37S  ptp(v)= 0.00  amp_cv=1.987
+      I=0.3442    22L/0S  ptp(v)= 3.77  amp_cv=0.000
+      I=0.3772    23L/0S  ptp(v)= 3.79  amp_cv=0.000
+      I=0.4101    24L/0S  ptp(v)= 3.80  amp_cv=0.000
+      I=0.4430    24L/0S  ptp(v)= 3.81  amp_cv=0.000
+
+VERDICT: no I shows steady-state L AND S coexistence; ρ(I) jumps 0→1 at
+the cycle birth (FP→relaxation) with NO intermediate mode-locked plateaus.
+The amplitude distribution is single-mode (amp_cv≈0) at every I. There is
+NO devil's staircase in autonomous 2D FHN — consistent with the planar
+Jordan-curve obstruction. The MMO chapter needs ≥3D (folded node) or forcing.
+
+Figure: /sessions/vigilant-brave-mayer/mnt/Reduced Neuronal Model Project/figures/mmo_2d_check.png

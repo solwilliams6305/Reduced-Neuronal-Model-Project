@@ -1,0 +1,115 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\theoremstyle{plain}\newtheorem{proposition}{Proposition}\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{remark}\newtheorem{remark}[proposition]{Remark}
+\newcommand{\dd}{\,\mathrm{d}}\newcommand{\E}{\mathbb{E}}\newcommand{\R}{\mathbb{R}}\newcommand{\C}{\mathbb{C}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\OK}{{\footnotesize\textsf{[established]}}}\newcommand{\cited}{{\footnotesize\textsf{[cited]}}}
+\newcommand{\gap}{{\footnotesize\textsf{[open]}}}
+\begin{document}
+\title[The $s\to-\infty$ Stokes constant]{The complex Stokes constant of $\mathrm{TW}_\beta$: it is
+a trans-series object, not a resonance shift --- and why $\Omega_1$ is real}
+\author{Solomon Williams}\date{\today}
+\begin{abstract}
+The genuinely resurgent (complex) analogue of the cusp $\Omega_2=-0.451+0.352i$ --- the
+median-resummation Stokes constant on the $s\to-\infty$ branch of Painlev\'e~II --- is the last
+open piece of Theorem~T2 for $\mathrm{TW}_\beta$. We establish where it lives, and why it is
+\emph{structurally different} from the connection-root shift $\Omega_1=-1.12$ already computed. The
+stochastic Airy operator is self-adjoint, so its spectrum is real for \emph{every} noise
+realization; hence the connection-root (eigenvalue) shift is real to all orders and $\Omega_1$ is
+real by structure, not accident. The cusp's $\Omega_2$ is complex because the Weber operator is
+\emph{unbounded below} (escape down $-Y^2$): its ``eigenvalue'' $\lambda_0=0.8896(1-i)$ is a
+genuine complex \emph{resonance}. $\mathrm{TW}_\beta$ has no such resonance, so its complex Stokes
+constant cannot come from the connection root; it lives entirely in the median resummation of the
+divergent $1/\beta$ tail series --- the imaginary ambiguity of the lateral Borel sum, fixed by
+reality. Its deterministic value is inherited from the Painlev\'e~II Hastings--McLeod trans-series
+(Cleri--Dunne, Its--Kapaev); its $O(1/\beta)$ noise shift requires the large-order growth of the
+$c_n(a)$ (the transport hierarchy) or the perturbed PII connection on the Stokes sheet. This is a
+precise obstruction map, and it sharpens the $q{=}1$ vs $q{=}2$ contrast at the heart of both papers.
+\end{abstract}
+\maketitle
+
+\section{The structural dichotomy}
+
+\begin{proposition}[Self-adjointness forces $\Omega_1\in\R$]\label{prop:sa}
+The stochastic Airy operator $\mathcal A_\beta=-\partial_x^2+x+2\eps b'$ on $L^2(\R_+)$ (Dirichlet)
+is self-adjoint for every realization of the real potential $x+2\eps b'$; its spectrum is real.
+Hence the connection root (lowest eigenvalue) $\Lambda_0[b']$ is real for every $b'$, and its
+noise average $\E[\Lambda_0]=\Lambda_0^{\det}+\beta^{-1}\Omega_1+\cdots$ is real to all orders.
+\OK\ \emph{(Verified: over $200$ realizations at $\eps=0.3$, $\max|\mathrm{Im}\,\Lambda_n|=0$
+exactly.)}
+\end{proposition}
+
+\begin{proposition}[Why the cusp $\Omega_2$ is complex, and $\mathrm{TW}_\beta$'s is not there]\label{prop:cusp}
+The cusp Weber operator $u''=(\operatorname{sign}(Y)Y^2-\lambda-\eta\dot W)u$ is \emph{unbounded
+below} (escape down the $-Y^2$ side; no bottom eigenvalue). Its connection datum $D(\lambda)$ has a
+complex \emph{resonance} root $\lambda_0=0.8896-0.8896i$ (a decaying, non-normalizable state), and
+$\Omega_2=\E[\text{resonance shift}]=-0.451+0.352i$ is complex \emph{because the object being
+shifted is already complex}. $\mathrm{TW}_\beta$ has no complex resonance
+(Prop.~\ref{prop:sa}), so its complex Stokes constant \textbf{cannot} arise as a connection-root
+shift. \cited\,/\,\OK
+\end{proposition}
+
+This is the precise reason the $\Omega_1$ computation returned a real number: it is the shift of a
+real eigenvalue. The imaginary/resurgent content lives elsewhere.
+
+\section{Where the complex Stokes constant lives}
+
+The tail is $\mathcal T_\beta(a)=e^{-\beta\Phi(a)}\sum_{n\ge0}c_n(a)\beta^{-n}$ with $c_n$
+factorially divergent (Theorem~T1); by Cleri--Dunne the coefficients are non-sign-alternating in
+the relevant region, so the Borel singularity sits on the positive axis and the lateral Borel sums
+$\mathcal S_\pm$ differ by an imaginary amount,
+\begin{equation}\label{eq:disc}
+\mathcal S_+-\mathcal S_-\ \sim\ 2\pi i\,\mathsf S(a)\,e^{-\beta\Phi(a)}+\cdots,
+\end{equation}
+whose median $\tfrac12(\mathcal S_++\mathcal S_-)$ is the real tail. The coefficient $\mathsf S(a)$
+is the \emph{Stokes constant} --- the complex, genuinely resurgent object. It is a property of the
+divergent trans-series (the imaginary ambiguity of resummation), not of any eigenvalue; this is the
+$s\to-\infty$ / oscillatory-branch datum of Painlev\'e~II.
+
+\begin{corollary}[Deterministic value is inherited]\label{cor:det}
+By Theorem~T1 the $c_n$ are Painlev\'e~II trans-series coefficients, so the deterministic Stokes
+constant $\mathsf S_{\mathrm{HM}}$ is the Hastings--McLeod value of the PII connection problem
+(Its--Kapaev; Cleri--Dunne). \cited
+\end{corollary}
+
+\section{The noise shift, and the obstruction}
+
+The noise-averaged Stokes constant is $\mathsf S(\beta)=\mathsf S_{\mathrm{HM}}+\beta^{-1}\mathsf S_1+\cdots$,
+and $\mathsf S_1$ --- the true complex analogue of $\Omega_2$ --- is the target. Two routes, both
+genuine work:
+\begin{itemize}
+\item[(R1)] \emph{Large-order growth of the $c_n$.} $\mathsf S_1$ is read from the noise-dependence
+of $c_n(a)\sim \mathsf S(a)\,\Gamma(n+\gamma)/\Phi(a)^{n+\gamma}$ at large $n$; this needs the $c_n$
+to high order, i.e.\ running the transport hierarchy of the O1 note (which was set up but not
+evaluated). Median/lateral Borel--Pad\'e on the resulting series then extracts
+$\mathrm{Im}\,\mathsf S$ directly, exactly as in the cusp resummation. \gap
+\item[(R2)] \emph{Perturbed PII connection on the Stokes sheet.} Linearise PII about the HM
+solution (the Jacobi operator $\mathcal J=\mu^2\mathcal L_{\mathrm{PII}}$ of the Lax-pair note) and
+compute the $O(\eps^2)$ noise average of its connection coefficient across the anti-Stokes line
+$s\to-\infty$ --- on a rotated contour, as in the cusp $\Omega_2$ code. Unlike the real
+eigenvalue, this connection coefficient is complex, and its noise shift carries
+$\mathrm{Im}\,\mathsf S_1$. \gap
+\end{itemize}
+
+\begin{remark}[Status and the sharpened contrast]\label{rem:status}
+This is the one genuinely-open piece of the $\mathrm{TW}_\beta$ program, and it is
+\emph{harder} than $\Omega_1$: not a real eigenvalue shift but a resurgent trans-series datum. The
+finding of \S1 is itself a result: it explains why $\Omega_1\in\R$ (self-adjointness) and pins the
+complex Stokes constant to the median-resummation sector, so the cusp and $\mathrm{TW}_\beta$
+papers are contrasted precisely --- the cusp's complexity is a resonance (non-self-adjoint,
+unbounded-below) phenomenon, $\mathrm{TW}_\beta$'s is a pure trans-series phenomenon. Deterministic
+value: inherited (Cor.~\ref{cor:det}). Noise shift $\mathsf S_1$: routes R1/R2, open. \gap
+\end{remark}
+
+\begin{thebibliography}{9}
+\bibitem{CleriDunne} N.~J.~Cleri, G.~V.~Dunne, \emph{Resurgent trans-series for generalized
+Hastings--McLeod solutions}, J. Phys. A \textbf{53} (2020) 305201; arXiv:2002.06270.
+\bibitem{FIKN} A.~S.~Fokas, A.~R.~Its, A.~A.~Kapaev, V.~Yu.~Novokshenov, \emph{Painlev\'e
+Transcendents: The Riemann--Hilbert Approach}, AMS Math. Surveys Monogr. \textbf{128}, 2006.
+\bibitem{Costin} O.~Costin, \emph{On Borel summation and Stokes phenomena of nonlinear differential
+systems}, Duke Math. J. \textbf{93} (1998) 289--344; arXiv:math/0608408.
+\end{thebibliography}
+\end{document}

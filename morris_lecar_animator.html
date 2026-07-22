@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Morris–Lecar (Type II) — fold-of-limit-cycles animator</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#0f172a; --panel2:#1e293b; --line:#1f2a44;
+    --txt:#e2e8f0; --mut:#94a3b8; --emer:#34d399; --emer2:#10b981;
+    --blue:#4ea1ff; --orange:#ff7a59; --amber:#fbbd23; --red:#f87272;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#020617;color:var(--txt);
+       font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
+  .wrap{max-width:1080px;margin:0 auto;padding:16px;background:#020617;}
+  .card{background:var(--bg);border-radius:18px;padding:16px;}
+  .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+  h2{font-size:18px;font-weight:600;margin:0}
+  .chip{font-size:12px;padding:5px 10px;border-radius:999px;background:var(--panel2);
+        border:1px solid var(--line)}
+  .chip b{color:var(--emer)}
+  .grid2{display:grid;grid-template-columns:1fr;gap:16px}
+  @media(min-width:820px){.grid2{grid-template-columns:1fr 1fr}}
+  .cv{border:1px solid #16223c;border-radius:12px;overflow:hidden;background:#0b1020}
+  canvas{display:block;width:100%}
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+  .pc label{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--mut);margin-bottom:3px}
+  .pc input[type=number]{width:92px;text-align:right;font-family:ui-monospace,monospace;
+       color:var(--txt);background:var(--panel);border:1px solid var(--line);
+       border-radius:6px;padding:2px 6px;font-size:12px}
+  .pc input[type=number]:focus{outline:none;border-color:var(--emer)}
+  .pc input[type=range]{width:100%;accent-color:var(--emer)}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
+  button{border:none;border-radius:9px;padding:7px 12px;font-size:13px;cursor:pointer;
+         background:var(--panel2);color:var(--txt)}
+  button:hover{background:#334155}
+  button.primary{background:var(--emer);color:#04110b;font-weight:600}
+  button.primary:hover{background:#6ee7b7}
+  .spikes{margin-left:auto;font-family:ui-monospace,monospace;font-size:12px;color:var(--mut)}
+  .info{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
+  @media(min-width:820px){.info{grid-template-columns:1fr 1fr}}
+  .ipanel{border:1px solid var(--line);border-radius:12px;padding:11px;background:rgba(15,23,42,.5);font-size:12px}
+  .ipanel .t{color:var(--mut);font-weight:600;margin-bottom:6px}
+  .fp{display:flex;align-items:center;gap:8px;font-family:ui-monospace,monospace;margin:2px 0}
+  .dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+  .mono{font-family:ui-monospace,monospace;color:var(--mut);line-height:1.7}
+  .foot{margin-top:14px;font-size:11px;color:var(--mut);line-height:1.6}
+  .k{color:var(--emer)}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+  <div class="row">
+    <h2>Morris–Lecar Trajectory Animator <span style="color:var(--mut);font-weight:400;font-size:13px">— Type II (Hopf / fold of limit cycles)</span></h2>
+    <span class="chip">regime:&nbsp;<b id="regime">—</b></span>
+  </div>
+
+  <div class="grid2">
+    <div class="cv"><canvas id="phase" width="470" height="390" style="cursor:crosshair" title="Click to set the starting point (V₀, w₀)"></canvas></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="cv"><canvas id="trace" width="470" height="150"></canvas></div>
+      <div class="controls" id="controls"></div>
+      <div class="btns">
+        <button class="primary" id="playBtn">Pause</button>
+        <button id="restBtn">Start at rest</button>
+        <button id="kickBtn">Kick → cycle</button>
+        <button id="resetBtn">Reset</button>
+        <button id="passBtn">Slow passage ↓</button>
+        <button id="revBtn">auto-reverse: on</button>
+        <button id="nullBtn">Hide nullclines</button>
+        <button id="lcBtn">Hide limit cycle</button>
+        <span class="spikes">spikes: <span id="spk">0</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="ipanel">
+      <div class="t">Fixed points (<span id="nfp">0</span>)</div>
+      <div id="fplist"></div>
+    </div>
+    <div class="ipanel mono" id="diag"></div>
+  </div>
+
+  <div class="foot">
+    Blue = V-nullcline (N-shaped), orange = w-nullcline (w<sub>∞</sub>). Faint green loop = the stable limit cycle.
+    Dots: <span style="color:var(--emer)">green</span> stable, <span style="color:var(--red)">red</span> unstable, <span style="color:var(--amber)">amber</span> saddle.
+    White crosshair = start point (click the plane or edit V₀/w₀). Euler–Maruyama on
+    C·V̇ = I − g<sub>L</sub>(V−V<sub>L</sub>) − g<sub>Ca</sub>m<sub>∞</sub>(V)(V−V<sub>Ca</sub>) − g<sub>K</sub>w(V−V<sub>K</sub>) + noise, ẇ = φ(w<sub>∞</sub>(V)−w)/τ<sub>w</sub>(V).
+    <br><span class="k">The fold of limit cycles lives in the bistable window</span> (≈ I∈[88,94] for the defaults): a stable rest <i>and</i> a stable spiking cycle coexist.
+    Set I≈90, then raise σ to watch <span class="k">noise-induced escape across the fold of cycles</span> — the very transition this project's Tracy–Widom analysis describes.
+    <br>Hit <span class="k">Slow passage ↓</span> to ramp I slowly down from above the Hopf: the trajectory rides the cycle and then <i>falls off near the fold</i> — the canard escape (the <i>folded</i> limit cycle itself). With σ&gt;0 the escape current jitters run-to-run; that distribution is the Tracy–Widom object. Up-ramps do nothing until the Hopf (hysteresis).
+  </div>
+</div></div>
+
+<script>
+"use strict";
+const P = { Iapp:90, phi:0.04, sigma:1.5, dt:0.1, steps:12,
+            gCa:4.4, gK:8, gL:2, VCa:120, VK:-84, VL:-60, C:20,
+            V1:-1.2, V2:18, V3:2, V4:30 };
+let V0 = 0.0, w0 = 0.13;          // start kicked → goes to the limit cycle on load
+let running = true, showNull = true, showLC = true;
+let rampOn=false, rampMag=0.006, rampDir=-1, autoRev=true, Imin=83, Imax=96;
+let bif={fold:88.5, hopf:94};
+
+// ---- model ----
+const minf = V => 0.5*(1+Math.tanh((V-P.V1)/P.V2));
+const winf = V => 0.5*(1+Math.tanh((V-P.V3)/P.V4));
+const tauw = V => 1/Math.cosh((V-P.V3)/(2*P.V4));
+const F = (V,w) => (P.Iapp - P.gL*(V-P.VL) - P.gCa*minf(V)*(V-P.VCa) - P.gK*w*(V-P.VK))/P.C;
+const G = (V,w) => P.phi*(winf(V)-w)/tauw(V);
+const hroot = V => P.Iapp - P.gL*(V-P.VL) - P.gCa*minf(V)*(V-P.VCa) - P.gK*winf(V)*(V-P.VK);
+const wNull = V => (P.Iapp - P.gL*(V-P.VL) - P.gCa*minf(V)*(V-P.VCa))/(P.gK*(V-P.VK)); // V-nullcline w
+
+function fixedPoints(){
+  const pts=[]; const lo=-80,hi=60,N=3000; let vp=lo,gp=hroot(lo);
+  for(let k=1;k<=N;k++){ const v=lo+(hi-lo)*k/N, g=hroot(v);
+    if(gp*g<0){ let a=vp,b=v,fa=gp;
+      for(let it=0;it<60;it++){ const m=0.5*(a+b),fm=hroot(m);
+        if(fa*fm<=0)b=m; else {a=m;fa=fm;} }
+      pts.push(0.5*(a+b)); }
+    vp=v; gp=g; }
+  return pts;
+}
+function classify(V){
+  const t1=Math.tanh((V-P.V1)/P.V2), dminf=(1-t1*t1)/(2*P.V2);
+  const t3=Math.tanh((V-P.V3)/P.V4), dwinf=(1-t3*t3)/(2*P.V4), w=winf(V);
+  const a11=(-P.gL - P.gCa*(dminf*(V-P.VCa)+minf(V)) - P.gK*w)/P.C;
+  const a12=(-P.gK*(V-P.VK))/P.C;
+  const a21=P.phi*dwinf/tauw(V), a22=-P.phi/tauw(V);
+  const tr=a11+a22, det=a11*a22-a12*a21, disc=tr*tr-4*det;
+  let kind;
+  if(det<0) kind="saddle";
+  else if(tr<0) kind=disc<0?"stable spiral":"stable node";
+  else if(tr>0) kind=disc<0?"unstable spiral":"unstable node";
+  else kind="center (Hopf)";
+  return {V,w,kind,tr,det};
+}
+// detect the stable limit cycle by a deterministic probe from a depolarised start
+function detectCycle(){
+  let V=0,w=0.13; const dt=0.2;
+  for(let i=0;i<10000;i++){ const dV=F(V,w)*dt,dw=G(V,w)*dt; V+=dV; w+=dw; }
+  const pts=[]; let vmin=1e9,vmax=-1e9;
+  for(let i=0;i<4000;i++){ V+=F(V,w)*dt; w+=G(V,w)*dt;
+    if(i%6===0) pts.push([V,w]); if(V<vmin)vmin=V; if(V>vmax)vmax=V; }
+  return {pts, amp:vmax-vmin};
+}
+// locate the two walls of the bistable window once, for the slow-passage readout
+function findBifs(){
+  const save=P.Iapp; let fold=null,hopf=null;
+  for(let I=84;I<=98.001;I+=0.5){ P.Iapp=I;
+    if(fold===null && detectCycle().amp>15) fold=I;
+    const stable=fixedPoints().map(classify).some(c=>c.kind.startsWith("stable"));
+    if(hopf===null && !stable) hopf=I;
+  }
+  P.Iapp=save;
+  return {fold:fold==null?88.5:fold, hopf:hopf==null?94:hopf};
+}
+
+// ---- state ----
+const st={V:V0,w:w0,t:0,trail:[],trace:[],spikes:0,above:false};
+let fps=[], cyc={pts:[],amp:0};
+function resetState(v,w){ st.V=v; st.w=w; st.t=0; st.trail=[]; st.trace=[]; st.spikes=0; st.above=false; }
+
+// ---- geometry / canvas ----
+const VMIN=-80,VMAX=60,WMIN=-0.05,WMAX=0.62;
+const ph=document.getElementById("phase"), pc=ph.getContext("2d");
+const tr=document.getElementById("trace"), tc=tr.getContext("2d");
+const X=v=>((v-VMIN)/(VMAX-VMIN))*ph.width;
+const Y=w=>ph.height-((w-WMIN)/(WMAX-WMIN))*ph.height;
+
+function drawPhase(){
+  const W=ph.width,H=ph.height;
+  pc.fillStyle="#0b1020"; pc.fillRect(0,0,W,H);
+  pc.strokeStyle="rgba(255,255,255,0.06)"; pc.lineWidth=1;
+  for(let v=-80;v<=60;v+=20){ pc.beginPath();pc.moveTo(X(v),0);pc.lineTo(X(v),H);pc.stroke(); }
+  for(let w=0;w<=0.6;w+=0.1){ pc.beginPath();pc.moveTo(0,Y(w));pc.lineTo(W,Y(w));pc.stroke(); }
+  if(showNull){
+    pc.strokeStyle="#4ea1ff"; pc.lineWidth=2; pc.beginPath();
+    let started=false;
+    for(let i=0;i<=400;i++){ const v=VMIN+(VMAX-VMIN)*i/400, w=wNull(v);
+      if(w<WMIN-0.3||w>WMAX+0.3){started=false;continue;}
+      if(!started){pc.moveTo(X(v),Y(w));started=true;} else pc.lineTo(X(v),Y(w)); }
+    pc.stroke();
+    pc.strokeStyle="#ff7a59"; pc.beginPath();
+    for(let i=0;i<=400;i++){ const v=VMIN+(VMAX-VMIN)*i/400, w=winf(v);
+      if(i===0)pc.moveTo(X(v),Y(w)); else pc.lineTo(X(v),Y(w)); }
+    pc.stroke();
+  }
+  if(showLC && !rampOn && cyc.amp>15 && cyc.pts.length){
+    pc.strokeStyle="rgba(110,231,183,0.45)"; pc.lineWidth=2.5; pc.beginPath();
+    cyc.pts.forEach((p,i)=> i?pc.lineTo(X(p[0]),Y(p[1])):pc.moveTo(X(p[0]),Y(p[1])));
+    pc.closePath(); pc.stroke();
+  }
+  // trail
+  pc.lineWidth=1.6; pc.strokeStyle="rgba(125,224,160,0.9)"; pc.beginPath();
+  st.trail.forEach((p,i)=> i?pc.lineTo(X(p[0]),Y(p[1])):pc.moveTo(X(p[0]),Y(p[1])));
+  pc.stroke();
+  // fixed points
+  fps.forEach(f=>{ pc.beginPath(); pc.arc(X(f.V),Y(f.w),5.5,0,6.2832);
+    pc.fillStyle=f.kind.startsWith("stable")?"#34d399":f.kind==="saddle"?"#fbbd23":"#f87272";
+    pc.fill(); pc.strokeStyle="#0b1020"; pc.lineWidth=1.5; pc.stroke(); });
+  // start marker
+  pc.strokeStyle="rgba(255,255,255,0.85)"; pc.lineWidth=1.5;
+  pc.beginPath(); pc.arc(X(V0),Y(w0),6.5,0,6.2832); pc.stroke();
+  pc.beginPath(); pc.moveTo(X(V0)-4,Y(w0)); pc.lineTo(X(V0)+4,Y(w0));
+  pc.moveTo(X(V0),Y(w0)-4); pc.lineTo(X(V0),Y(w0)+4); pc.stroke();
+  // current point
+  pc.beginPath(); pc.arc(X(st.V),Y(st.w),4.5,0,6.2832); pc.fillStyle="#fff"; pc.fill();
+  pc.fillStyle="rgba(255,255,255,0.55)"; pc.font="12px system-ui";
+  pc.fillText("V (mV)",W-52,H-8); pc.fillText("w",8,14);
+}
+function drawTrace(){
+  const W=tr.width,H=tr.height; tc.fillStyle="#0b1020"; tc.fillRect(0,0,W,H);
+  const y=v=>H-((v-VMIN)/(VMAX-VMIN))*H;
+  tc.strokeStyle="rgba(255,255,255,0.16)"; tc.setLineDash([4,4]);
+  tc.beginPath(); tc.moveTo(0,y(0)); tc.lineTo(W,y(0)); tc.stroke(); tc.setLineDash([]);
+  tc.strokeStyle="#7ee0a0"; tc.lineWidth=1.6; tc.beginPath();
+  const d=st.trace, n=d.length;
+  for(let i=0;i<n;i++){ const px=i/Math.max(1,n-1)*W; i?tc.lineTo(px,y(d[i])):tc.moveTo(px,y(d[i])); }
+  tc.stroke();
+  tc.fillStyle="rgba(255,255,255,0.55)"; tc.font="12px system-ui"; tc.fillText("V(t)",8,14);
+}
+
+// ---- noise ----
+let spare=null;
+function gauss(){ if(spare!==null){const s=spare;spare=null;return s;}
+  let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random();
+  const m=Math.sqrt(-2*Math.log(u)); spare=m*Math.sin(6.2832*v); return m*Math.cos(6.2832*v); }
+
+// ---- regime / diagnostics ----
+function recompute(){
+  fps=fixedPoints().map(classify);
+  cyc=detectCycle();
+  const restStable=fps.some(f=>f.kind.startsWith("stable"));
+  const cycle=cyc.amp>15;
+  let label;
+  if(restStable&&cycle) label="Bistable — fold of limit cycles";
+  else if(cycle) label="Tonic spiking (limit cycle)";
+  else if(restStable) label="Excitable (rest only)";
+  else label="—";
+  document.getElementById("regime").textContent=label;
+  document.getElementById("nfp").textContent=fps.length;
+  const col=k=>k.startsWith("stable")?"#34d399":k==="saddle"?"#fbbd23":"#f87272";
+  document.getElementById("fplist").innerHTML=fps.map(f=>
+    `<div class="fp"><span class="dot" style="background:${col(f.kind)}"></span>`+
+    `<span style="width:96px">V*=${f.V.toFixed(1)} mV</span><span style="color:var(--mut)">${f.kind}</span></div>`).join("")||
+    `<div style="color:var(--mut)">none in range</div>`;
+  document.getElementById("diag").innerHTML=
+    `regime: <span style="color:var(--emer)">${label}</span><br>`+
+    `I = ${P.Iapp.toFixed(1)} µA/cm²<br>`+
+    `limit-cycle amplitude: ${cycle?cyc.amp.toFixed(1)+" mV":"— (no cycle)"}<br>`+
+    `rest fixed point: <span style="color:${restStable?'#34d399':'#f87272'}">${restStable?'stable':'unstable'}</span><br>`+
+    `<span style="color:#64748b">fold of cycles ≈ I where the cycle appears; Hopf ≈ I where rest goes unstable (≈94 for defaults)</span>`;
+}
+
+// ---- controls ----
+const SPEC=[
+  ["Iapp","I (current)",60,130,0.5],["phi","φ (timescale)",0.01,0.25,0.005],
+  ["sigma","σ (noise)",0,12,0.1],["dt","dt (ms)",0.02,0.5,0.01],
+  ["gCa","g_Ca",2,7,0.05],["gK","g_K",4,14,0.1],
+  ["V3","V₃ (Type II≈2)",-6,20,0.5],["V4","V₄ (Type II≈30)",8,40,0.5],
+  ["steps","speed (steps/frame)",1,60,1],
+];
+const cont=document.getElementById("controls");
+const extra=[["V0","V₀ (start)",VMIN,VMAX,0.5,()=>V0,v=>{V0=v;}],
+             ["w0","w₀ (start)",WMIN,WMAX,0.005,()=>w0,v=>{w0=v;}],
+             ["rampMag","ramp |dI/dt| (slow passage)",0.001,0.03,0.001,()=>rampMag,v=>{rampMag=v;}]];
+function mkControl(id,label,min,max,step,get,set){
+  const d=document.createElement("div"); d.className="pc";
+  d.innerHTML=`<label><span>${label}</span><input type="number" step="${step}"></label><input type="range" min="${min}" max="${max}" step="any">`;
+  const num=d.querySelector('input[type=number]'), rng=d.querySelector('input[type=range]');
+  const fmt=v=>String(Number(v.toPrecision(5)));
+  const sync=()=>{ const v=get(); num.value=fmt(v); rng.value=Math.min(max,Math.max(min,v)); };
+  num.addEventListener("input",e=>{const v=parseFloat(e.target.value); if(!isNaN(v)){set(v);rng.value=Math.min(max,Math.max(min,v));afterChange();}});
+  rng.addEventListener("input",e=>{const v=parseFloat(e.target.value); set(v);num.value=fmt(v);afterChange();});
+  d.sync=sync; sync(); cont.appendChild(d); return d;
+}
+const ctrls=[];
+SPEC.forEach(([k,l,mn,mx,sp])=> ctrls.push(mkControl(k,l,mn,mx,sp,()=>P[k],v=>{P[k]=k==="steps"?Math.round(v):v;})));
+extra.forEach(([k,l,mn,mx,sp,g,s])=> ctrls.push(mkControl(k,l,mn,mx,sp,g,s)));
+function afterChange(){ recompute(); if(!running){drawPhase();drawTrace();} ctrls.forEach(c=>c.sync()); }
+
+// ---- buttons ----
+const playBtn=document.getElementById("playBtn");
+playBtn.onclick=()=>{ running=!running; playBtn.textContent=running?"Pause":"Play"; if(running)loop(); };
+document.getElementById("resetBtn").onclick=()=>{ resetState(V0,w0); if(!running){drawPhase();drawTrace();} };
+document.getElementById("restBtn").onclick=()=>{ const s=fps.find(f=>f.kind.startsWith("stable"));
+  const v=s?s.V:-26.6, w=s?s.w:winf(-26.6); V0=v;w0=w; resetState(v,w); ctrls.forEach(c=>c.sync()); if(!running){drawPhase();drawTrace();} };
+document.getElementById("kickBtn").onclick=()=>{ V0=0;w0=0.13; resetState(0,0.13); ctrls.forEach(c=>c.sync()); if(!running){drawPhase();drawTrace();} };
+document.getElementById("nullBtn").onclick=e=>{ showNull=!showNull; e.target.textContent=(showNull?"Hide":"Show")+" nullclines"; if(!running)drawPhase(); };
+document.getElementById("lcBtn").onclick=e=>{ showLC=!showLC; e.target.textContent=(showLC?"Hide":"Show")+" limit cycle"; if(!running)drawPhase(); };
+const passBtn=document.getElementById("passBtn"), revBtn=document.getElementById("revBtn");
+passBtn.onclick=()=>{
+  rampOn=!rampOn;
+  if(rampOn){                       // start above the Hopf, kicked onto the cycle, then drift down
+    P.Iapp=Imax; rampDir=-1;
+    resetState(0,0.13); ctrls.forEach(c=>c.sync());
+    if(!running){ running=true; playBtn.textContent="Pause"; loop(); }
+  } else recompute();
+  passBtn.textContent = rampOn ? "Stop passage" : "Slow passage ↓";
+};
+revBtn.onclick=e=>{ autoRev=!autoRev; e.target.textContent="auto-reverse: "+(autoRev?"on":"off"); };
+ph.addEventListener("click",e=>{ const r=ph.getBoundingClientRect();
+  const v=VMIN+((e.clientX-r.left)/r.width)*(VMAX-VMIN);
+  const w=WMIN+(1-(e.clientY-r.top)/r.height)*(WMAX-WMIN);
+  V0=v;w0=w; resetState(v,w); ctrls.forEach(c=>c.sync()); if(!running){drawPhase();drawTrace();} });
+
+// ---- slow passage through the fold of cycles ----
+function liveDiag(){
+  const I=P.Iapp;
+  const zone = I>=bif.hopf ? "tonic (rest unstable)" : I>=bif.fold ? "bistable (rest + cycle)" : "excitable (rest only)";
+  const zc = (I>=bif.fold&&I<bif.hopf) ? "#34d399" : I<bif.fold ? "#f87272" : "#fbbd23";
+  document.getElementById("regime").textContent = "slow passage — "+zone;
+  document.getElementById("diag").innerHTML =
+    `slow passage: I = <span style="color:var(--emer)">${I.toFixed(2)}</span> µA/cm²  (drifting ${rampDir<0?'↓':'↑'})<br>`+
+    `fold of cycles ≈ <b>${bif.fold.toFixed(1)}</b> &nbsp;·&nbsp; subcritical Hopf ≈ <b>${bif.hopf.toFixed(1)}</b><br>`+
+    `now in: <span style="color:${zc}">${zone}</span><br>`+
+    `<span style="color:#64748b">ramping ↓: the trajectory rides the cycle, then falls off near the fold — the canard escape. Raise σ and re-run to see the escape current jitter.</span>`;
+}
+// ---- loop ----
+function loop(){
+  if(!running) return;
+  const sq=Math.sqrt(P.dt);
+  for(let k=0;k<P.steps;k++){
+    if(rampOn){
+      P.Iapp += rampDir*rampMag*P.dt;
+      if(P.Iapp<=Imin){ P.Iapp=Imin; if(autoRev)rampDir=1; else rampOn=false; }
+      else if(P.Iapp>=Imax){ P.Iapp=Imax; if(autoRev)rampDir=-1; else rampOn=false; }
+    }
+    const v=st.V,w=st.w;
+    st.V=v + F(v,w)*P.dt + P.sigma*sq*gauss();
+    st.w=w + G(v,w)*P.dt;
+    st.t+=P.dt;
+    const ab=st.V>=0; if(ab&&!st.above)st.spikes++; st.above=ab;
+    st.trail.push([st.V,st.w]); if(st.trail.length>1600)st.trail.shift();
+    st.trace.push(st.V); if(st.trace.length>1100)st.trace.shift();
+  }
+  if(rampOn){ fps=fixedPoints().map(classify); ctrls.forEach(c=>c.sync()); liveDiag(); }
+  document.getElementById("spk").textContent=st.spikes;
+  drawPhase(); drawTrace();
+  requestAnimationFrame(loop);
+}
+bif=findBifs(); recompute(); drawPhase(); drawTrace(); loop();
+</script>
+</body>
+</html>

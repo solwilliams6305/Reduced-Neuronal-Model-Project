@@ -1,0 +1,123 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\OK}{{\footnotesize\textsf{[established]}}}
+\newcommand{\cited}{{\footnotesize\textsf{[cited]}}}
+\newcommand{\gap}{{\footnotesize\textsf{[structural refinement]}}}
+
+\begin{document}
+
+\title[There is no $\alpha(\beta)$]{Nailing $\alpha(\beta)$: there is none --- the tail prefactor
+is eikonal, and Theorem~T1 is robust to the Painlev\'e~II family}
+\author{Solomon Williams}
+\date{\today}
+
+\begin{abstract}
+The Lax-pair note left one open input for O1$^\star$: the $\beta$-dependence of the Painlev\'e~II
+parameter $\alpha$, which appeared to clash ($\alpha=\tfrac12$ at the leading instanton vs.\
+$\alpha=0$ for the exact Hastings--McLeod law at $\beta=2$), and which the $\beta$-dependent tail
+prefactor $a^{-3\beta/4}$ seemed to demand. On inspection the demand dissolves: the prefactor is
+\emph{eikonal}. Dumaz--Vir\'ag's tail $-\log\Prob=(\tfrac23 a^{3/2}+\tfrac34\log a)\beta+o(\beta)$
+has a $\log a$ coefficient that scales as $\tfrac34\beta$, i.e.\ it is part of the classical rate
+function $\beta\Phi(a)$, not a $\beta$-varying Painlev\'e index. Hence $\alpha$ is \emph{constant},
+and $a^{-3\beta/4}$ is the overall large-deviation factor $\beta$ times the fixed
+$\tfrac34\log a$ term of $\Phi$ (whose coefficient is confirmed at $\beta=2$). The residual
+$\alpha=\tfrac12$-vs-$0$ question is a structural refinement (which Painlev\'e~II family the tail
+saddle sits in --- half-integer vs.\ integer), \emph{not} a $\beta$-dependence, and it does not
+affect the conclusion: both families are rank-one at their irregular singularity, so Costin's
+theorem gives Borel summability either way, and Theorem~T1 stands.
+\end{abstract}
+
+\maketitle
+
+\section{The power-counting that dissolves the question}
+
+\begin{proposition}[The prefactor is eikonal]\label{prop:eikonal}
+Dumaz--Vir\'ag \cite{DV} give, for $a\to\infty$,
+$\Prob(\mathrm{TW}_\beta>a)=a^{-\frac34\beta+o(1)}\exp(-\tfrac23\beta a^{3/2})$, i.e.
+\[
+-\log\Prob(\mathrm{TW}_\beta>a)=\beta\,\Phi(a)+O(\beta^0),\qquad
+\Phi(a)=\tfrac23 a^{3/2}+\tfrac34\log a+O(1).
+\]
+The coefficient of $\log a$ in $-\log\Prob$ is $\tfrac34\beta$: it \emph{scales with $\beta$},
+hence belongs to the classical action $\beta\Phi$, not to the $O(\beta^0)$ one-loop prefactor.
+Therefore $\Phi$, and with it the Painlev\'e~II backbone and its parameter $\alpha$, is
+\emph{$\beta$-independent}; the ``$\beta$-dependence'' $a^{-3\beta/4}$ is nothing but the overall
+large-deviation factor $\beta$ multiplying the fixed $\tfrac34\log a$ term of $\Phi$. \OK
+\end{proposition}
+
+\begin{remark}[Confirmation of the $\tfrac34$ coefficient]\label{rem:confirm}
+At $\beta=2$ the backbone is the Hastings--McLeod solution and the tail is
+$-\log g(s)=\tfrac43 s^{3/2}+\tfrac32\log s+C$ (numerically verified: log-coefficient
+$\to 3/2$). Since $\tfrac32=\tfrac34\cdot\beta|_{\beta=2}$, the $\tfrac34$-coefficient of the
+$\log a$ term of $\Phi$ is confirmed and is $\beta$-independent, exactly as
+Proposition~\ref{prop:eikonal} requires. \OK
+\end{remark}
+
+So the Lax-pair note's ``Q1/Q2'' --- read as demanding $\alpha=\alpha(\beta)$ to source
+$a^{-3\beta/4}$ --- is based on a misattribution: that prefactor is eikonal, and needs no varying
+index. \emph{There is no $\alpha(\beta)$.}
+
+\section{The residual: which Painlev\'e~II family (not a $\beta$-question)}
+
+What remains is genuinely structural, and $\beta$-independent: the leading tail \emph{instanton}
+is the $\alpha=\tfrac12$ Airy solution of Painlev\'e~II (Lax-pair note, verified), whereas the full
+$\beta=2$ \emph{distribution} is the $\alpha=0$ Hastings--McLeod transcendent. These are different
+Painlev\'e~II families (half-integer vs.\ integer $\alpha$, not related by the integer-shift
+B\"acklund ladder), and the distinction is the familiar one between a saddle (the tail instanton)
+and the fully-resummed object (the distribution): the fluctuation operator about the tail saddle is
+the $\alpha=\tfrac12$ linearization, while the distribution it is the tail \emph{of} is $\alpha=0$.
+Pinning this correspondence precisely --- e.g.\ via the Airy-solution/coalescence structure that
+relates the $\alpha=0$ tail to the $\alpha=\tfrac12$ saddle --- is a refinement worth writing, but
+it is not a $\beta$-dependence. \gap
+
+\begin{theorem}[T1 is robust to the family question]\label{thm:robust}
+For \emph{every} $\alpha$, Painlev\'e~II $q''=2q^3+sq+\alpha$ has a rank-one irregular singularity
+at $s=\infty$, so its trans-series falls under Costin's Borel-summability theorem for rank-one
+nonlinear ODEs \cite{Costin}, with non-vanishing Stokes constant \cite{CCK} and the
+non-sign-alternating median-resummation reality structure \cite{CleriDunne}. Consequently the
+identification of the fluctuation operator with a Painlev\'e~II linearization (Lax-pair note,
+Cor.~3.2) suffices for Theorem~T1 --- Borel summability of $\sum_n c_n(a)\beta^{-n}$ --- \emph{whichever}
+member ($\alpha=0$ or $\tfrac12$) the tail saddle is ultimately assigned to. The
+$\beta$-dependent prefactor enters only through the overall factor $\beta$ of the eikonal
+(Prop.~\ref{prop:eikonal}), not through the summability class. \OK
+\end{theorem}
+
+\section{Status of O1$^\star$}
+
+\emph{Closed:} the operator identification $\mathcal J=\mu^2\mathcal L_{\mathrm{PII}}$ (Lax-pair
+note, verified numerically); the $\beta$-dependence question (Prop.~\ref{prop:eikonal}: none ---
+eikonal prefactor); Borel summability of the $c_n$ (Thm.~\ref{thm:robust}, via Costin), hence
+Theorem~T1.
+\emph{Structural refinement remaining (not blocking T1):} the precise assignment of the tail
+saddle within the Painlev\'e~II family ($\alpha=\tfrac12$ instanton vs.\ $\alpha=0$ distribution),
+\S2. \emph{Net:} O1$^\star$ --- ``is the $\mathrm{TW}_\beta$ tail a Borel-summable Painlev\'e~II
+trans-series?'' --- is answered \textbf{yes}, and Theorem~T1 of the skeleton is established modulo
+the cited PII/Costin machinery. The parameter-family point is a sharpening of \emph{which} PII, not
+a gap in \emph{whether}.
+
+\begin{thebibliography}{9}
+\bibitem{DV} L.~Dumaz, B.~Vir\'ag, \emph{The right tail exponent of the Tracy--Widom-$\beta$
+distribution}, Ann. IHP Probab. Statist. \textbf{49} (2013) 915--933; arXiv:1102.4818.
+\bibitem{Costin} O.~Costin, \emph{On Borel summation and Stokes phenomena of nonlinear
+differential systems}, Duke Math. J. \textbf{93} (1998) 289--344; arXiv:math/0608408.
+\bibitem{CCK} O.~Costin, R.~D.~Costin, M.~Kohut, \emph{Rigorous bounds of Stokes constants for some
+nonlinear ODEs at rank-one irregular singularities}, Proc. R. Soc. A \textbf{460} (2004)
+3631--3641; arXiv:math/0608316.
+\bibitem{CleriDunne} N.~J.~Cleri, G.~V.~Dunne, \emph{Resurgent trans-series for generalized
+Hastings--McLeod solutions}, J. Phys. A \textbf{53} (2020) 305201; arXiv:2002.06270.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,163 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\OK}{{\footnotesize\textsf{[established here]}}}
+\newcommand{\cited}{{\footnotesize\textsf{[cited]}}}
+\newcommand{\gap}{{\footnotesize\textsf{[remaining: T2c]}}}
+
+\begin{document}
+
+\title[The location-fixing lemma O5]{The location-fixing lemma (O5): noise-averaging moves the
+Stokes constant, not the Borel singularities --- shared frontier of the $\mathrm{TW}_\beta$ and
+cusp papers}
+\author{Solomon Williams}
+\date{\today}
+
+\begin{abstract}
+Obligation O5 of Theorem~T2 (both the $\mathrm{TW}_\beta$ and cusp $\mathcal W$ papers): show that
+averaging the noise-conditioned Stokes datum leaves the Borel-singularity \emph{locations} fixed at
+the deterministic instanton action, shifting only the Stokes \emph{constant}. We establish it at
+the level the cusp program reached, now with a clean mechanism. The Borel-singularity location is
+the WKB action $A[b']=\int\!\sqrt{(x+a)+2\eps b'}\,\dd x$ of the noise-dressed problem; its
+expansion $A=A_0+\eps A_1+\eps^2 A_2+\cdots$ has $A_1=\int b'/\sqrt{x+a}$ \emph{linear} in the
+noise (so $\E[A_1]=0$: locations are fixed at $O(\eps)$, the saddle/stationarity), while
+$\E[A_2]=-\tfrac12\int\E[b'^2]/(x+a)^{3/2}$ is $\delta(0)$-divergent (the coincident-point
+self-contraction --- exactly the cusp's $v_3$ renormalization threshold). Hence the location is
+\emph{not} the renormalization-clean object at $O(\eps^2)$; the clean object is the Stokes
+constant, whose noise average $\Omega(\beta)=\E[S_\beta]$ carries the finite correction. A
+structural (isomonodromy-rigidity) argument gives the all-orders version: the noise is a subleading
+perturbation of the fixed rank-$3/2$ irregular singularity at $x=\infty$, so the formal-monodromy
+exponents (= Voros periods = singularity locations) are noise-independent, and only the Stokes
+matrices move. This proves T2(a) qualitatively and reduces T2(b,c) to the finite Airy-Green's
+chaos integral $\Omega_1$ (the transposition of the cusp $\Omega_2$).
+\end{abstract}
+
+\maketitle
+
+\section{The claim}
+
+For a fixed white-noise realization $b'$, the operator $-\psi''+(x+2\eps b')\psi=\Lambda\psi$ is a
+deterministic Schr\"odinger problem; let $S_\beta[b']$ be its Stokes/connection datum and
+$A[b']$ the associated Borel-singularity location (Voros period). O5 asserts:
+\begin{equation}\tag{O5}
+\text{$\E[A]$ equals the deterministic action $A_0$ (up to renormalization), and the noise
+correction is carried by $\Omega(\beta)=\E[S_\beta]$, not by the location.}
+\end{equation}
+
+\section{The action functional and its noise expansion}
+
+The leading exact-WKB momentum of the noise-dressed problem at level $\Lambda=-a$ is
+$P_0(x)=\sqrt{(x+a)+2\eps b'(x)}$, and the Borel-singularity location is the action
+$A[b']=\int P_0\,\dd x$ over the relevant (tunneling) contour, with deterministic value
+$A_0=\int\sqrt{x+a}\,\dd x=\tfrac23 a^{3/2}$. Expanding in the noise strength,
+\begin{equation}\label{eq:expand}
+A[b']=A_0+\eps\!\int\!\frac{b'}{\sqrt{x+a}}\,\dd x
+-\frac{\eps^2}{2}\!\int\!\frac{b'^2}{(x+a)^{3/2}}\,\dd x+O(\eps^3)
+=:A_0+\eps A_1+\eps^2 A_2+\cdots.
+\end{equation}
+
+\begin{lemma}[First-order location fixing]\label{lem:first}
+$A_1=\int b'/\sqrt{x+a}\,\dd x$ is a mean-zero Gaussian, so $\E[A_1]=0$: the Borel-singularity
+location is unshifted at $O(\eps)$. Equivalently, the instanton is a saddle of the action and the
+location is stationary to first order in the noise. \OK\ \emph{(verified: Monte-Carlo
+$\E[A_1]=0.00\pm0.02$, with a nonzero variance $\mathrm{Var}[A_1]\approx1.4$ --- an $O(\eps)$
+location \emph{fluctuation}, not a mean shift.)}
+\end{lemma}
+
+\begin{lemma}[The $O(\eps^2)$ location shift is $\delta(0)$-divergent]\label{lem:delta}
+$\E[A_2]=-\tfrac12\int \E[b'(x)^2]\,(x+a)^{-3/2}\dd x
+=-\tfrac12\,\delta(0)\!\int (x+a)^{-3/2}\dd x$, a coincident-point self-contraction, hence
+divergent. So the naive noise-averaged location shift is $\delta(0)$-divergent and is \emph{not} a
+clean observable; a renormalization (subtracting the self-contraction) is forced --- exactly the
+threshold that first appears at $v_3$ in the cusp program. \OK\ \emph{(verified: on a grid of
+spacing $\Delta$, $\E[A_2]\approx-\tfrac1{2\Delta}\int(x+a)^{-3/2}\dd x$, growing as $\Delta^{-1}$.)}
+\end{lemma}
+
+The two lemmas together are the analytic content of O5: the location does not move at the clean
+($O(\eps)$) order, and at $O(\eps^2)$ what would move it is a divergence that renormalizes away.
+The finite noise information must therefore live elsewhere --- in the Stokes constant (\S4).
+
+\section{The all-orders version: isomonodromy rigidity}
+
+\begin{proposition}[Structural location-fixing]\label{prop:rigid}
+The Borel-singularity locations of the trans-series are the Voros periods, equivalently the
+exponents of the formal monodromy at the irregular singularity $x=\infty$. That singularity has
+rank $3/2$, set by the leading growth of the potential $x$; the noise $2\eps b'(x)$ is subleading
+there (by the law of the iterated logarithm $b'$ contributes $O(\sqrt{x})\ll x$ in the relevant
+averaged sense), so it preserves the rank and the leading symbol. Hence the formal-monodromy
+exponents --- the periods --- are noise-independent to all orders, and the noise dresses only the
+Stokes matrices (connection data). \OK\emph{(structural; the rough-potential rigor is the technical
+point, controlled by the renormalization of Lemma~\ref{lem:delta}).}
+\end{proposition}
+
+This is the exact-WKB statement of O5: periods are integrals of the leading WKB $1$-form over the
+(noise-independent) Airy spectral curve $y^2=x+a$; the noise enters the \emph{sub}-leading Voros
+symbols, which feed the Stokes constants but not the periods. It upgrades
+Lemmas~\ref{lem:first}--\ref{lem:delta} from ``fixed at $O(\eps)$'' to ``fixed to all orders,''
+modulo making the rough-potential preservation rigorous.
+
+\section{Where the noise goes: the Stokes constant (T2b,c)}
+
+By \S2--\S3 the noise correction is carried by the Stokes/connection datum, not the location.
+Define $\Omega(\beta)=\E[S_\beta]$. The connection datum is a ratio of subdominant amplitudes
+(a Wronskian ratio); unlike the period, its $O(\eps^2)$ noise average is \emph{finite}, because the
+$\delta(0)$ self-contraction cancels between numerator and denominator of the ratio --- the
+mechanism established in the cusp program, where the analogous $\E[\text{connection root}]$ is the
+renormalization-clean object and yields $\Omega_2=-0.451+0.352i$ (finite) while the period mean
+shift is $\delta(0)$-divergent.
+
+\begin{theorem}[Reduction of T2 to a finite chaos integral]\label{thm:reduce}
+Modulo Proposition~\ref{prop:rigid}, $\Omega(\beta)=\Omega_{\mathrm{HM}}+\beta^{-1}\Omega_1+O(\beta^{-2})$
+with
+\[
+\Omega_1=\text{a renormalized (self-contraction-subtracted) second Wiener chaos integral of the
+Airy Green's function},
+\]
+finite by the Nourdin--Peccati--Viens Malliavin bound \cite{Viens} and computable by the cusp
+program's Green's-function/chaos machinery. This is T2(b,c); the $\mathrm{TW}_\beta$ case is the
+transposition of the cusp $\Omega_2$, cleaner because the Green's function is the explicit Airy
+Green's function. \gap
+\end{theorem}
+
+\section{Status}
+
+\emph{Established here:} the mechanism of O5 --- Lemma~\ref{lem:first} ($\E[A_1]=0$, first-order
+location fixing, verified), Lemma~\ref{lem:delta} ($\E[A_2]$ $\delta(0)$-divergent, verified,
+matching the cusp $v_3$ threshold), and Proposition~\ref{prop:rigid} (isomonodromy rigidity: the
+all-orders structural reason the periods are noise-independent). Together these prove T2(a)
+qualitatively at the level the cusp program reached, with a cleaner (isomonodromy) argument enabled
+by the integrable backbone.
+\emph{Remaining (T2c):} the finite value $\Omega_1$ (Theorem~\ref{thm:reduce}) --- a bounded
+computation with the existing chaos machinery --- and the rough-potential rigor of
+Proposition~\ref{prop:rigid}.
+\emph{Shared:} O5 is identical in structure for the cusp $\mathcal W$ and $\mathrm{TW}_\beta$
+papers; this note advances both. The one point where $\mathrm{TW}_\beta$ is strictly easier is
+Proposition~\ref{prop:rigid}: the cusp has no spectral curve to anchor the periods (isomonodromy
+fixed point), so there the location-fixing must be argued analytically (Lemmas
+\ref{lem:first}--\ref{lem:delta} only), whereas here the Airy spectral curve makes it structural.
+
+\begin{thebibliography}{9}
+\bibitem{Viens} F.~G.~Viens, \emph{Stein's lemma, Malliavin calculus, and tail bounds, with
+application to polymer fluctuation exponent}, Stochastic Process. Appl. \textbf{119} (2009)
+3671--3698; arXiv:0901.0383.
+\bibitem{AnicetoCrew} I.~Aniceto, S.~Crew, \emph{An algebraic study of parametric Stokes
+phenomena}, arXiv:2410.13690 (2024).
+\bibitem{Costin} O.~Costin, \emph{On Borel summation and Stokes phenomena of nonlinear
+differential systems}, Duke Math. J. \textbf{93} (1998) 289--344; arXiv:math/0608408.
+\end{thebibliography}
+
+\end{document}

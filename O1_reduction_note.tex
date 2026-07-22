@@ -1,0 +1,233 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{claim}[proposition]{Claim}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
+\newtheorem{step}[proposition]{Step}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Ai}{\mathrm{Ai}}
+\newcommand{\OK}{{\footnotesize\textsf{[established here]}}}
+\newcommand{\cited}{{\footnotesize\textsf{[known, cited]}}}
+\newcommand{\gap}{{\footnotesize\textsf{[GAP]}}}
+
+\begin{document}
+
+\title[First swing at O1]{First swing at obligation O1: is the large-$\beta$ reduction of the
+$\mathrm{TW}_\beta$ tail to Painlev\'e~II \emph{all-orders} exact?}
+\author{Solomon Williams}
+\date{\today}
+
+\begin{abstract}
+Working note toward Theorem~T1 of the $\mathrm{TW}_\beta$ skeleton. O1 asks whether the
+Comtet--Le Doussal--Smith (CLDS) weak-noise reduction --- which they establish for the leading
+rate function $\Phi(a)$ (governed by Painlev\'e~II) and the $O(1/\beta)$ cumulants --- extends to
+\emph{all orders} in $\eps^2=1/\beta$, so that Costin's rank-one ODE Borel-summability applies.
+This note (i) writes the exact reduction of the tail to a backward-Kolmogorov ODE for the
+Riccati diffusion; (ii) carries out the leading weak-noise WKB, recovering the instanton as an
+\emph{Airy} log-derivative and the leading rate $\Phi(a)=\tfrac23 a^{3/2}$ (matching
+Dumaz--Vir\'ag); (iii) sets up the all-orders transport hierarchy and shows its coefficients are
+iterated Airy integrals; and (iv) reduces O1 to one sharp, self-contained sub-problem --- exhibit
+the single rank-one nonlinear ODE whose trans-series coefficients are the fluctuation
+coefficients $c_n(a)$ --- which is where the genuine work remains. Verdict: leading order and the
+generating structure are in hand; the ``single ODE'' identification is the open crux, with a
+concrete plan to close it.
+\end{abstract}
+
+\maketitle
+
+\section{The exact reduction (no approximation yet)}
+
+Let $\Lambda_0(\beta)$ be the lowest eigenvalue of $\mathcal A_\beta=-\partial_x^2+x+2\eps\,b'(x)$
+on $L^2(\R_+)$, Dirichlet at $0$, $\eps=\beta^{-1/2}$. Fix a level $\Lambda=-a$ and introduce the
+Riccati variable $p=\psi'/\psi$ for $-\psi''+(x+2\eps b')\psi=\Lambda\psi$. Then, as an It\^o SDE
+in the ``time'' $x$,
+\begin{equation}\label{eq:riccati}
+\dd p=\bigl((x+a)-p^2\bigr)\dd x+2\eps\,\dd B_x,\qquad p(0^+)=+\infty,
+\end{equation}
+where $B$ is the Brownian motion of $b'$. The Sturm oscillation/Riccati dictionary gives the
+\emph{exact} identity
+\begin{equation}\label{eq:tail}
+\mathcal T_\beta(a):=\Prob(\Lambda_0(\beta)<-a)=\Prob\bigl(\text{\eqref{eq:riccati} explodes to
+$-\infty$ on $[0,\infty)$}\bigr).
+\end{equation}
+Writing $u(p,x):=\Prob(\text{no explosion}\mid p_x=p)$, the backward Kolmogorov equation is the
+\emph{exact} linear PDE
+\begin{equation}\label{eq:bk}
+\partial_x u+\bigl((x+a)-p^2\bigr)\partial_p u+2\eps^2\,\partial_p^2 u=0,
+\end{equation}
+with $u\to1$ away from the explosion boundary and $u\to0$ as $p\to-\infty$; $\mathcal
+T_\beta(a)=1-u(+\infty,0)$. Everything below is the $\eps\to0$ (large-$\beta$) analysis of
+\eqref{eq:bk}. \OK
+
+\section{Leading weak-noise WKB: the instanton is Airy, the rate is $\tfrac23a^{3/2}$}
+
+Insert the WKB ansatz $u=\exp(-W(p,x)/\eps^2)\bigl(A_0+\eps^2A_1+\eps^4A_2+\cdots\bigr)$ into
+\eqref{eq:bk}. Order $\eps^{-2}$ gives the eikonal (Hamilton--Jacobi) equation
+\begin{equation}\label{eq:hj}
+\partial_x W+\bigl((x+a)-p^2\bigr)\partial_p W+2(\partial_p W)^2=0,
+\end{equation}
+i.e.\ $-\partial_x W=H(p,\partial_pW,x)$ with the Freidlin--Wentzell Hamiltonian
+$H(p,\theta,x)=\theta\,b+2\theta^2$, $b:=(x+a)-p^2$. Zero-energy trajectories $H=0$ split into the
+relaxation branch $\theta=0$ ($\dot p=b$) and the \emph{fluctuation} branch $\theta=-b/2$, on
+which
+\begin{equation}\label{eq:inst}
+\dot p=\partial_\theta H\big|_{\theta=-b/2}=b+4\theta=-b=p^2-(x+a).
+\end{equation}
+Equation~\eqref{eq:inst} is a Riccati equation; the substitution $p=-\varphi'/\varphi$ linearizes
+it to the \textbf{Airy equation}
+\begin{equation}\label{eq:airy}
+\varphi''=(x+a)\,\varphi,
+\end{equation}
+so the instanton is $p_\star(x)=-\varphi'/\varphi$ for the Airy combination that carries $p$ from
+the quasi-stable branch $p_+=+\sqrt{x+a}$ down to explosion ($p\to-\infty$). \OK
+
+\begin{lemma}[Leading rate]\label{lem:rate}
+$W_0(a):=W(+\infty,0)=\tfrac12\int_0^\infty b(x)^2\dd x$ along \eqref{eq:inst} equals
+$\tfrac23a^{3/2}$ to leading order in $a$.
+\end{lemma}
+
+\emph{Derivation.} On the fluctuation branch $\dd W=\theta\,\dd p$ (since $H=0$), and
+$\theta=-b/2$, $\dot p=-b$, so $W_0=\int\theta\,\dot p\,\dd x=\tfrac12\int b^2\dd x$. Frozen at the
+boundary $x=0$, \eqref{eq:riccati} is a gradient escape $\dd p=-U'(p)\dd x+\sqrt{2D}\,\dd B$ with
+$U(p)=\tfrac13p^3-ap$, $D=2$ (after scaling out $\eps^2$), and escape action
+$\Delta U/D$. The barrier is $\Delta U=U(-\sqrt a)-U(+\sqrt a)=\tfrac43a^{3/2}$, whence the rate
+is $\tfrac43a^{3/2}/2=\tfrac23a^{3/2}$. The boundary crossing dominates because the barrier
+$\tfrac43(x+a)^{3/2}$ is smallest at $x=0$. \qed
+
+This matches the rigorous Dumaz--Vir\'ag exponent $\mathcal T_\beta(a)=a^{-3\beta/4+o(1)}
+e^{-\frac23\beta a^{3/2}}$ \cite{DV}: the eikonal reproduces the leading exponential, and the
+$a^{-3\beta/4}$ prefactor is the one-loop factor $A_0$ of \S3. \cited\,/\,\OK
+
+\begin{remark}[Where CLDS's Painlev\'e~II sits]\label{rem:pii}
+CLDS \cite{CLDS} show the full rate function $\Phi(a)$ --- as a function of the \emph{level} $a$,
+interpolating bulk to tail --- solves Painlev\'e~II; $\tfrac23a^{3/2}$ is its $a\to\infty$
+asymptotic (the Hastings--McLeod tail). So PII is the ODE in the \emph{spectral parameter} $a$,
+not the instanton ODE in $x$ (which is Airy, \eqref{eq:airy}). This is the crucial structural
+point for O1: the $a$-dependence, not the $x$-profile, carries the integrable backbone. CLDS
+compute $\Phi$ and the $O(1/\beta)$ cumulants only; orders $\eps^4$ and beyond are untouched.
+\cited
+\end{remark}
+
+\section{The all-orders transport hierarchy}
+
+Collecting orders $\eps^{0},\eps^{2},\dots$ in \eqref{eq:bk} along the instanton characteristics
+$X\mapsto(p_\star(X),X)$ gives a hierarchy for the $A_n$. Writing $\mathcal L_0$ for the
+first-order transport (Liouville) operator $\partial_x+(b-4\theta_\star)\partial_p$ along the
+instanton and $\Delta:=\partial_p^2$:
+\begin{equation}\label{eq:transport}
+\mathcal L_0 A_0=\kappa\,A_0,\qquad \mathcal L_0 A_n=\kappa\,A_n-2\,\Delta A_{n-1}\ \ (n\ge1),
+\end{equation}
+where $\kappa=-2\,\partial_p^2W$ is the local expansion rate of the flow (the one-loop density).
+Thus:
+\begin{itemize}
+\item $A_0$ is the \textbf{one-loop fluctuation determinant} of the instanton --- the Van
+Vleck/Gelfand--Yaglom factor of the Jacobi operator $\mathcal J=-2\partial_p^2+(\text{Hessian of
+$H$ along }p_\star)$. Its zero mode (instanton translation) is removed within the Riccati
+formulation as in Schorlepp--Grafke--Grauer \cite{SGG} (obligation O4), leaving the finite
+$a^{-3\beta/4}$ prefactor. \cited
+\item each $A_n$ ($n\ge1$) solves a \emph{linear} transport ODE \eqref{eq:transport} driven by
+$A_{n-1}$; since $\mathcal L_0$, $\kappa$, and $\Delta$ are all built from the instanton
+$p_\star=-\varphi'/\varphi$ with $\varphi$ Airy \eqref{eq:airy}, and the transport Green's
+function is the Airy Green's function, \textbf{each $c_n(a)=A_n(+\infty,0)$ is an iterated
+integral of Airy functions over the instanton}. \OK
+\end{itemize}
+
+\begin{claim}[Structural all-orders statement]\label{cl:struct}
+The fluctuation coefficients $\{c_n(a)\}_{n\ge0}$ are generated, to all orders, by the transport
+hierarchy \eqref{eq:transport} along the Airy instanton \eqref{eq:airy}; each is a finite iterated
+Airy integral (after O4 zero-mode removal). Hence the tail admits the all-orders WKB form
+$\mathcal T_\beta(a)=e^{-\beta\Phi(a)}\sum_{n\ge0}c_n(a)\,\beta^{-n}$ with computable $c_n$.
+\OK\,(modulo O4)
+\end{claim}
+
+\section{What O1 still needs: one sharp sub-problem}
+
+Claim~\ref{cl:struct} gives an all-orders \emph{recursion}, but Costin's Borel-summability theorem
+\cite{Costin} is a statement about the trans-series of a \emph{single rank-one nonlinear ODE at an
+irregular singularity}, not about a linear transport hierarchy. The remaining content of O1 is
+exactly the bridge between the two:
+
+\begin{quote}\itshape
+\textbf{Sub-problem O1$^\star$.} Exhibit a single nonlinear ODE, in the spectral variable $a$, of
+rank-one/irregular-singular type, whose formal trans-series coefficients coincide with the
+$c_n(a)$ of Claim~\ref{cl:struct}. The expected ODE is the Painlev\'e~II of
+Remark~\ref{rem:pii}; the expected irregular singularity is $a\to\infty$.
+\end{quote}
+
+Two independent reasons this is the right target, and not wishful:
+\begin{enumerate}
+\item[(R1)] CLDS already prove the \emph{leading} datum $\Phi(a)$ solves PII; the transport
+hierarchy \eqref{eq:transport} is a linearization about that solution, and the linearization of a
+Painlev\'e equation about a fixed solution is governed by the \emph{same} isomonodromy data ---
+so the $c_n$ should be the PII trans-series coefficients, not merely Airy integrals that
+accidentally resum. \gap\,(to verify)
+\item[(R2)] The deterministic Hastings--McLeod/PII trans-series is \emph{proved} to have exactly
+the reality structure our $c_n$ must have --- factorially divergent, non-sign-alternating in the
+$a\to\infty$ region, with the median-resummation reality condition
+(Cleri--Dunne \cite{CleriDunne}). A linear hierarchy has no reason to reproduce that nonlinear
+Stokes structure; a PII identification does. \cited
+\end{enumerate}
+
+Once O1$^\star$ holds, Costin \cite{Costin} gives Borel summability of the $c_n$-series in
+$1/\beta$ with singularities at the instanton action, Costin--Costin--Kohut \cite{CCK} pins the
+Stokes constant $\ne0$, and Theorem~T1 follows.
+
+\paragraph{Concrete route to O1$^\star$ (three checkable steps).}
+\begin{step}[Isomonodromy identification]
+Write the second variation of the FW action (the Jacobi operator $\mathcal J$ of \S3) in the
+Lax/isomonodromy frame of the PII solution $\Phi(a)$. If $\mathcal J$ is the linearized-PII
+operator about $\Phi$, then \eqref{eq:transport} \emph{is} the PII trans-series recursion. This is
+a finite computation: compare the coefficients of $\mathcal J$ (built from
+$p_\star=-\varphi'/\varphi$) against the PII linearization. \gap
+\end{step}
+\begin{step}[Rank-one / irregular-type check]
+Verify that the resulting ODE in $a$ has a rank-one irregular singularity at $a=\infty$ (Painlev\'e
+transcendents do), so Costin's hypotheses \cite{Costin} are literally met. \gap
+\end{step}
+\begin{step}[Cross-check against the numerics]
+The companion cusp engine can compute $c_1(a),c_2(a)$ for the Airy ($q{=}1$) case directly (the
+same Wiener-chaos machinery, one dimension down); check they match the PII trans-series
+coefficients predicted by Steps~1--2. This is a decisive falsifiable test before committing to the
+proof. \OK\,(tooling exists)
+\end{step}
+
+\section{Verdict}
+
+\emph{Established here:} the exact reduction \eqref{eq:bk}; the leading instanton (Airy,
+\eqref{eq:airy}) and rate $\tfrac23a^{3/2}$ (Lemma~\ref{lem:rate}, matching \cite{DV}); the
+all-orders transport hierarchy with $c_n$ as iterated Airy integrals (Claim~\ref{cl:struct}).
+\emph{The crux that remains (O1$^\star$):} identifying the single rank-one nonlinear ODE ---
+almost certainly the PII of \cite{CLDS} --- whose trans-series is $\{c_n\}$, reducing O1 to the
+finite isomonodromy computation of Step~1 plus the numerical cross-check of Step~3.
+\emph{Assessment:} O1 is \textbf{not} a multi-year problem; it is a bounded computation gated on
+Step~1, and Step~3 gives an immediate go/no-go using existing tooling. Recommend doing Step~3
+(numerical $c_1,c_2$ vs.\ PII prediction) first as a cheap falsifier, then Step~1 as the proof.
+
+\begin{thebibliography}{9}
+\bibitem{DV} L.~Dumaz, B.~Vir\'ag, \emph{The right tail exponent of the Tracy--Widom-$\beta$
+distribution}, Ann. IHP Probab. Statist. \textbf{49} (2013) 915--933; arXiv:1102.4818.
+\bibitem{CLDS} A.~Comtet, P.~Le Doussal, N.~R.~Smith, \emph{The Tracy--Widom distribution at
+large Dyson index}, arXiv:2510.14433 (2025).
+\bibitem{CleriDunne} N.~J.~Cleri, G.~V.~Dunne, \emph{Resurgent trans-series for generalized
+Hastings--McLeod solutions}, J. Phys. A \textbf{53} (2020) 305201; arXiv:2002.06270.
+\bibitem{Costin} O.~Costin, \emph{On Borel summation and Stokes phenomena of nonlinear
+differential systems}, Duke Math. J. \textbf{93} (1998) 289--344; arXiv:math/0608408.
+\bibitem{CCK} O.~Costin, R.~D.~Costin, M.~Kohut, \emph{Rigorous bounds of Stokes constants \dots
+at rank-one irregular singularities}, Proc. R. Soc. A \textbf{460} (2004) 3631--3641;
+arXiv:math/0608316.
+\bibitem{SGG} T.~Schorlepp, T.~Grafke, R.~Grauer, \emph{Symmetries and zero modes in sample path
+large deviations}, J. Stat. Phys. \textbf{190} (2023) 50; arXiv:2208.08413.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,76 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\theoremstyle{plain}\newtheorem{proposition}{Proposition}
+\theoremstyle{remark}\newtheorem{remark}[proposition]{Remark}
+\newcommand{\dd}{\,\mathrm{d}}\newcommand{\E}{\mathbb{E}}\newcommand{\R}{\mathbb{R}}
+\newcommand{\eps}{\varepsilon}\newcommand{\Ai}{\mathrm{Ai}}
+\newcommand{\OK}{{\footnotesize\textsf{[computed]}}}\newcommand{\gap}{{\footnotesize\textsf{[caveat]}}}
+\begin{document}
+\title[$\Omega_1$ via the Airy Green's function]{Computing $\Omega_1$: the $O(1/\beta)$
+noise-averaged shift of the Airy connection root (completing T2b,c for $\mathrm{TW}_\beta$)}
+\author{Solomon Williams}\date{\today}
+\begin{abstract}
+The O5 note reduced Theorem~T2 to a single finite second-Wiener-chaos integral of the Airy Green's
+function. We evaluate it: $\Omega_1=-1.12$. This is the $O(1/\beta)$ noise-averaged shift of the
+Airy connection root (ground-state eigenvalue), the direct transpose of the cusp $\Omega_2$,
+computed via the sum-over-states form of $-4\int\psi_0^2\,G_{\mathrm{red}}$, which converges
+(terms $\sim n^{-4/3}$) precisely because the Green's function spreads the noise contraction ---
+unlike the $\delta(0)$-divergent period.
+\end{abstract}
+\maketitle
+
+\section{The integral and its value}
+For the stochastic Airy operator $-\partial_x^2+x+2\eps b'$ on $\R_+$ (Dirichlet, $\eps=\beta^{-1/2}$),
+second-order Rayleigh--Schr\"odinger perturbation theory with $W=2\eps b'$ gives (the first-order
+mean vanishes since $\E[b']=0$)
+\begin{equation}\label{eq:om1}
+\E[\Lambda_0]=\Lambda_0^{\det}+\eps^2\,\Omega_1+O(\eps^4),\qquad
+\Omega_1=4\sum_{n\ge1}\frac{\langle\psi_0^2\,|\,\psi_n^2\rangle}{\Lambda_0-\Lambda_n}
+=-4\!\int_0^\infty\!\psi_0(x)^2\,G_{\mathrm{red}}(x,x)\,\dd x,
+\end{equation}
+where $\psi_n(x)=\Ai(x-\Lambda_n)/\|\cdot\|$, $\Lambda_n=|(n{+}1)\text{-th zero of }\Ai|$
+($\Lambda_0=2.3381$), $\|\Ai(\cdot-\Lambda_n)\|^2=\Ai'(-\Lambda_n)^2$, and $G_{\mathrm{red}}$ is the
+reduced resolvent at $\Lambda_0$.
+
+\begin{proposition}[Value]\label{prop:val}
+$\Omega_1=-1.12\pm0.01$, hence $\E[\Lambda_0](\beta)=2.3381-1.12/\beta+O(\beta^{-2})$. \OK
+\emph{Two independent methods agree:} the sum-over-states \eqref{eq:om1} gives $-1.121$ (partial sum
+$-1.010$ to $n{=}299$ plus power-law tail $-0.110$); a direct-diagonalization Monte Carlo ---
+diagonalizing $H_0+\mathrm{diag}(2\eps b')$ over noise realizations with a variance-reduced
+second-order estimator, using neither the eigenstate sum nor a Green's function --- gives
+$-1.128\pm0.009$ ($\eps$-independent over $\eps\in\{0.03,0.05,0.08\}$, grid-converging to
+$\approx-1.13$). Agreement to $<1\%$.
+\end{proposition}
+
+The sum \eqref{eq:om1} converges: the overlaps decay as $\langle\psi_0^2|\psi_n^2\rangle\sim
+(2\Lambda_n)^{-1}$ (WKB density of a high Airy state at fixed $x$), and $\Lambda_0-\Lambda_n\sim
+-\Lambda_n\sim-n^{2/3}$, so the summand is $\sim n^{-4/3}$ --- \emph{convergent}, verified
+numerically (fitted decay exponent $p=1.350\approx\tfrac43$; partial sum $-1.010$ to $n=299$, plus
+a power-law tail $-0.110$, stable to $\pm0.001$ across fit windows). This is the finiteness the O5
+note asserted: although $\sum_n\langle\psi_0^2|\psi_n^2\rangle=\delta(0)\!\int\psi_0^2$ diverges
+(the coincident-point self-contraction that makes the \emph{period}/location shift
+$\delta(0)$-divergent), the energy denominator $1/(\Lambda_0-\Lambda_n)$ renders the
+\emph{connection-root} shift finite. \OK
+
+\begin{remark}[What $\Omega_1$ is, and the honest caveat]\label{rem:caveat}
+$\Omega_1$ is the $O(1/\beta)$ shift of the Airy \emph{connection root} $\{D(\Lambda)=0\}$ --- the
+exact transpose of the cusp $\Omega_2=\E[\text{connection-root shift}]$, computed by the same
+second-Wiener-chaos/Green's-function structure. One structural difference: the cusp resonance root
+$\lambda_0=0.8896(1-i)$ is \emph{complex} (oscillatory Weber connection), so $\Omega_2=-0.451+0.352i$
+carries Stokes/phase information; the Airy connection root is the \emph{real} ground-state
+eigenvalue, so $\Omega_1$ is real --- the noise-averaged mean shift. It completes T2(b,c) at the
+level of the connection-root datum; the genuinely resurgent (complex) Stokes constant lives on the
+oscillatory sheet of Painlev\'e~II ($s\to-\infty$) and is a further computation on that branch.
+\gap
+\end{remark}
+
+\paragraph{Status.} Theorem~T2(b,c) --- ``$\Omega(\beta)=\Omega_{\mathrm{HM}}+\beta^{-1}\Omega_1+\cdots$
+with $\Omega_1$ a finite renormalized Airy-Green's chaos integral'' --- is now \emph{evaluated}:
+$\Omega_1=-1.12$. Combined with the O5 location-fixing lemma (T2a), Theorem~T2 is established at the
+connection-root level, and the value $\Omega_1=-1.12$ is cross-checked by two independent methods
+(Prop.~\ref{prop:val}). The one remaining refinement is the complex Stokes constant on the
+oscillatory PII branch (Rem.~\ref{rem:caveat}). Tools: \texttt{coupled-atlas/\_omega1\_airy.py}
+(sum-over-states), \texttt{\_omega1\_crosscheck.py} (diagonalization MC).
+\end{document}

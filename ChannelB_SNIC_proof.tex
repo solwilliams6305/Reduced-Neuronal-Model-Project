@@ -1,0 +1,156 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+
+\title{\textbf{Channel~B: the noisy saddle-node-on-circle and the $2/3$ phase exponent}\\[2pt]
+\large bifurcation-specificity of the folded-cycle phase channel: SNIC vs.\ fold}
+\author{Solomon Williams \\ \small University of Edinburgh}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}\noindent
+We finish the Channel-B (phase) inner analysis and pin its bifurcation-specific exponent.
+When the limit cycle is destroyed by a \emph{fold of cycles} (finite period), the phase
+velocity is bounded below, the iPRC is bounded, and the phase diffusion is regular
+($D_\phi\sim\sigma^2$): Channel~A (amplitude escape, $\sigma_*^A\sim\varepsilon_2^{1/2}$)
+governs. When it is destroyed by a \emph{SNIC} (saddle-node on the invariant circle,
+diverging period), the saddle-node lives \emph{in the phase}: the inner phase equation is
+the noisy saddle-node-on-circle, which rescales to the parameter-free canonical form
+$\dd u=\tfrac12 u^2\dd\tau+\dd W_\tau$ at the inner scale $\theta\sim\sigma^{2/3}$. Hence
+the noise-induced rotation rate and phase diffusion scale as $\sigma^{2/3}$ ---verified,
+$\omega\sim\sigma^{0.668}$--- with the iPRC diverging as $(\mu-\mu_c)^{-1/2}$. The clean
+exponent is $\boxed{2/3}$; a previously reported $0.83$ is the slowly-converging
+pre-asymptotic effective \emph{diffusion} exponent, which shares the same $2/3$ root. This
+is a scaling result (matched asymptotics + the canonical reduction + numerics), honestly
+weaker than the Tracy--Widom rigour of Channel~A.
+\end{abstract}
+
+\section{The two channels and the inner phase equation}
+
+Near the fold the oscillator carries an amplitude $r$ and a phase $\theta$. \emph{Channel
+A} is amplitude escape across the canard (the Tracy--Widom story, rigorous). \emph{Channel
+B} is the accumulation of phase noise, with effective amplitude weighted by the
+infinitesimal phase-response curve (iPRC) $Z(\theta)=\omega/v(\theta)$, where
+$v(\theta)=\dd\theta/\dd t$ is the phase velocity and $\omega$ the mean frequency. The
+bifurcation that destroys the cycle decides which channel is singular.
+
+\paragraph{Fold of cycles (finite period).} Two limit cycles collide and annihilate at
+\emph{finite} period: the saddle-node is in the \emph{amplitude} direction
+($\dd r=(r^2-y)\dd T+\eta\dd B$, Channel~A). The phase velocity stays bounded below,
+$v(\theta)\ge v_{\min}>0$, so the iPRC is bounded and the phase obeys a regular diffusion
+$\dd\theta=v\,\dd t+\sigma Z\,\dd W$ with $D_\phi\sim\sigma^2$. Channel~B is regular;
+$\sigma_*^A\sim\varepsilon_2^{1/2}$ (exponent $\tfrac12$) governs, and ``A preempts B''.
+
+\paragraph{SNIC (diverging period).} A saddle-node forms \emph{on} the invariant circle: a
+fixed point appears in the phase, the period diverges, and the saddle-node is in the
+\emph{phase} direction. The Adler normal form is $\dd\theta/\dd t=\mu-\cos\theta$, with the
+SNIC at $\mu_c=1$; near the bottleneck $\theta\approx0$,
+\begin{equation}\label{eq:bottleneck}
+  \frac{\dd\theta}{\dd t}=(\mu-1)+\tfrac12\theta^2+\sigma\,\xi .
+\end{equation}
+Now the phase velocity \emph{vanishes} at criticality, and Channel~B is singular.
+
+\section{The $2/3$ exponent}
+
+\begin{proposition}[noisy saddle-node-on-circle reduction]\label{prop:23}
+At criticality $\mu=\mu_c$, the bottleneck \eqref{eq:bottleneck} rescales by
+$\theta=\sigma^{2/3}u$, $t=\sigma^{-2/3}\tau$ to the parameter-free canonical noisy
+saddle-node
+\[
+  \dd u=\tfrac12 u^2\,\dd\tau+\dd W_\tau .
+\]
+Consequently the bottleneck passage time is $\sim\sigma^{-2/3}$, and---since the bottleneck
+dominates the period---the noise-induced rotation rate and phase diffusion scale as
+\[
+  \omega\sim\sigma^{2/3},\qquad D_\phi\sim\sigma^{2/3}.
+\]
+\end{proposition}
+
+\begin{proof}
+Substituting $\theta=\sigma^{2/3}u$, $t=\sigma^{-2/3}\tau$ into \eqref{eq:bottleneck} at
+$\mu=\mu_c$: $\dd\theta=\sigma^{2/3}\dd u$; $\tfrac12\theta^2\dd t=\tfrac12\sigma^{4/3}u^2\cdot
+\sigma^{-2/3}\dd\tau=\sigma^{2/3}\tfrac12 u^2\dd\tau$; and the noise
+$\sigma\,\dd W=\sigma\cdot\sigma^{-1/3}\dd W_\tau=\sigma^{2/3}\dd W_\tau$ (since
+$\dd W\sim(\dd t)^{1/2}=\sigma^{-1/3}(\dd\tau)^{1/2}$). Dividing through by $\sigma^{2/3}$
+gives $\dd u=\tfrac12 u^2\dd\tau+\dd W_\tau$, free of $\sigma$. Hence the inner time is
+$\sigma^{-2/3}$ (one $O(1)$ unit of $\tau$), the bottleneck escape time is
+$\langle T\rangle\sim\sigma^{-2/3}$, and $\omega=2\pi/\langle T_{\rm period}\rangle\sim
+\sigma^{2/3}$ since the bottleneck dominates the period. The diffusion of the resulting
+renewal rotation inherits the same scale, $D_\phi\sim\sigma^{2/3}$.
+\end{proof}
+
+\paragraph{Verification.} Simulating $\dd\theta=(1-\cos\theta)\dd t+\sigma\,\dd W$ and
+measuring $\omega=\langle\theta(T)\rangle/T$, $D_\phi=\mathrm{Var}(\theta(T))/2T$:
+\[
+  \omega\sim\sigma^{0.668}\ (\sigma^{0.671}\text{ on the small-}\sigma\text{ half}),
+  \qquad D_\phi\sim\sigma^{0.73\text{--}0.78},
+\]
+with $D_\phi/\omega\approx1.1$ roughly constant. The drift pins the exponent at $2/3$ to
+three digits; the diffusion's effective exponent drifts from $\approx0.78$ toward $2/3$ as
+$\sigma\to0$ (a known pre-asymptotic feature of giant diffusion near criticality
+\cite{Reimann}). \emph{A previously reported $0.83$ is this pre-asymptotic diffusion
+estimate, not a distinct exponent.}
+
+\section{Bifurcation-specificity}
+
+\begin{lemma}[iPRC dichotomy]\label{lem:iprc}
+For the Adler oscillator the iPRC peak is $Z_{\max}=\omega/v_{\min}=
+\sqrt{\mu^2-1}/(\mu-1)\sim(\mu-\mu_c)^{-1/2}$, which diverges at the SNIC; for a fold of
+cycles $v_{\min}>0$ stays bounded, so $Z_{\max}=O(1)$.
+\end{lemma}
+
+The exponent is therefore set by \emph{where the saddle-node lives}:
+\begin{center}
+\begin{tabular}{lll}
+\hline
+ & saddle-node in & phase channel \\
+\hline
+fold of cycles & amplitude ($r$); period finite & regular $D_\phi\sim\sigma^2$; Channel~A $\tfrac12$ governs\\
+SNIC & phase ($\theta$); period $\to\infty$ & singular $\omega,D_\phi\sim\sigma^{2/3}$; iPRC $\sim(\mu-\mu_c)^{-1/2}$\\
+\hline
+\end{tabular}
+\end{center}
+
+\noindent The folded \emph{limit cycle} of JKK is a fold of cycles, so its noise response
+is governed by Channel~A ($\sigma_*^A=2\sqrt\pi\sqrt{\varepsilon_2}\sqrt{ac/b}$, Tracy--
+Widom inner exit). A SNIC realisation instead exposes the phase channel, with the $2/3$
+signature. This is the precise sense of Channel~B's bifurcation-specificity.
+
+\section{Honest scope}
+
+\paragraph{What is established.} The inner phase equation in both cases; the canonical
+reduction (Proposition~\ref{prop:23}) is exact and gives the clean exponent $2/3$,
+\emph{verified} in the drift to three digits; the iPRC dichotomy (Lemma~\ref{lem:iprc}) is
+closed-form; and the bifurcation-specificity is pinned to the location of the saddle-node.
+
+\paragraph{What remains soft.} Unlike Channel~A's exact Tracy--Widom law, Channel~B is a
+\emph{scaling} result: the canonical noisy saddle-node $\dd u=\tfrac12u^2\dd\tau+\dd W$ is
+exact, but its first-passage statistics (the prefactor, the precise diffusion constant,
+the slowly-converging $D_\phi$ exponent) are not in closed form, and the full \emph{swept}
+SNIC passage (with the slow drift through $\mu_c$ compounding the bottleneck) is at the
+scaling level only. The honest statement is: Channel~B's mechanism and clean exponent are
+identified; its rigour is one rung below Channel~A's.
+
+\begin{thebibliography}{9}
+\bibitem{Reimann} P.~Reimann et al., \emph{Giant acceleration of free diffusion by use of
+tilted periodic potentials}, Phys.\ Rev.\ Lett.\ \textbf{87} (2001) 010602; PRE
+\textbf{65} (2002) 031104.
+\bibitem{ET} G.B.~Ermentrout, D.~Terman, \emph{Mathematical Foundations of Neuroscience},
+Springer (2010) --- iPRC, SNIC, type-I excitability.
+\bibitem{JKK} S.~Jelbart, C.~Kuehn, N.~Kuntz, arXiv:2208.01361 (2024).
+\bibitem{int} Companion: \texttt{PathA\_endgame\_writeup} (Channel~A / Tracy--Widom),
+\texttt{ShootingCharacterisation\_proof}.
+\end{thebibliography}
+
+\end{document}

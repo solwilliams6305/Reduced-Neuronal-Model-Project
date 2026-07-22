@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shooting, the node, and the spectral function G</title>
+<style>
+  :root{--bg:#fbfaf8;--panel:#fff;--ink:#20242b;--sec:#5c6470;--line:#e3e0da;
+    --blue:#2f6fb0;--red:#d84b3f;--grn:#1f9d63;--amb:#d9851f;--pur:#7a5cc0;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45;}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 18px 40px;}
+  h1{font-size:21px;margin:0 0 2px;}
+  .sub{color:var(--sec);font-size:13.5px;margin:0 0 14px;}
+  .controls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px;}
+  .controls .blk{display:flex;align-items:center;gap:9px;font-size:13px;}
+  input[type=range]{width:120px;accent-color:var(--amb);}
+  button{font:inherit;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer;}
+  button:hover{background:#f3f1ec;} button.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .val{font-variant-numeric:tabular-nums;font-weight:600;min-width:30px;display:inline-block;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;}
+  .panel h2{font-size:13px;margin:0 0 4px;} .panel .cap{font-size:12px;color:var(--sec);margin-top:8px;min-height:48px;}
+  canvas{display:block;width:100%;height:auto;border-radius:8px;}
+  .foot{font-size:12px;color:var(--sec);}
+  code{background:#f3f1ec;padding:1px 5px;border-radius:5px;font-size:12px;}
+  b.g{color:var(--grn);} b.r{color:var(--red);} b.a{color:var(--amb);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Shooting, the node, and the spectral function G</h1>
+  <p class="sub">Why Y<sub>node</sub> is "correlated with the noise," why centering on it is illegal, and how the monotone G fixes it. Hit <b>new draw</b> a few times, then <b>▶ auto</b>.</p>
+
+  <div class="controls">
+    <div class="blk"><label for="eta">noise &eta;</label><input id="eta" type="range" min="0.4" max="2.4" step="0.02" value="1.41"><span class="val" id="etaVal">1.41</span></div>
+    <div class="blk"><label for="tlev">test level t (panel 2)</label><input id="tlev" type="range" min="-4" max="2" step="0.02" value="0"><span class="val" id="tlevVal">0.00</span></div>
+    <div class="blk"><label for="thr">toy threshold (panel 3)</label><input id="thr" type="range" min="0.5" max="2.5" step="0.05" value="1.50"><span class="val" id="thrVal">1.50</span></div>
+    <div class="blk"><button id="draw">🎲 new draw</button><button id="auto">▶ auto</button><button id="burst">＋200 samples</button><button id="clear">clear stats</button></div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>1 · The noise picks the node</h2>
+      <canvas id="p1" width="470" height="240"></canvas>
+      <div class="cap">One random squiggle (faint). The <b style="color:#20242b">swept solution</b> rides down and first hits zero at <b style="color:#d84b3f">Y_node</b>. Y_node is <em>computed from</em> this squiggle — new draw ⇒ it jumps. (a₁ = the noiseless value.)</div>
+    </div>
+    <div class="panel">
+      <h2>2 · The spectral function G(t)</h2>
+      <canvas id="p2" width="470" height="240"></canvas>
+      <div class="cap" id="cap2"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>3 · Why you can't stand on the node (the bias)</h2>
+      <canvas id="p3" width="470" height="240"></canvas>
+      <div class="cap">Toy: i.i.d. normals; N = first one over threshold (the "node"). <b class="r">Value AT the self-selected landmark Z<sub>N</sub></b> is always &gt; threshold — biased, not standard. <b class="g">Value at a FIXED index</b> stays standard. Centering on the noise-chosen point corrupts the noise.</div>
+    </div>
+    <div class="panel">
+      <h2>4 · Sweeping fixed t rebuilds the law</h2>
+      <canvas id="p4" width="470" height="240"></canvas>
+      <div class="cap">Histogram of Y_node over draws — skewed, <b>Tracy–Widom</b> class (not a bell curve). The fixed-t question in panel 2, swept over all t, reconstructs exactly this — without ever standing on the random node.</div>
+    </div>
+  </div>
+
+  <p class="foot">Faithful: deterministic node = a₁ = −2.338; at &eta;=√2 (&beta;=2) the Y_node histogram has mean ≈ −1.77, the Tracy–Widom (TW₂) value. G(t) is the energy at which the shot recessive solution's first node sits at t.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var C={ink:"#20242b",sec:"#5c6470",line:"#e3e0da",blue:"#2f6fb0",red:"#d84b3f",grn:"#1f9d63",amb:"#d9851f",pur:"#7a5cc0"};
+  function setup(id){var cv=document.getElementById(id),dpr=Math.max(1,window.devicePixelRatio||1);
+    var w=cv.width,h=cv.height;cv.width=w*dpr;cv.height=h*dpr;var x=cv.getContext("2d");x.scale(dpr,dpr);return {x:x,w:w,h:h};}
+  var P1=setup("p1"),P2=setup("p2"),P3=setup("p3"),P4=setup("p4");
+  function gauss(){var u1=Math.random()||1e-12,u2=Math.random();return Math.sqrt(-2*Math.log(u1))*Math.cos(6.283185307*u2);}
+
+  // ---- model ----
+  var Ylo=-4,Ytop=5,dy=0.02,K=Math.round((Ytop-Ylo)/dy);
+  var a1=-2.338;
+  var eta=1.41, tLevel=0, thr=1.5;
+  function makeNoise(){var b=new Array(K+1);for(var k=0;k<=K;k++)b[k]=gauss()/Math.sqrt(dy);return b;}
+  // integrate recessive soln of u''=(Y-eta*b-lam)u downward; return {node, U?}
+  function shoot(b,lam,wantU){
+    var Vt=Ytop-eta*b[K]-lam, u=1.0,up=-Math.sqrt(Math.max(Vt,0.05)), node=null;
+    var U=wantU?new Array(K+1):null; if(wantU)U[K]=u;
+    for(var k=K;k>0;k--){
+      var Ya=Ylo+k*dy,Yb=Ylo+(k-1)*dy,h=-dy;
+      var Va=Ya-eta*b[k]-lam,Vb=Yb-eta*b[k-1]-lam,Vm=0.5*(Va+Vb);
+      var k1u=up,k1p=Va*u, k2u=up+0.5*h*k1p,k2p=Vm*(u+0.5*h*k1u),
+          k3u=up+0.5*h*k2p,k3p=Vm*(u+0.5*h*k2u), k4u=up+h*k3p,k4p=Vb*(u+h*k3u);
+      var un=u+h/6*(k1u+2*k2u+2*k3u+k4u); up=up+h/6*(k1p+2*k2p+2*k3p+k4p);
+      if(node===null&&u>0&&un<=0)node=Ya+h*(u/(u-un));
+      u=un; if(wantU)U[k-1]=u;
+    }
+    return {node:(node===null?Ylo:node),U:U};
+  }
+  // current draw
+  var cur={b:null,U:null,node:0,bm:null,nArr:[],lamArr:[]};
+  function computeG(b){var nA=[],lA=[];for(var lam=-2.6;lam<=2.601;lam+=0.1){nA.push(shoot(b,lam,false).node);lA.push(lam);}return {nArr:nA,lamArr:lA};}
+  function brownian(b){var bm=new Array(K+1);bm[0]=0;for(var k=1;k<=K;k++)bm[k]=bm[k-1]+b[k]*dy;return bm;}
+  function newDraw(withG){
+    var b=makeNoise();var r=shoot(b,0,true);
+    cur.b=b;cur.U=r.U;cur.node=r.node;cur.bm=brownian(b);
+    if(withG){var g=computeG(b);cur.nArr=g.nArr;cur.lamArr=g.lamArr;}
+    ynodeHist.push(r.node); if(ynodeHist.length>4000)ynodeHist.shift();
+  }
+  function Gat(t){var n=cur.nArr,l=cur.lamArr;if(!n.length)return 0;
+    if(t<=n[0])return l[0]-(n[0]-t);if(t>=n[n.length-1])return l[l.length-1]+(t-n[n.length-1]);
+    for(var i=0;i<n.length-1;i++){if(t>=n[i]&&t<=n[i+1]){var f=(t-n[i])/(n[i+1]-n[i]||1);return l[i]+f*(l[i+1]-l[i]);}}return 0;}
+
+  // ---- toy ----
+  var TN=42,Z=[],Nidx=0,FIX=12, zNHist=[], zFHist=[];
+  function toyDraw(push){var zz=new Array(TN),n=-1;for(var i=0;i<TN;i++){zz[i]=gauss();if(n<0&&zz[i]>thr)n=i;}
+    if(n<0)n=TN-1;Z=zz;Nidx=n;
+    if(push){zNHist.push(zz[n]);zFHist.push(zz[FIX]);if(zNHist.length>6000){zNHist.shift();zFHist.shift();}}}
+  var ynodeHist=[];
+
+  // ---- drawing helpers ----
+  function axes(P,L,R,T,B){var x=P.x;x.strokeStyle=C.line;x.lineWidth=1;x.strokeRect(L,T,R-L,B-T);}
+  function vline(P,px,T,B,col,dash){var x=P.x;x.strokeStyle=col;x.lineWidth=1.2;if(dash)x.setLineDash(dash);x.beginPath();x.moveTo(px,T);x.lineTo(px,B);x.stroke();x.setLineDash([]);}
+
+  function draw1(){
+    var P=P1,x=P.x;x.clearRect(0,0,P.w,P.h);var L=40,R=P.w-12,T=16,B=P.h-26,pw=R-L,ph=B-T;
+    function X(Y){return L+(Y-Ylo)/(Ytop-Ylo)*pw;}
+    axes(P,L,R,T,B);
+    // noise squiggle (brownian), faint
+    if(cur.bm){var sc=0;for(var k=0;k<=K;k++)sc=Math.max(sc,Math.abs(cur.bm[k]));sc=sc||1;
+      x.strokeStyle="rgba(122,92,192,0.35)";x.lineWidth=1;x.beginPath();
+      for(var k2=0;k2<=K;k2+=2){var px=X(Ylo+k2*dy),py=T+ph*0.5-(cur.bm[k2]/sc)*ph*0.32;if(k2===0)x.moveTo(px,py);else x.lineTo(px,py);}x.stroke();
+      x.fillStyle=C.pur;x.font="10px sans-serif";x.textAlign="left";x.fillText("noise squiggle ∫ξ̃",L+4,T+12);}
+    // zero line
+    x.strokeStyle="rgba(92,100,112,0.5)";x.lineWidth=1;x.beginPath();x.moveTo(L,T+ph*0.5);x.lineTo(R,T+ph*0.5);x.stroke();
+    // swept solution squashed u/(1+|u|)
+    if(cur.U){x.strokeStyle=C.ink;x.lineWidth=2.2;x.beginPath();
+      for(var k3=K;k3>=0;k3--){var u=cur.U[k3],us=u/(1+Math.abs(u));var px=X(Ylo+k3*dy),py=T+ph*0.5-us*ph*0.42;if(k3===K)x.moveTo(px,py);else x.lineTo(px,py);}x.stroke();}
+    // markers
+    vline(P,X(0),T,B,"rgba(92,100,112,0.7)",[4,3]);x.fillStyle=C.sec;x.font="10px sans-serif";x.textAlign="center";x.fillText("fold 0",X(0),B+13);
+    vline(P,X(a1),T,B,"rgba(92,100,112,0.5)",[2,3]);x.fillText("a₁",X(a1),B+13);
+    var nx=X(cur.node);vline(P,nx,T,B,C.red,null);
+    x.beginPath();x.arc(nx,T+ph*0.5,5,0,6.2832);x.fillStyle=C.red;x.fill();
+    x.fillStyle=C.red;x.font="600 11px sans-serif";x.textAlign="center";x.fillText("Y_node = "+cur.node.toFixed(2),nx,T+ph*0.5-9);
+    x.fillStyle=C.sec;x.font="10px sans-serif";x.textAlign="right";x.fillText("slow variable Y →",R,B+13);
+  }
+
+  function draw2(){
+    var P=P2,x=P.x;x.clearRect(0,0,P.w,P.h);var L=44,R=P.w-12,T=16,B=P.h-26,pw=R-L,ph=B-T;
+    var tmin=-4,tmax=2,gmin=-2.6,gmax=2.6;
+    function X(t){return L+(t-tmin)/(tmax-tmin)*pw;}function YG(g){return B-(g-gmin)/(gmax-gmin)*ph;}
+    axes(P,L,R,T,B);
+    // G=0 line
+    x.strokeStyle="rgba(92,100,112,0.45)";x.setLineDash([4,4]);x.beginPath();x.moveTo(L,YG(0));x.lineTo(R,YG(0));x.stroke();x.setLineDash([]);
+    x.fillStyle=C.sec;x.font="10px sans-serif";x.textAlign="right";x.fillText("G=0",L-4,YG(0)+3);
+    // G curve
+    if(cur.nArr.length){x.strokeStyle=C.amb;x.lineWidth=2.6;x.beginPath();var st=false;
+      for(var i=0;i<cur.nArr.length;i++){var px=X(cur.nArr[i]),py=YG(cur.lamArr[i]);if(px<L||px>R)continue;if(!st){x.moveTo(px,py);st=true;}else x.lineTo(px,py);}x.stroke();}
+    // crossing at Y_node
+    var ncx=X(cur.node);x.fillStyle=C.red;x.beginPath();x.arc(ncx,YG(0),5,0,6.2832);x.fill();
+    x.fillStyle=C.red;x.font="10px sans-serif";x.textAlign="center";x.fillText("G(Y_node)=0",ncx,YG(0)-8);
+    // test level t
+    var tx=X(tLevel),g=Gat(tLevel);vline(P,tx,T,B,C.grn,[3,3]);
+    x.beginPath();x.arc(tx,YG(g),5,0,6.2832);x.fillStyle=C.grn;x.fill();
+    x.fillStyle=C.sec;x.font="10px sans-serif";x.textAlign="center";x.fillText("t",tx,B+13);
+    x.fillText("test level t (slow var)",L+pw/2,B+13+0);x.textAlign="left";
+    x.save();x.translate(13,T+ph/2);x.rotate(-Math.PI/2);x.fillStyle=C.sec;x.fillText("energy G = ground state on [t,∞)",0,0);x.restore();
+    // readout
+    var gok=g>=0, yok=cur.node<=tLevel;
+    x.font="600 12px sans-serif";x.textAlign="left";
+    x.fillStyle=C.grn;x.fillText("G(t) = "+g.toFixed(2)+"  ≥ 0 ?  "+(gok?"YES":"no"),L+6,T+14);
+    x.fillStyle=C.red;x.fillText("Y_node ≤ t ?  "+(yok?"YES":"no"),L+6,T+30);
+    x.fillStyle=(gok===yok)?C.sec:C.red;x.font="10px sans-serif";x.fillText(gok===yok?"→ the two answers ALWAYS agree":"(mismatch?!)",L+6,T+44);
+  }
+
+  function histify(data,lo,hi,nb){var bins=new Array(nb).fill(0);for(var i=0;i<data.length;i++){var bi=Math.floor((data[i]-lo)/(hi-lo)*nb);if(bi>=0&&bi<nb)bins[bi]++;}return bins;}
+  function drawBars(P,bins,lo,hi,L,R,T,B,col){var x=P.x,nb=bins.length,mx=1;for(var i=0;i<nb;i++)mx=Math.max(mx,bins[i]);var bw=(R-L)/nb;
+    for(var i2=0;i2<nb;i2++){var bh=(bins[i2]/mx)*(B-T);x.fillStyle=col;x.fillRect(L+i2*bw+0.5,B-bh,bw-1,bh);}return mx;}
+
+  function draw3(){
+    var P=P3,x=P.x;x.clearRect(0,0,P.w,P.h);var L=44,R=P.w-12,T=58,B=P.h-24,pw=R-L;
+    // top: the Z row + N
+    var rowT=14,rowB=48,mid=(rowT+rowB)/2;function ZX(i){return L+(i+0.5)/TN*pw;}
+    x.strokeStyle="rgba(92,100,112,0.4)";x.lineWidth=1;x.beginPath();x.moveTo(L,mid);x.lineTo(R,mid);x.stroke();
+    var thrY=mid-(thr/3)*(rowB-rowT)*0.5;x.strokeStyle=C.sec;x.setLineDash([3,3]);x.beginPath();x.moveTo(L,thrY);x.lineTo(R,thrY);x.stroke();x.setLineDash([]);
+    x.fillStyle=C.sec;x.font="9px sans-serif";x.textAlign="left";x.fillText("threshold",L,thrY-2);
+    for(var i=0;i<TN;i++){var zx=ZX(i),zy=mid-(Z[i]/3)*(rowB-rowT)*0.5;var isN=(i===Nidx),isF=(i===FIX);
+      x.strokeStyle=isN?C.red:(isF?C.grn:"rgba(92,100,112,0.5)");x.lineWidth=isN||isF?2.2:1;x.beginPath();x.moveTo(zx,mid);x.lineTo(zx,zy);x.stroke();
+      x.fillStyle=isN?C.red:(isF?C.grn:C.sec);x.beginPath();x.arc(zx,zy,isN||isF?3:1.6,0,6.2832);x.fill();}
+    x.fillStyle=C.red;x.font="9px sans-serif";x.textAlign="center";x.fillText("N",ZX(Nidx),rowB+8);
+    x.fillStyle=C.grn;x.fillText("fixed",ZX(FIX),rowB+8);
+    // bottom: two histograms overlaid
+    axes(P,L,R,T,B);
+    var lo=-3.2,hi=3.2,nb=32;
+    function HX(v){return L+(v-lo)/(hi-lo)*pw;}
+    drawBars(P,histify(zFHist,lo,hi,nb),lo,hi,L,R,T,B,"rgba(31,157,99,0.55)");
+    drawBars(P,histify(zNHist,lo,hi,nb),lo,hi,L,R,T,B,"rgba(216,75,63,0.6)");
+    vline(P,HX(thr),T,B,C.sec,[3,3]);vline(P,HX(0),T,B,"rgba(92,100,112,0.4)",[2,3]);
+    x.fillStyle=C.grn;x.font="600 10px sans-serif";x.textAlign="left";x.fillText("Z at fixed index (standard)",L+4,T+12);
+    x.fillStyle=C.red;x.fillText("Z at landmark N (biased, all > thr)",L+4,T+25);
+    x.fillStyle=C.sec;x.font="9px sans-serif";x.textAlign="center";x.fillText("value  (n="+zNHist.length+")",L+pw/2,B+13);
+  }
+
+  function draw4(){
+    var P=P4,x=P.x;x.clearRect(0,0,P.w,P.h);var L=40,R=P.w-12,T=16,B=P.h-24,pw=R-L;
+    var lo=-4,hi=2,nb=40;function HX(v){return L+(v-lo)/(hi-lo)*pw;}
+    axes(P,L,R,T,B);
+    drawBars(P,histify(ynodeHist,lo,hi,nb),lo,hi,L,R,T,B,"rgba(217,133,31,0.75)");
+    vline(P,HX(0),T,B,"rgba(92,100,112,0.6)",[4,3]);x.fillStyle=C.sec;x.font="10px sans-serif";x.textAlign="center";x.fillText("fold 0",HX(0),T+10);
+    vline(P,HX(a1),T,B,"rgba(92,100,112,0.45)",[2,3]);x.fillText("a₁",HX(a1),T+10);
+    var m=0;for(var i=0;i<ynodeHist.length;i++)m+=ynodeHist[i];m=ynodeHist.length?m/ynodeHist.length:0;
+    vline(P,HX(m),T,B,C.red,null);x.fillStyle=C.red;x.font="600 10px sans-serif";x.fillText("mean "+m.toFixed(2),HX(m),B-4);
+    x.fillStyle=C.sec;x.font="9px sans-serif";x.textAlign="center";x.fillText("Y_node  (n="+ynodeHist.length+")  — skewed = Tracy–Widom",L+pw/2,B+13);
+  }
+
+  function redraw(){draw1();draw2();draw3();draw4();updateCap2();}
+  function updateCap2(){var g=Gat(tLevel);document.getElementById("cap2").innerHTML=
+    "G(t) = the ground-state energy on [t,∞) (Dirichlet at t) = the energy at which the <b>shot</b> recessive solution's first node sits exactly at t. <b>Monotone</b>, and crosses 0 at Y_node. Move <b>t</b>: at any <em>fixed</em> t you ask a clean yes/no — and <b class='g'>G(t)≥0</b> ⟺ <b class='r'>Y_node≤t</b>, always.";}
+
+  // ---- controls ----
+  function fullDraw(){newDraw(true);toyDraw(true);redraw();}
+  document.getElementById("draw").addEventListener("click",fullDraw);
+  document.getElementById("burst").addEventListener("click",function(){for(var i=0;i<200;i++){newDraw(false);toyDraw(true);}redraw();});
+  document.getElementById("clear").addEventListener("click",function(){ynodeHist=[];zNHist=[];zFHist=[];redraw();});
+  var autoTimer=null;
+  document.getElementById("auto").addEventListener("click",function(){this.classList.toggle("on");
+    if(autoTimer){clearInterval(autoTimer);autoTimer=null;}else{autoTimer=setInterval(fullDraw,300);}});
+  var es=document.getElementById("eta"),ev=document.getElementById("etaVal");
+  es.addEventListener("input",function(){eta=parseFloat(es.value);ev.textContent=eta.toFixed(2);ynodeHist=[];newDraw(true);redraw();});
+  var ts=document.getElementById("tlev"),tv=document.getElementById("tlevVal");
+  ts.addEventListener("input",function(){tLevel=parseFloat(ts.value);tv.textContent=tLevel.toFixed(2);draw2();updateCap2();});
+  var hs=document.getElementById("thr"),hv=document.getElementById("thrVal");
+  hs.addEventListener("input",function(){thr=parseFloat(hs.value);hv.textContent=thr.toFixed(2);zNHist=[];zFHist=[];toyDraw(false);draw3();});
+
+  // init
+  newDraw(true);toyDraw(false);for(var i=0;i<60;i++){newDraw(false);toyDraw(true);}newDraw(true);redraw();
+})();
+</script>
+</body>
+</html>

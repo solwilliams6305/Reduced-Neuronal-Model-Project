@@ -90,3 +90,34 @@ curve already implemented (Marchal; Chekhov–Eynard) and specialize.
 - **Naive `RHS/Y` is wrong at the branch points** by `O(1/β)` (the `(1-2/β)∂_x` quantum term).
 - **Naive coincident `W_2^{[0]}(x,x)` is wrong** — needs Bergman regularization.
 - **Three finite-β points don't fix `R_{m≥3}`;** they anchor/validate but miss the `X→∞` diagonal.
+
+---
+
+## UPDATE — the "ready β-TR / Airy curve" route (Kidwai–Osuga arXiv:2204.12431)
+
+Tried the **refined topological recursion** (a clean, geometric β-TR; refinement parameter
+`𝒬=√β−1/√β`, Ω-background `ε₁=ℏ√β`, `ε₂=−ℏ/√β`, so `ε₁+ε₂=ℏ𝒬`, `ε₁ε₂=−ℏ²`). Its **quantum curve**
+is a 2nd-order ODE `(ε₁²∂ₓ²+q ε₁∂ₓ+r)ψ^{TR}=0` — the exact resummation of all `ω_{g,n}` (so `ln ψ^{TR}`
+IS the full tail exponent, no missing pieces, **no projection/coincident subtleties**). Two results:
+
+- **The refined AIRY curve is TRIVIAL — a dead end for TW_β.** For `y²=x` (`x=z², y=z`), eq. (4.27) is
+  `(ε₁² d²/dx² − x)ψ^{TR}=0` — the **plain Airy equation** with `ℏ→ε₁=ℏ√β`. No `μ,ν` params, no β-content
+  beyond the trivial `ε₁` rescaling. So the local Airy curve carries **none** of the TW_β tail's
+  `R_m(2/β)` β-dependence. (Makes sense: TW_β lives in the Airy *kernel*/PII Fredholm determinant, not
+  the Airy *curve* wavefunction.)
+- **TW_β lives on the WEBER curve — explicit clean ODE.** Weber `y²=¼x²−m∞` is the Gaussian-βE
+  semicircle (`x=√m∞(z+1/z)`, `y=½√m∞(z−1/z)`; at `m∞=1`, `Y=½√(x²−4)`). Its refined quantum curve
+  (eq. 4.23) is a **β-deformed parabolic-cylinder ODE**:
+  $$\Big(\varepsilon_1^2\tfrac{d^2}{dx^2} + C + \tfrac{4m_\infty-x^2}{4}\Big)\psi^{TR}(x)=0,\qquad
+    C=\tfrac{\varepsilon_2(\nu_{\infty+}-\nu_{\infty-})-(\varepsilon_1+\varepsilon_2)\mu_{\infty+}}{2}$$
+  (`C` is a *constant*, linear in `ε₁,ε₂`). Leading WKB `S₀=∫√(x²/4−m∞)dx ~ (2/3)(x−2√m∞)^{3/2}`
+  reproduces the `(2/3)βs^{3/2}` rate — the route is structurally correct.
+
+**Why this is the clean path to `R_{m≥4}` (recommended):** WKB of a *single* ODE is a plain recursion
+(`S_k` from `S_{k-1}`), sidestepping the loop-recursion's branch-projection and `W_2` coincident
+subtleties entirely. Remaining steps (a focused computation, not a package call): (1) WKB-expand
+`W=ψ'/ψ`; (2) fix the identification to the Borot–Nadal resolvent (map `ε₁,K,m∞,μ,ν` ↔ `N,β`), pinned by
+matching the **exact** `ω_1^{[1]}` (eq. 2-26) / `∫ω_1^{[2]}` (eq. 2-33); (3) edge-extract via Prop. 2.1;
+(4) generate `R_4,R_5,…` and **cross-check against `_tw_bn_brackets.py`** (X=2,1,1/2). The Weber ODE
+(4.23) is the concrete object to WKB. **No off-the-shelf code emits `R_m`** — the refined-TR packages
+give the formalism/curve, not the TW_β tail coefficients.

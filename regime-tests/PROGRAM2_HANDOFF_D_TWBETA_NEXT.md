@@ -67,11 +67,23 @@ of the tanh-kink escape instanton `P⋆=−tanh τ` (`‖ψ₀‖²=∫sech⁴=4
    / Nonlinearity / a resurgence-friendly venue); (iii) the 4 refinements below are tagged `[to prove]`/
    `[frontier]` in-text and can ship as remarks. Gotcha: the classical citations (TW1994, FN1980, JMU1981,
    FIKN, Clarkson) were web-verified this program (2 title patches applied) — don't re-paraphrase.
-2. **[tractable rigor] Uniform-in-`a` noise Borel-summability.** Task #5 proved the dynamical sector in
-   the *scaling regime* `g=βa^{3/2}→∞` (frozen escape exact). Extend to **fixed finite `a`**: combine the
-   Airy/median proof with the T1 PII map (level structure) and control the Borot–Nadal `R_m(2/β)` regular
-   part + the `O(a^{−3/2})` x-extension corrections (the GY zero-mode dressing). Upgrades T3 from
-   scaling-regime to a uniform theorem. This is the natural completion of Thread 2.
+2. **[tractable rigor] Uniform-in-`a` noise Borel-summability — REDUCED 2026-07-22**
+   (`PROGRAM2_TWBETA_UNIFORM_IN_A_NOTES.md`, `coupled-atlas/_tw_uniform_in_a.py`). Worked from the
+   **exact** Borot–Nadal tail (1111.2761 Prop 1.1; `R_m(2/β)` are IN the paper for `m≤3`, validated at
+   β=2 vs GUE: `R_1(1)=−35/24`, `R_2(1)=35/16`). **Done:** (i) reduction — the Coulomb-gas prefactor and
+   `−(3β/4)log a` are a-independent/`β^{≥0}`, so ALL `1/β`-Borel content is the exact noise coeffs
+   `σ_n(a)=2^nΣ_{m≥n}r_{m,n+1}a^{-3m/2}` (`r_{m,ℓ}=[X^ℓ]R_m`, `X=2/β`; self-checked); (ii) **sector
+   uniformity is structural** — the dynamical singularity is at the *real* WKB action `Φ(a)∈ℝ₊` (moves
+   with `a`, never leaves the ray), Coulomb-gas fixed on `iℝ` ⇒ median sector uniform for `a≥a₀`.
+   **FINDING:** the frozen boundary-escape series is **NOT** the exact noise series beyond `n=1` — the
+   exact diagonal `2^n r_{n,n+1}` matches frozen `δ_n` at `n=1,3` but **not `n=2`** (`R_2` has degree
+   deficit `2<m+1=3` ⇒ exact 2-loop scaling coeff **=0**, frozen `−5/8`). So T3's Airy proof covers the
+   *frozen* object; the exact large-order must be read off BN. **RESIDUAL (one estimate):** a uniform
+   Gevrey-1 bound `|σ_n(a)|≤KΓ(n)Φ(a)^{-n}` on the exact `σ_n` — needs the **BN loop-equation recursion**
+   (§1.3 of 1111.2761) for `R_{m≥4}` (large-order `r_{n,n+1}` growth + off-diagonal `O(a^{-3/2})`
+   uniformity; the `n=1` off-diagonal is `σ_1=(−5/12)a^{-3/2}[1−(33/8)a^{-3/2}+(1555/64)a^{-3}+…]`).
+   **Next actor:** derive/port the BN recursion, generate `R_4..R_~20`, extract `r_{n,n+1}` growth and
+   confirm the on-axis singularity numerically. This is now the natural completion of Thread 2.
 3. **[structural] `α=1/2` vs `α=0` family assignment** (paper Rem.~in §5). The tail *saddle* is the
    α=1/2 Airy solution; the β=2 *distribution* is α=0 (HM). Pin the correspondence via the PII
    coalescence / Airy-solution structure. Does NOT block T1 (Costin's class covers all α); sharpens

@@ -150,5 +150,27 @@ used `ε₁=1/N` and put β in `K` — wrong slot. In CEM the genus-0 resolvent 
 **polynomial** `R_m(X)` (X=2/β_Dyson=1/β_CEM) needs the full normalization bookkeeping: (i) `ℏ^m ∝ 𝒬^m`
 with `𝒬=√β−1/√β=(1−X)/√X` is **non-polynomial** in X on its own; (ii) the `β^{k/2}` resolvent
 normalization and the `N√β/t₀` measure factor must combine with `𝒬^m` to restore a polynomial (and to
-fix the rate — the naive `1/𝒬` leading factor does NOT match `−(4/3X)s^{3/2}`). This bookkeeping is the
-remaining derivation. **Dictionary = found; assembly of `R_4` = a careful (not mechanical) next step.**
+fix the rate — the naive `1/𝒬` leading factor does NOT match `−(4/3X)s^{3/2}`).
+
+## UPDATE 3 — the normalization pass: the blocker is the GENUS SUM, not the bookkeeping (definitive)
+
+Worked the bookkeeping. The CEM `1/N`-expansion (eq. 8.6) `W_1 = Σ_h (N/t₀)^{1−2h} W_1^{(h)}(ℏ)` with
+`ℏ=(t₀/N)𝒬` means the tail correlator `ω_1^{[k]}` (coeff of `N^{1−k}`, giving `R_{k−1}`) is a **genus
+sum**: genus `h` contributes the `ℏ^{k−2h}=𝒬^{k−2h}` piece, `h=0..⌊k/2⌋`. So
+$$R_m(X)=\sum_{h=0}^{\lfloor (m+1)/2\rfloor} 𝒬^{\,m+1-2h}\,c_{m,h}\quad(\text{× the }β^{(m+1)/2}\text{ normalization}).$$
+**Verified** (sympy): `R_m` carries `m+2` independent X-coefficients (`m+1` at the R_2 deficit), while a
+single genus (one `𝒬`-power) supplies only ~1–2 of them. E.g. `R_1·X = −5X³/24+3X²/8−13X/8` needs both
+genus 0 (`𝒬²`) and genus 1 (`𝒬⁰`); `R_3·X²` spans `X²…X⁶` — genus 0,1,2.
+
+**Consequence (definitive).** The single quantum-curve WKB is **genus 0 only**, so it yields at most the
+leading-`𝒬` piece of each `R_m` — matching `R_1,R_3` top-X coeffs (`_tw_weber_wkb.py`) but never the full
+polynomial. The full `R_4` **requires all genera** `h=0,1,2` = the full topological recursion (the
+loop-equation recursion of §2, WITH its branch-projection + `W_2` coincident-limit subtleties). For
+general β there is **no single-ODE shortcut** — an exact all-genus ODE for `⟨∏(x−λ)^{β_Dyson}⟩` exists
+only at even `β_Dyson` (the solvable β=2,4,6 cases). **The normalization was never the sole blocker; the
+genus sum is intrinsic, and it routes back to the same loop-equation TR every path hit.**
+
+**Net for `R_4`:** not produced. The only route is implementing the all-genus loop-equation TR
+(branch-projection + Bergman-regularized `W_2` coincident limit); the finite-β bracket data
+(`_tw_bn_brackets.py`) gives 3 exact checkpoints (X=2,1,1/2) and β=2/HM gives `R_m(1)` to high `m`, but
+3–4 points cannot fix a degree-≤5 polynomial. **Dictionary found (UPDATE 2); the wall is the TR.**

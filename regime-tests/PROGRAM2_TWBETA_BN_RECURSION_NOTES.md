@@ -121,3 +121,34 @@ matching the **exact** `ω_1^{[1]}` (eq. 2-26) / `∫ω_1^{[2]}` (eq. 2-33); (3)
 (4) generate `R_4,R_5,…` and **cross-check against `_tw_bn_brackets.py`** (X=2,1,1/2). The Weber ODE
 (4.23) is the concrete object to WKB. **No off-the-shelf code emits `R_m`** — the refined-TR packages
 give the formalism/curve, not the TW_β tail coefficients.
+
+---
+
+## UPDATE 2 — the constant-K Weber ODE FAILS; the Chekhov–Eynard–Marchal dictionary (the fix)
+
+**Ran the Weber WKB** (`coupled-atlas/_tw_weber_wkb.py`). **Structural obstruction:** Kidwai–Osuga
+eq. 4.23 is a **pure Schrödinger** ODE (no `d/dx` term — Weber has no finite poles), so β can enter
+only through the constant `K`. Full edge double-scaling shows the `K`-dependence **cancels**: with
+`K=1+q₁X` one gets `R_1 = −15/8` *identically*, independent of `q₁`. And the pure WKB `w_k` (leading
+edge coeffs, `−1,−1/4,5/32,−15/64,1105/2048,…`) reproduce the exact top coeff `r_{m,m+1}` only at
+non-deficit orders (R_1,R_3) and **alternate** in sign, whereas the true diagonal `2^n r_{n,n+1}` is
+non-alternating. So a constant-K, β-in-the-potential ODE cannot make TW_β's β-dependence.
+
+**The Chekhov–Eynard–Marchal dictionary (arXiv:1009.6007 §8) — where β actually enters.**
+Measure `Z=∫dλ |Δ(λ)|^{2β} ∏ e^{−(N√β/t₀)V(λ_i)}` (their **β = Dyson/2**; β=1 = Hermitian). Then:
+- **Quantum curve** `((ℏ∂)² − U(x))ψ(x)=0` (a Schrödinger ODE), with
+- **`ℏ = (t₀/N)(√β − 1/√β)`** (eq. 8.3) — β enters through the **KINETIC** term ℏ, not the potential.
+  `ℏ=0` ↔ β=1 (Hermitian); `ℏ→−ℏ` ↔ `β→1/β`.
+- Resolvents `W_k = β^{k/2}⟨Σ…⟩_c` (eq. 8.4); loop eq. `W₁²+(√β−1/√β)W₁'+W₂=(N/t₀)(V'W₁−P₁)` (eq. 8.11).
+- Gaussian `U(x)=x²/4 − t₀ + O(ℏ)` (semicircle + quantum correction; edge at `2√t₀`).
+
+**So the fix is:** the WKB parameter is `ℏ ∝ (√β−1/√β)/N` (β-dependent), NOT `1/N`. My Weber attempt
+used `ε₁=1/N` and put β in `K` — wrong slot. In CEM the genus-0 resolvent is *already* quantum
+(Riccati `ω²+ℏω'=V'ω−P₁`, eq. 8.12), and β rides in `ℏ`.
+
+**Honest caveat (why this is not yet a plug-in).** Converting the CEM curve to Borot–Nadal's
+**polynomial** `R_m(X)` (X=2/β_Dyson=1/β_CEM) needs the full normalization bookkeeping: (i) `ℏ^m ∝ 𝒬^m`
+with `𝒬=√β−1/√β=(1−X)/√X` is **non-polynomial** in X on its own; (ii) the `β^{k/2}` resolvent
+normalization and the `N√β/t₀` measure factor must combine with `𝒬^m` to restore a polynomial (and to
+fix the rate — the naive `1/𝒬` leading factor does NOT match `−(4/3X)s^{3/2}`). This bookkeeping is the
+remaining derivation. **Dictionary = found; assembly of `R_4` = a careful (not mechanical) next step.**

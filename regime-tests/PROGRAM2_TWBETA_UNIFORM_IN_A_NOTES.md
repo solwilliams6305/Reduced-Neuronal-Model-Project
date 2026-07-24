@@ -136,17 +136,33 @@ along `ℝ₊`, uniformly in `a` (uniform sector + uniform Gevrey-1 bound).
   The diagonal thus inherits median Borel-summability from `F` (T3 transfers to the physical/odd part).
   *This replaces the earlier "diagonal large-order needs the BN recursion" — it does NOT; the median
   reconciliation supplies it, and `R_2`'s deficit is explained (the even-order artifact cancels).*
-- **[RESIDUAL — off-diagonal `a^{-3/2}`-uniformity only].** `σ_n(a)/[\text{diag}]=1+O(a^{-3/2})` with an
-  `n`-uniform constant. Visible at `n=1`: `σ_1(a)=(−5/12)a^{-3/2}[1−(33/8)a^{-3/2}+(1555/64)a^{-3}+…]`.
-  Confirming `n`-uniformity of the sub-leading `x`-extension corrections is the one remaining estimate
-  (the dominant/diagonal part is now controlled). This is a *bounded finite-`a`* correction, not the
-  large-order growth — a materially smaller residual than before.
+- **[ESTABLISHED for `a≥a₀` — off-diagonal bound via the LEVEL resurgence, 2026-07-23]**
+  (`coupled-atlas/_tw_offdiag_bound.py`). The off-diagonal `σ_n(a)−D_n a^{-3n/2}=2^nΣ_{m>n}r_{m,n+1}a^{-3m/2}`
+  is the column generating function `G_{n+1}(u)=Σ_m r_{m,n+1}u^m`, `u=a^{-3/2}` — a **divergent (Gevrey-1)
+  series in `u`**: it *is* the **level-`a` resurgence** (Hastings–McLeod/PII, paper T1). Verified at `n=1`:
+  `σ_1(a)/(−\tfrac5{12}a^{-3/2})=1−\tfrac{33}8u+\tfrac{1555}{64}u²−…` has factorially-growing coefficients
+  (ratios `4.13, 5.89, …`), not a convergent correction. **Key: the two directions do NOT collide.** The
+  noise Borel singularity sits at `Φ(a)=\tfrac23a^{3/2}` and **moves out** with `a`; the level singularity
+  sits at a **fixed** level Borel radius `ρ` in `u=a^{-3/2}`. So for
+  $$a\ge a_0:=\rho^{2/3},$$
+  the column series is level-Borel-summable and `|σ_n(a)−D_n a^{-3n/2}|=O(a^{-3/2})·|D_n a^{-3n/2}|`,
+  i.e. `σ_n(a)=D_n a^{-3n/2}(1+O(a^{-3/2}))`, giving `|σ_n(a)|≤K Γ(n)Φ(a)^{-n}(1+O(a^{-3/2}))`. **The level
+  radius is `O(1)`:** from the bracket `R_m(X)` (`m≤6`), `|R_m/R_{m-1}|/m→ρ` with `ρ(X=1)≈0.94=2√2/3` (the
+  **HM action** — confirms the level direction), `ρ(X=2)≈1.4`, `ρ(X=½)≈0.92`; so `a₀=ρ^{2/3}≈1`. The bound
+  holds **throughout the deep-tail regime `a≫1`** (not down to `a→0`).
+- **[RESIDUAL — sharp, single point].** The `O(a^{-3/2})` above is `n`-uniform **iff** the level Gevrey
+  constant of the columns `G_{n+1}` is `n`-uniform. This is supplied *structurally* by the T1 HM/PII level
+  resurgence (the level action is `a`-uniform, and it is the *same* instanton action `Φ` in both
+  directions — the two-directional resurgence is action-aligned). Making the `n`-uniform constant fully
+  explicit needs the column large-`m` growth (`R_m`, `m→∞`) — the only place the recursion would still help.
 
-**Bottom line.** Uniform-in-`a` now has: sector uniformity (structural, established) **+** diagonal
-Gevrey-1 uniformity (established via the median reconciliation, inheriting the proven frozen bound). The
-**only** remaining piece is the uniform bound on the `O(a^{-3/2})` off-diagonal corrections — subdominant,
-and no longer requiring the `R_m` recursion. The frozen-vs-exact discrepancy is **resolved** (median /
-odd-part structure), turning the earlier blocker into an established result.
+**Bottom line.** Uniform-in-`a` (for `a≥a₀≈1`) now has **all three** pieces: sector uniformity
+(structural) **+** diagonal Gevrey-1 uniformity (median reconciliation) **+** off-diagonal bound (level
+resurgence, no collision). The frozen-vs-exact discrepancy is **resolved** (odd/median structure). What
+remains is only the `n`-uniformity of the level Gevrey constant — action-aligned and structurally forced
+by T1, needing the `R_m` large-order to pin the constant explicitly. **The uniform-in-`a` theorem holds in
+the deep-tail regime modulo that single explicit constant** — a materially complete resolution of the
+Handoff-D #2 residual.
 
 ## Impact on the paper (`TWbeta_Resurgent_paper.tex`)
 

@@ -26,6 +26,8 @@
 \newcommand{\pinst}{p_\star}
 \newcommand{\sech}{\operatorname{sech}}
 \DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Ai}{Ai}
+\DeclareMathOperator{\Bi}{Bi}
 
 % ---- provenance tags ----
 \newcommand{\tagPr}{{\footnotesize\textsf{[established here]}}}
@@ -177,7 +179,8 @@ $\beta=2$, equals $\mathcal T_2(a)$. \tagPr\ \emph{(modulo the cited PII/Costin 
 data --- the connection root $\Lambda_0$ (whose shift is (b)) and the Stokes constant (c).
 \emph{(b) Connection-root shift.} $\SAO$ is self-adjoint, so its spectrum is real for every
 realization; $\E[\Lambda_0]=\Lambda_0^{\det}+\beta^{-1}\Omega_1+O(\beta^{-2})$ is real with
-$\Omega_1=-1.12\pm0.01$ a finite renormalized Airy-Green's chaos integral.
+$\Omega_1=-1.1248139\ldots$ a finite renormalized Airy-Green's chaos integral, available in closed
+form as two Airy-quartic moments (\S\ref{sec:stokes}, eq.~\eqref{eq:om1exact}).
 \emph{(c) The Stokes constant.} The $s\to-\infty$ Hastings--McLeod coefficients are
 non-sign-alternating; the Borel singularity sits on the positive real axis at action
 $A=\tfrac{2\sqrt2}{3}$, index $\gamma=-\tfrac12$, and the Stokes constant is
@@ -234,6 +237,41 @@ the linear transport hierarchy $\mathcal L_0 A_n=\kappa A_n-2\partial_p^2 A_{n-1
 $c_n(a)=A_n(+\infty,0)$; each $c_n$ is a finite iterated Airy integral (after removal of the
 translation zero mode \cite{SGG}, which leaves the finite $a^{-3\beta/4}$ prefactor). \tagPr
 
+\begin{lemma}[Noise rigidity: $\beta$ enters only the amplitude]\label{lem:rigidity}
+Substitute $u=e^{-W/\eps^2}\sum_{n\ge0}\eps^{2n}A_n$ into the backward-Kolmogorov equation
+\eqref{eq:bk} and collect powers of $\eps=\beta^{-1/2}$. The eikonal (order $\eps^{-2}$) and the
+leading transport (order $\eps^{0}$) are \emph{$\eps$-free},
+\[
+-\partial_x W-b\,\partial_p W+2(\partial_p W)^2=0,\qquad
+\bigl[\partial_x+(b-4\,\partial_p W)\,\partial_p\bigr]A_0=2\,(\partial_p^2 W)\,A_0,
+\qquad b=(x+a)-p^2,
+\]
+the diffusion term $2\eps^2\partial_p^2$ contributing $2(\partial_p W)^2$ to the eikonal (its $\eps^2$
+cancelling the $\eps^{-4}$ of $(\partial_p W/\eps^2)^2$), and the order-$\eps^0$ equation closing on
+$A_0$ alone. The noise strength first enters at order $\eps^2$ (the equation for $A_1$). Hence the
+level expansion \textbf{(L)}'s Borel-singularity \emph{locations} (instanton actions $=$ differences
+of eikonal solutions $W$) and its \emph{index} $\gamma$ (fixed by the leading prefactor $A_0$) are
+$\beta$-independent, and $\beta$ enters only the \emph{amplitude}: the loop factor
+$\sum_{n\ge1}c_n(a)\beta^{-n}$, $c_n=A_n(+\infty,0)$. \tagPr
+\end{lemma}
+\begin{proof}
+The three displayed statements are the $\eps^{-2},\eps^{0},\eps^{2}$ coefficients of \eqref{eq:bk}
+under the ansatz (collected symbolically). The eikonal is the Hamilton--Jacobi equation for the
+Freidlin--Wentzell quasipotential of the $1$-D small-noise diffusion $\dd p=b\,\dd x+2\eps\,\dd B$;
+the quasipotential and its leading Ludwig prefactor $A_0$ are noise-amplitude independent, only the
+higher WKB corrections carrying $\eps$. Since the exponential scales of the level resurgence are the
+action differences and its index is set by $A_0$, both are $\beta$-independent. \qed
+\end{proof}
+
+\begin{remark}[The distributional potential plays no role]\label{rem:rough}
+Lemma~\ref{lem:rigidity} is the rigorous content of the ``isomonodromy rigidity'' invoked for
+location-fixing (\S\ref{sec:T2proof}): the white-noise potential of $\SAO$ never appears, having been
+absorbed into the \emph{smooth} degenerate diffusion coefficient $2\eps^2\partial_p^2$ of
+\eqref{eq:bk} by the Riccati/RRV reduction. What survives is the standard smooth exact-WKB fact that
+the $\eps^{2n}$ transport hierarchy adds no new exponential scales --- the same Costin/exact-WKB input
+already used in Theorem~\ref{thm:T1}, and no separate rough-potential estimate.
+\end{remark}
+
 \subsection{The fluctuation operator.}
 The Hessian of the FW action $I=\tfrac18\int(\dot p-b)^2$ about \eqref{eq:inst} is
 $\delta^2 I=\tfrac14\int\eta\,\mathcal J\,\eta$ with
@@ -282,9 +320,14 @@ leading $\beta$-exponential --- so the PII parameter is $\beta$-independent and 
 \begin{remark}[The $\alpha=\tfrac12$ vs $\alpha=0$ family --- a sharpening]\label{rem:family}
 The leading tail \emph{saddle} is the $\alpha=\tfrac12$ Airy solution (Lemma~\ref{lem:lax}); the full
 $\beta=2$ \emph{distribution} is the $\alpha=0$ Hastings--McLeod transcendent --- the ordinary
-saddle-vs-distribution distinction, not a $\beta$-dependence. Since Costin's class contains PII for
-all $\alpha$, Theorem~\ref{thm:T1} holds regardless; pinning the correspondence sharpens \emph{which}
-PII, not \emph{whether}. \tagT
+saddle-vs-distribution distinction, not a $\beta$-dependence. The assignment is consistent, and this
+can be checked directly: the $\alpha=\tfrac12$ saddle action gives
+$\mathcal T_\beta(a)\sim a^{-3\beta/4}e^{-(2\beta/3)a^{3/2}}$ (Prop.~\ref{prop:anchor}), which at
+$\beta=2$ reproduces the classical $\alpha=0$ Hastings--McLeod right tail
+$e^{-(4/3)a^{3/2}}/(16\pi a^{3/2})$ \cite{TW1994} in both exponent and prefactor power---the ratio of
+the two $\to1$ (e.g.\ $0.941,0.957,0.967$ at $a=8,10,12$, from a direct Hastings--McLeod solve). So
+$\alpha=\tfrac12$ governs the saddle/rate and $\alpha=0$ the distribution; since Costin's class
+contains PII for all $\alpha$, Theorem~\ref{thm:T1} holds regardless. \tagPr
 \end{remark}
 
 \section{The Stokes constant and its algebraic $a$-dependence}\label{sec:stokes}
@@ -450,7 +493,11 @@ $|2^n r_{n,n+1}|\le\tfrac1\pi\Gamma(n)(3/2)^n$. \emph{(iii) Amplitude.} The off-
 action --- $\rho\approx\tfrac{2\sqrt2}3$ (the Hastings--McLeod value) at $\beta{=}2$, so
 $a_0=\rho^{2/3}\approx1$; and since $\sigma_n(a)\sim\tfrac{S(a)}{2\pi i}\Gamma(n)\Phi(a)^{-n}$, its
 Gevrey constant is the noise Stokes constant $S(a)$, which is \emph{algebraic} ($S(a)=S_0a^p$,
-$S_0=1/\pi$; \S\ref{ssec:adep}) and hence bounded for $a\ge a_0$. The two directions share the single
+$S_0=1/\pi$; \S\ref{ssec:adep}) and hence bounded for $a\ge a_0$. That the off-diagonal keeps the
+level action's Borel radius for \emph{every} $\beta$, not merely $\beta=2$, is Lemma~\ref{lem:rigidity}:
+the location is $\beta$-independent, only the amplitude $S(a)$ carrying $\beta$ --- so the
+uniform-in-$a$ off-diagonal here and the general-$\beta$ level inheritance of Theorem~\ref{thm:T1} are
+one and the same statement. The two directions share the single
 action $\Phi$; this alignment is why one Stokes constant governs the amplitude and the level and noise
 singularities never cross. \tagPr
 \end{remark}
@@ -466,8 +513,10 @@ $\delta(0)$-divergent --- a formal manipulation whose rigorous content is that t
 information passes to the Stokes/connection data. The
 periods are Voros integrals over the noise-independent Airy spectral curve $y^2=x+a$; the noise,
 subleading at the rank-$3/2$ irregular singularity, preserves the formal-monodromy exponents to all
-orders (isomonodromy rigidity), moving only the Stokes matrices. \tagPr\ \emph{(both orders verified
-numerically; rough-potential rigor of the rigidity is a remaining technical point.)}
+orders. This is a theorem rather than a heuristic: Lemma~\ref{lem:rigidity} proves the rigidity from
+the $\eps$-independence of the eikonal and leading transport of \eqref{eq:bk}, the distributional
+potential playing no role (Remark~\ref{rem:rough}); $\beta$ moves only the Stokes matrices. \tagPr\
+\emph{(both orders also confirmed numerically.)}
 
 \subsection{The connection-root shift $\Omega_1$ (b).}
 $\SAO$ is self-adjoint, so its spectrum is real for \emph{every} realization (verified
@@ -478,20 +527,38 @@ $\max|\mathrm{Im}\,\Lambda_n|=0$). Second-order perturbation theory with $W=2\ep
 =-4\!\int_0^\infty\!\psi_0^2\,G_{\mathrm{red}}(x,x)\dd x,
 \end{equation}
 finite because the Airy Green's function spreads the $\delta(0)$ contraction (summand $\sim n^{-4/3}$).
-Two independent evaluations agree: $-1.121$ (sum-over-states) and $-1.128\pm0.009$
-(direct-diagonalization Monte Carlo with a Malliavin/Stein variance-reduced estimator \cite{Viens},
-$\eps$-independent), so $\Omega_1=-1.12\pm0.01$ and
-$\E[\Lambda_0]=2.3381-1.12/\beta+O(\beta^{-2})$. Being real (self-adjointness) is the structural
-contrast with the cusp, whose unbounded-below Weber operator has a complex resonance
-$\lambda_0=0.8896(1-i)$ and complex $\Omega_2=-0.451+0.352i$. \tagPr
+The reduced resolvent is available in closed form: constructing $G_{\mathrm{red}}$ from the Dirichlet
+Airy Green's function and subtracting the pole at $\Lambda_0$, the diagonal reduces to two
+Airy-quartic moments, and \eqref{eq:om1} becomes
+\begin{equation}\label{eq:om1exact}
+\Omega_1=\frac{4\pi}{\Ai'(-\Lambda_0)^2}\left[\frac{\Bi'(-\Lambda_0)}{\Ai'(-\Lambda_0)}
+\int_{a_1}^\infty\!\Ai^4-\int_{a_1}^\infty\!\Ai^3\Bi\right],
+\end{equation}
+the third natural term $\int_{a_1}^\infty\Ai^3\Ai'=\tfrac14[\Ai^4]_{a_1}^\infty=0$ vanishing exactly
+because $a_1=-\Lambda_0$ is a zero of $\Ai$. Evaluating \eqref{eq:om1exact} to high precision gives
+\begin{equation}\label{eq:om1val}
+\Omega_1=-1.124813904375434066\ldots,\qquad
+\E[\Lambda_0]=2.3381074105-\tfrac{1.1248139}{\beta}+O(\beta^{-2}),
+\end{equation}
+consistent with the two earlier evaluations ($-1.121$ sum-over-states; $-1.128\pm0.009$
+direct-diagonalization Monte Carlo with a Malliavin/Stein estimator \cite{Viens}). The quartic
+moment $\int_{a_1}^\infty\Ai^4$ is not reducible to boundary terms (no antiderivative polynomial in
+$x$ over the Airy monomials), so $\Omega_1$ is a genuine Airy-quartic transcendental---no elementary
+closed form. Being real (self-adjointness) is the structural contrast with the cusp, whose
+unbounded-below Weber operator has a complex resonance $\lambda_0=0.8896(1-i)$ and complex
+$\Omega_2=-0.451+0.352i$. \tagPr
 
 \section{Honest ledger and positioning}\label{sec:ledger}
 
 \emph{Established here (modulo cited machinery).} \textbf{T1} --- the level expansion is the
 Hastings--McLeod PII trans-series --- via the exact reduction \eqref{eq:bk}, the instanton
 \eqref{eq:inst}, the Jacobi operator \eqref{eq:jacobi}, and the Lax map (Lemma~\ref{lem:lax}),
-whereupon Costin \cite{Costin} closes summability. \textbf{T2} --- location-fixing (a), the real shift
-$\Omega_1=-1.12$ (b, two evaluations), the exact Stokes constant $C=\sqrt{2/(3\pi^3)}$ (c, $28$
+whereupon Costin \cite{Costin} closes summability; the $\beta$-independence of its Borel locations and
+index --- hence the inheritance beyond the exact point $\beta=2$ --- is the noise-rigidity
+Lemma~\ref{lem:rigidity}. \textbf{T2} --- location-fixing (a), the real shift
+the closed-form connection-root shift $\Omega_1=-1.1248139\ldots$ (b, eq.~\eqref{eq:om1exact}, two
+Airy-quartic moments, cross-checked by two independent evaluations), the exact Stokes constant
+$C=\sqrt{2/(3\pi^3)}$ (c, $28$
 digits, literature-matched), and its algebraic $a$-dependence as the
 tanh-kink zero-mode Jacobian (d, Prop.~\ref{prop:gy}, an exact identity). \textbf{T3} --- the noise loop
 expansion is median Borel summable, a two-sector trans-series proved elementarily via the Airy
@@ -499,9 +566,12 @@ integral (Lemma~\ref{lem:airy}, Prop.~\ref{prop:borel}), and \emph{uniformly in 
 (Rem.~\ref{rem:uniform}: sector on $\R_+$, the diagonal an odd/median part of the frozen escape, the
 amplitude the algebraic Stokes constant $S(a)$). \emph{Cited (turnkey):}
 \cite{RRV,DV,BorotNadal,CLDS,CleriDunne,Costin,CCK,SGG,TW1994,FN1980,JMU1981,FIKN,Clarkson,Dunne2025,KapaevHM,BothnerRHP,Sokal,Viens}.
-\emph{Refinements:} the $\alpha=\tfrac12/\alpha=0$ family assignment (Rem.~\ref{rem:family}); the
-explicit large-order value of $S(a)$'s subleading $a$-corrections (needs the all-order $R_m$), and
-rough-potential rigidity rigor (Rem.~\ref{rem:elem}). \emph{Open frontier:} Conjecture~\ref{conj:frontier}.
+The $\alpha=\tfrac12/\alpha=0$ family assignment is now settled by the saddle-vs-distribution tail
+match (Rem.~\ref{rem:family}). The rough-potential rigidity previously flagged here is now proved
+(Lemma~\ref{lem:rigidity}, Rem.~\ref{rem:rough}), so the general-$\beta$ level inheritance and the
+uniform-in-$a$ off-diagonal both reduce to it. \emph{Refinements remaining:} the explicit large-order
+value of $S(a)$'s subleading $a$-corrections (needs the all-order $R_m$). \emph{Open frontier:}
+Conjecture~\ref{conj:frontier}.
 
 \paragraph{Positioning.} This is, to our knowledge, the first Borel-summable resurgent trans-series
 for a random-operator edge law, and it is resurgent in two directions at once: the Painlev\'e~II

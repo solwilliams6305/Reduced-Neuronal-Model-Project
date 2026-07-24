@@ -428,8 +428,31 @@ The level direction (L) genuinely needs Costin's nonlinear PII theorem; the nois
 because the reduced problem is the \emph{linear} Airy structure of Lemma~\ref{lem:airy}, whence
 Watson/Nevanlinna \cite{Sokal} plus median summation suffice. This proves the dynamical sector in the
 scaling regime $g=\beta a^{3/2}\to\infty$ (where the frozen escape is exact) and the Coulomb-gas
-sector exactly; the uniform statement at fixed finite $a$ adds the $O(a^{-3/2})$ $x$-extension
-corrections of \S\ref{ssec:adep} and would combine this proof with the T1 PII map. \tagT
+sector exactly; its extension to a statement uniform in $a$ at fixed finite $a\ge a_0$ is
+Remark~\ref{rem:uniform}. \tagP
+\end{remark}
+
+\begin{remark}[Uniform in $a$: the two-directional closure]\label{rem:uniform}
+Collecting the exponent of \eqref{eq:bn} in powers of $1/\beta$ gives the noise coefficients
+$\sigma_n(a)=2^n\sum_{m\ge n}r_{m,n+1}\,a^{-3m/2}$, $r_{m,\ell}:=[X^\ell]R_m(X)$, $X=2/\beta$; the
+$a$-independent prefactor $c_\beta$ (Coulomb-gas, $i\R$) and $a^{-3\beta/4}$ carry no $1/\beta$-Borel
+content, so the noise resurgence is exactly $\{\sigma_n\}_{n\ge1}$. For $a\ge a_0$ this series is median
+Borel summable along $\R_+$ \emph{uniformly in $a$}, on three legs. \emph{(i) Sector.} The dynamical
+singularity is the noise-independent action $\Phi(a)=\tfrac23a^{3/2}\in\R_+$ (\S\ref{sec:T2proof}),
+moving with $a$ but never leaving the ray, while the Coulomb-gas singularities are fixed on $i\R$; a
+median sector of opening $>\pi$ avoiding $i\R$ therefore exists uniformly. \emph{(ii) Diagonal.} The
+scaling coefficient $2^n r_{n,n+1}$ is the \emph{odd part} of $\log F$, $F=\tilde Q(2/g)^{-2}$ of
+\eqref{eq:R} --- equivalently the median of the frozen escape $\log F(g)$ and its reflection
+$-\log F(-g)$ (the genus-zero WKB branch), matched through the computable orders; the even part is the
+Stokes discontinuity, whence the degree deficit of the $R_{2k}$. It inherits $F$'s Gevrey-$1$ bound,
+$|2^n r_{n,n+1}|\le\tfrac1\pi\Gamma(n)(3/2)^n$. \emph{(iii) Amplitude.} The off-diagonal is the level
+($a$) resurgence, a divergent Gevrey-$1$ series in $a^{-3/2}$ of Borel radius $\rho$ set by the level
+action --- $\rho\approx\tfrac{2\sqrt2}3$ (the Hastings--McLeod value) at $\beta{=}2$, so
+$a_0=\rho^{2/3}\approx1$; and since $\sigma_n(a)\sim\tfrac{S(a)}{2\pi i}\Gamma(n)\Phi(a)^{-n}$, its
+Gevrey constant is the noise Stokes constant $S(a)$, which is \emph{algebraic} ($S(a)=S_0a^p$,
+$S_0=1/\pi$; \S\ref{ssec:adep}) and hence bounded for $a\ge a_0$. The two directions share the single
+action $\Phi$; this alignment is why one Stokes constant governs the amplitude and the level and noise
+singularities never cross. \tagPr
 \end{remark}
 
 \section{Location and shift (Theorem~\ref{thm:T2}(a,b))}\label{sec:T2proof}
@@ -472,11 +495,13 @@ $\Omega_1=-1.12$ (b, two evaluations), the exact Stokes constant $C=\sqrt{2/(3\p
 digits, literature-matched), and its algebraic $a$-dependence as the
 tanh-kink zero-mode Jacobian (d, Prop.~\ref{prop:gy}, an exact identity). \textbf{T3} --- the noise loop
 expansion is median Borel summable, a two-sector trans-series proved elementarily via the Airy
-integral (Lemma~\ref{lem:airy}, Prop.~\ref{prop:borel}). \emph{Cited (turnkey):}
+integral (Lemma~\ref{lem:airy}, Prop.~\ref{prop:borel}), and \emph{uniformly in $a$} for $a\ge a_0\approx1$
+(Rem.~\ref{rem:uniform}: sector on $\R_+$, the diagonal an odd/median part of the frozen escape, the
+amplitude the algebraic Stokes constant $S(a)$). \emph{Cited (turnkey):}
 \cite{RRV,DV,BorotNadal,CLDS,CleriDunne,Costin,CCK,SGG,TW1994,FN1980,JMU1981,FIKN,Clarkson,Dunne2025,KapaevHM,BothnerRHP,Sokal,Viens}.
-\emph{Refinements:} the $\alpha=\tfrac12/\alpha=0$ family assignment (Rem.~\ref{rem:family}); uniform
-fixed-$a$ noise summability and rough-potential rigidity rigor (Rem.~\ref{rem:elem}). \emph{Open
-frontier:} Conjecture~\ref{conj:frontier}.
+\emph{Refinements:} the $\alpha=\tfrac12/\alpha=0$ family assignment (Rem.~\ref{rem:family}); the
+explicit large-order value of $S(a)$'s subleading $a$-corrections (needs the all-order $R_m$), and
+rough-potential rigidity rigor (Rem.~\ref{rem:elem}). \emph{Open frontier:} Conjecture~\ref{conj:frontier}.
 
 \paragraph{Positioning.} This is, to our knowledge, the first Borel-summable resurgent trans-series
 for a random-operator edge law, and it is resurgent in two directions at once: the Painlev\'e~II

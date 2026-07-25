@@ -262,7 +262,34 @@ not a contour artifact.
 2. **Not a bad ladder.** Tested by comparing the series to FP at small $x$ — but see the caveat
    below; the test came back **inconclusive-for-the-ladder and damning-for-FP** instead.
 
-### ⚠ CAVEAT discovered: the FP-PDE is biased high at small η
+### ✅ RESOLVED (2026-07-25): the "FP bias" is first-order upwind diffusion, not a bias
+
+**The caveat below is retracted.** The FP-PDE is *not* biased — it is first-order accurate in $dp$,
+and the discrepancy is **numerical diffusion from the upwind advection**, $D_{\rm num}\sim|{\rm
+drift}|\,dp/2$. That is *independent of $\eta$*, so it swamps the physical $D=\eta^2/2$ at small
+$\eta$ — which is exactly why the error looked like a small-$\eta$ bias. Decisive test at $q=2$,
+$\eta=0.3$ (trusted cusp series = 0.14477):
+
+| $dp$ | 0.04 | 0.02 | 0.01 | 0.005 | 0.0025 |
+|---|---|---|---|---|---|
+| $f$ | 0.23041 | 0.18795 | 0.16674 | 0.15614 | 0.15085 |
+| err | +59.2% | +29.8% | +15.2% | +7.9% | +4.2% |
+
+The error **halves as $dp$ halves** — clean $O(dp)$ convergence. Richardson in $dp$ on the last two
+points gives $f\to0.1456$ vs the series' 0.14477: **agreement to 0.5%**. So the ladder and the FP
+agree once discretization is removed; both are sound.
+
+**Why this matters — it opens a route that needs no new rungs.** With $dp$-extrapolation (or a
+second-order/limiter scheme) the ground truth becomes accurate enough to *subtract the known
+perturbative part* and read the non-perturbative remainder directly, giving the Borel data
+($A$, and $\theta$ via its oscillation in $x$) from the observable rather than from the ladder's
+large-order behaviour. Window estimate for $q=3$: at $x\approx0.3$–0.4 the optimal-truncation
+ambiguity is 0.4–0.9% of $f$ while the non-perturbative term $\sim e^{-A/x}$ is 1.8–5% — a
+signal-to-ambiguity of $\sim4$–5×, workable if FP is pushed to $\sim0.1\%$ (one or two more $dp$
+halvings plus Richardson). **This is far cheaper than $v_8$ and is the recommended next attack.**
+**[NUMERIC, route newly opened]**
+
+### ⚠ SUPERSEDED caveat (kept for the record): "the FP-PDE is biased high at small η"
 
 The $\eta$-sweep table earlier in this file is **only trustworthy near $\beta=2$**. Control at $q=2$,
 where the cusp series is independently trusted:
@@ -330,6 +357,177 @@ $[3/3]$ and truth 0.1655. So the eighth coefficient **flips the error from 79% l
 the truth becomes *bracketed*, and $\theta$ settles to 51–56°, $|\zeta|\approx1.1$. That
 order-to-order oscillation is the signature of a slowly-converging (not broken) Padé sequence, which
 supports the "more rungs" reading — but it cannot be cashed in. **[NUMERIC, indicative only]**
+
+## Does the swallowtail belong to the same ladder family? — STRUCTURALLY YES (2026-07-25)
+
+Worth stating precisely, because the resummation failure is easy to misread as evidence against
+membership. It is not: it is a numerical method running out of coefficients.
+
+**Confirmed family structure at $q=3$** (each the $q$-general pattern evaluated at $q=3$):
+
+| family law | general form | $q=2$ (cusp) | $q=3$ (swallowtail) |
+|---|---|---|---|
+| backbone skeleton | Bessel-$1/(q{+}2)$ | Weber / $1/4$ | **Bessel-$1/5$** ✓ |
+| Stokes structure | $\mathbb Z_{q+2}$ | $\mathbb Z_4$ | **$\mathbb Z_5$** ✓ |
+| exact one-loop | $v_0^{(q)}=\int\varphi^4/\varphi'(\text{node})^4$ | 0.1343 | **0.04953** ✓ |
+| tail exponent | $2q+1$ | 5 | **7** ✓ |
+| divergence | Gevrey-1 | ✓ | **✓** |
+| Borel architecture | pair + real instanton, $\cos(k\theta-\varphi)$ envelope | node at $k{=}3$ | **node at $k{=}4$** ✓ |
+
+**The instanton constant is now a verified FIVE-member family law**, not a two-point coincidence
+(`instanton_action_q.py`, BVP at $s=10$; convergence to the asymptote is from below, faster at larger
+$q$):
+
+| $q$ | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| predicted $\tfrac1{2(2q+1)}$ | 0.16667 | 0.10000 | 0.07143 | 0.05556 | 0.04545 |
+| measured | 0.13987 | 0.09297 | 0.07010 | 0.05538 | 0.04543 |
+| ratio | 0.839 | 0.930 | 0.981 | 0.997 | 0.9995 |
+
+$$\boxed{I(s)=\frac{s^{2q+1}}{2(2q+1)}}\quad\text{[NUMERIC, }q=1..5\text{]}$$
+
+**What is NOT confirmed** is the *quantitative resurgent data*: $\theta(q)$ (unidentifiable at 7
+coefficients) and the end-to-end representation test (resummation reproducing $\operatorname{Var}$).
+So the open question is not "is it in the family" but "**does the family have a $\theta(q)$ law**" —
+which needs $\theta$ at two $q$, and we have it at one. Note the weak positive evidence that the
+representation itself is sound: including $v_7$ moves $f(2)$ from 0.035 to 0.22–0.25, *bracketing*
+the truth 0.1655 — the signature of an unconverged approximant over a correct representation, not a
+wrong one.
+
+## THE SKEW LADDER WORKS — θ is finally pinned (2026-07-25, provisional)
+
+After the conformal map and the direct extraction both failed *because they needed $(A,\theta)$ as
+input*, the third route — a **second observable** — is not circular: $\kappa_3$'s late orders are
+governed by the *same* Borel singularities with different amplitudes, so it adds independent
+constraints on the same unknowns using only coefficients we can compute.
+
+**The $\kappa_3$ ladder** ($\kappa_3=\eta^4\sum_j t_j\eta^{2j}$, `coupled-atlas/swtl_kappa3.py`,
+grids $n=12,16,20,24$, extrapolated with the same screens as the variance ladder):
+
+$$t_{0:5}=(+0.0169,\ +0.0566,\ +0.1689,\ +0.4045,\ +0.5182,\ -5.225)$$
+
+It is **far cheaper than the variance ladder** — $t_j$ needs chaos index only $2+2j$ versus $v_k$'s
+$2k+1$, so the whole 6-coefficient ladder costs ~2 min at $n=12$ against $v_7$'s ~10 days.
+
+**Structural corroboration, before any fitting.** Within each catastrophe *both* observables first
+turn negative at the **same rung** — cusp: $v_3$ and $t_3$; swallowtail: $v_5$ and $t_5$ — which is
+exactly what a shared $\cos(k\theta-\varphi)$ envelope demands. The swallowtail's node is 2 rungs
+later, so its $\theta$ must be **smaller**. This is the first independent confirmation that the
+Borel geometry inferred from the variance ladder is physical and not a Padé artifact.
+
+**The joint fit** (`swtl_joint.py`; shared $|\zeta|,\theta$, per-ladder $C,\varphi,\alpha$; 13 data
+points, 6–8 parameters) is **stable in $n$**, which no previous method was:
+
+| skew grid $n$ | 12 | 16 | 20 | 24 |
+|---|---|---|---|---|
+| $\theta$ | 37.2° | 37.9° | 38.0° | **38.0°** |
+| $|\zeta|$ | 1.452 | 1.469 | 1.471 | 1.470 |
+
+Four independent lines agree:
+
+| method | $\theta$ |
+|---|---|
+| joint fit, raw | 37.4–38.0° |
+| joint fit, bias-corrected (cusp gate runs +4.7°: 54.7 vs published 50) | **≈33°** |
+| node position (flip at rung 5 vs cusp's 3, $\sim50°\times\tfrac46$) | 33.3° |
+| low-$K$ Borel–Padé | 35–38° |
+
+$$\boxed{\theta_{\rm swallowtail}\approx33\text{–}38^\circ,\qquad |\zeta|\approx1.47}$$
+
+**and $\theta=50^\circ$ (the cusp value) is excluded** — the swallowtail's Borel phase is genuinely
+smaller, not inherited. **[NUMERIC]**
+
+⚠ **Honest limits.** (i) The joint fit's max relative residual is 0.8–0.9 (the cusp's is 0.7–1.1),
+so the shared-$(|\zeta|,\theta)$ model describes the data only roughly; the *stability* in $n$, not
+the fit quality, is what carries the result. (ii) The cusp gate passes but does **not tighten** —
+variance-alone gives 49.8° at half the residual (0.129), so the skew ladder's contribution is
+$n$-stability and the node argument, not extra precision. (iii) The bias correction is crude.
+
+**Why the grid stops at $n=24$.** $n=28$ was launched and then deliberately abandoned. $\theta$ held
+at 38.0° across $n{=}20\to24$ **while $t_5$ itself moved 5%** ($-5.65\to-5.39$) — so $\theta$ is
+demonstrably insensitive to the top rung, which is the only thing a further grid point would sharpen.
+The residual uncertainty is entirely systematic (model residual, the $+4.7°$ gate bias, the 2.4°
+$\alpha$-spread) at $\pm3$–5°, none of which a finer grid touches. Continuing would also have starved
+the $v_7$ run: load was 25–39 on 10 cores with the $\kappa_3$ pool holding 8 of them.
+
+## Route 1 (read the non-perturbative sector off the observable) — TRIED AND REFUTED (2026-07-25)
+
+Idea: since $v_8$ is walled, get $(A,\theta)$ from the *physics* instead of the ladder. The
+trans-series predicts a remainder $R(x)=f_{\rm exact}-f_{\rm pert}$ that decays as
+$e^{-A\cos\theta/x}$ and **oscillates** in $1/x$ with frequency $A\sin\theta$. Fit $R$, read off
+$A,\theta$. Implemented in `coupled-atlas/swtl_nonpert.py`.
+
+**Genuine by-product, worth keeping: a second-order FP solver.** The old first-order upwind scheme
+carries numerical diffusion $\sim|{\rm drift}|\,dp/2$; a MUSCL/van-Leer TVD reconstruction removes
+it. At $q=2,\eta=0.3$ against the converged series 0.144770:
+
+| $dp$ | 0.04 | 0.02 | 0.01 |
+|---|---|---|---|
+| upwind | +58.78% | +29.64% | +15.08% |
+| **MUSCL/van Leer** | **−0.01%** | **+0.11%** | **+0.31%** |
+
+A ~5000× accuracy gain at the same resolution. (The mild *growth* of error with finer $dp$ indicates
+a time-step/positivity-clipping floor, so Richardson in $dp$ is **not** valid here — use the direct
+value at moderate $dp$.) This solver is reusable for any ground-truth work. **[NUMERIC ✓]**
+
+**But the extraction itself fails its own cusp gate**, where $A=1.9,\theta=50^\circ$ are known:
+
+| perturbative part subtracted | implied $A\cos\theta$ | true | sign pattern of $R$ |
+|---|---|---|---|
+| optimally truncated sum | 1.526 (25% off) | 1.221 | − − − − − |
+| median Borel sum | 0.731 (40% off) | 1.221 | + + + + + + |
+
+**The decisive tell is the absence of oscillation.** A pair at $50^\circ$ must flip the sign of $R$
+across $x\in[0.35,1.1]$ (the phase $A\sin\theta/x$ sweeps ~2.5 rad); $R$ is monotone in both
+variants. So $R$ is not the pair term — it is method error. With only 7 coefficients the optimal
+truncation sits at $K=3$ for every $x$, so the "truncation ambiguity" is really the large, monotone,
+omitted tail $v_4x^4+v_5x^5+v_6x^6$; and after Borel subtraction the cusp residual is 0.4–1.3% of
+$f$, i.e. the same size as the Padé error and the solver error. For $q=3$ the residual is 5.6%→49%,
+transparently the Padé failure rather than physics.
+
+**The obstruction is circular:** extracting the non-perturbative data requires an accurate
+perturbative sum, and an accurate perturbative sum requires the Borel data. **[NEGATIVE RESULT,
+validated against the cusp]**
+
+## Conformal-map resummation — TRIED AND REFUTED (2026-07-25)
+
+Since $v_7$ is compute-walled, the natural move was a *method* upgrade needing no new coefficients:
+conformal-map Borel resummation, the standard fix for evaluating at $x=2$ when the nearest Borel
+singularity sits at $|\zeta|\approx1.1$. Implemented in `coupled-atlas/swtl_conformal.py` with the
+conjugate-pair map
+$$\sigma(u)=1-2\tfrac{u}{A}\cos\theta+\tfrac{u^2}{A^2},\qquad
+w(u)=\frac{1-\sqrt\sigma}{1+\sqrt\sigma},\qquad
+u(w)=A\Big[\cos\theta-\sqrt{\sigma(w)-\sin^2\theta}\Big],$$
+which correctly sends both branch points to $|w|=1$ (verified: $\sigma(\zeta)=0$ exactly).
+
+**It fails the cusp validation gate**, so it was never applied at $q=3$:
+
+| $x$ | plain $[3/3]$ | conformal+Padé | conformal+truncated | truth |
+|---|---|---|---|---|
+| 1.0 | 0.2244 | 0.1935 | 0.1980 | 0.232 |
+| **2.0** | **0.2347** | **0.1687** (29% off) | 0.3034 | **0.237** |
+| 2.25 | 0.2337 | 0.1623 | 0.3724 | 0.234 |
+
+**Why — and it is structural, not an implementation bug.** The map is built for *two* singularities,
+but the Borel plane has *three*: the conjugate pair **and** the real FW instanton. A real positive
+$z_r$ maps to
+$|w|=0.13,\,0.12,\,0.08,\,0.01,\,0.22$ for $z_r=1.2,1.5,1.9,2.5,3.8$ — i.e. **strictly inside the
+unit disc**, so the mapped series has a singularity in its own domain of convergence and cannot
+converge there. This is precisely the "three singularities compete" situation the 𝒲 paper flags
+(Rem. inheritance): for the swallowtail the pair ($|\zeta|\approx1.1$–1.5) and the real instanton
+($z_r\approx1.24$–1.54) have *comparable moduli*, so no two-singularity map separates them.
+
+**Subtracting the instanton first does not rescue it.** Scanning $(z_r,\gamma,C_r)$ over 63
+combinations on the cusp, $f(2)$ swings over $[-0.025,+0.396]$ with **no stable plateau**; the best
+value (0.2333) is only obtained by picking the combination nearest the known answer — fitting to the
+answer, not a method. Untuned plain $[3/3]$ beats it (0.2347).
+
+**The real lesson.** The conformal map needs the Borel singularity data $(A,\theta,z_r,C_r,\gamma)$
+as *input*, and the seven-coefficient ladder does not determine it — $\theta$ is unidentifiable
+(20.8° anchor spread at small residual), and $C_r$ is softer still. **So the method upgrade fails for
+a data reason, not a numerical one: you cannot build the map without the very information the ladder
+is too short to supply.** This closes the "improve the method instead of the engine" route.
+**[NEGATIVE RESULT, validated against the cusp]**
 
 ### Current best diagnosis
 

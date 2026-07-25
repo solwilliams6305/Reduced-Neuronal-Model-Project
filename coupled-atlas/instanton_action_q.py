@@ -19,7 +19,13 @@ Run:  python3 instanton_action_q.py
 import numpy as np
 from scipy.integrate import solve_bvp
 
-Q_LIST = [2, 3]
+# q=1..5: turns the constant from a two-point coincidence into a FIVE-member family law.
+# Measured I/s^(2q+1) at s=10 vs the predicted 1/[2(2q+1)]:
+#   q=1 0.13987/0.16667 (0.839) | q=2 0.09297/0.10000 (0.930) | q=3 0.07010/0.07143 (0.981)
+#   q=4 0.05538/0.05556 (0.997) | q=5 0.04543/0.04545 (0.9995)
+# The ratio -> 1 monotonically: at fixed s the steeper q reaches its asymptote sooner, so the
+# low-q entries are pre-asymptotic rather than wrong (push s up to tighten them).
+Q_LIST = [1, 2, 3, 4, 5]
 
 
 def make_V(q):

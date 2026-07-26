@@ -27,9 +27,11 @@ from math import factorial, pi
 from numpy.polynomial import polynomial as P
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-# Ground truth Var(Y*) at beta=2, REPRODUCED from the FP-PDE by swtl_groundtruth.py (0.3324/0.3309
-# at dp=0.02/0.01; q=2 regression gate passes).  The notes' asserted 0.328 is confirmed to 1%.
-VAR_TRUTH_BETA2 = 0.331
+# Ground truth Var(Y*) at beta=2 from the FP-PDE.  Now from the SECOND-ORDER (MUSCL) solver
+# (swtl_validate.py): f(2)=0.164683 => Var=0.3294.  Supersedes 0.331 from the first-order run, whose
+# upwind numerical diffusion |drift|*dp/2 biased it high.  Gates: the same solver reproduces the
+# converged partial sums at x=0.09 to +0.11% (q=2) and +0.35% (q=3).
+VAR_TRUTH_BETA2 = 0.3294
 Q = 3
 INSTANTON_C = 1.0 / (2 * (2 * Q + 1))   # I(s) = C * s^{2q+1};  q=3 -> 1/14
 V0_EXACT = 0.04953187

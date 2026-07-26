@@ -351,7 +351,32 @@ orders 7,9,11,13,15 are built). ⚠ Note `_yfile(17)` silently returns `_yexprs_
 $v_8$ run would `IndexError` rather than report the missing table — the same trap that broke $v_6$.
 **[NUMERIC, hard wall]**
 
-**What $v_7$ *would* buy, if it existed.** Scanning a plausible $v_7$ through the near-diagonal
+### $v_7$ LANDED (2026-07-26): $v_7(n{=}16)=-25.7215$
+
+The $n=16$ run completed in **61027 s ≈ 17 h** — the first *usable* resolution ($n\ge$ idx 15; the
+$n=10,12$ points stay below threshold and are auto-dropped). One usable grid point, so no
+extrapolation: $v_7=-25.72$ with no band. Sign pattern is now $+,+,+,+,+,-,-,-$.
+
+**The 8th coefficient transforms the resummation.** Against the verified truth $f(2)=0.1655$:
+
+| ladder | approximant | $f(1)$ | $f(1.5)$ | $f(2)$ | error |
+|---|---|---|---|---|---|
+| $v_0..v_6$ | $[3/3]$ | 0.0666 | 0.0478 | 0.0354 | **79% low** |
+| $v_0..v_7$ | $[3/4]$ | 0.1563 | 0.1913 | **0.2177** | **32% high** |
+
+Two qualitative gains, not just a smaller number: the truth is now **bracketed** (79% low → 32%
+high), and $f(x)$ **increases** with $x$ as it must (the 7-coefficient result *decreased*, which was
+flatly wrong — $f$ has to rise from $v_0=0.0497$ to 0.1655). This is what a slowly-converging Padé
+sequence over a *correct* representation looks like, and it retires the worry that the
+representation itself was at fault. It also confirms the earlier blind prediction (a scan over
+plausible $v_7$ gave 0.22–0.25; the actual $v_7=-25.7$ gives 0.2177). **[NUMERIC]**
+
+$v_7$ does **not** rescue $\theta$ from the joint fit — that stays at 38.1° (stable across all four
+skew grids) — but it does stabilise Borel–Padé's $\theta$, which forced the calibration analysis
+above. **A second usable point ($n=18$, ~35 h) would give $v_7$ a band; it is the single highest-value
+remaining computation.**
+
+**What $v_7$ was predicted to buy, before it existed.** Scanning a plausible $v_7$ through the near-diagonal
 $[4/3]$ Padé: $f(2)$ lands at 0.22–0.25 for $v_7\in[-20,-8]$, versus 0.035 from the 7-coefficient
 $[3/3]$ and truth 0.1655. So the eighth coefficient **flips the error from 79% low to ~40% high** —
 the truth becomes *bracketed*, and $\theta$ settles to 51–56°, $|\zeta|\approx1.1$. That
@@ -432,10 +457,33 @@ Four independent lines agree:
 | node position (flip at rung 5 vs cusp's 3, $\sim50°\times\tfrac46$) | 33.3° |
 | low-$K$ Borel–Padé | 35–38° |
 
-$$\boxed{\theta_{\rm swallowtail}\approx33\text{–}38^\circ,\qquad |\zeta|\approx1.47}$$
+$$\boxed{\theta_{\rm swallowtail}\approx33\text{–}42^\circ\ (\text{best }\sim39^\circ),\qquad |\zeta|\approx1.5}$$
 
 **and $\theta=50^\circ$ (the cusp value) is excluded** — the swallowtail's Borel phase is genuinely
 smaller, not inherited. **[NUMERIC]**
+
+**REVISED after $v_7$ landed (see below).** The first reading here was "33–38°", from the joint fit
+plus a node-position argument. Two corrections: (i) the node argument ($\theta\propto1/k_{\rm node}$)
+tacitly assumes the two catastrophes share the phase $\varphi$, which is not justified — a different
+$\varphi$ moves the node at fixed $\theta$, so it is **not** a reliable estimator and is demoted to a
+consistency check; (ii) with $v_7$, Borel–Padé $\theta$ stabilises at 50.6° ($K=6$: 50.7, $K=7$:
+50.6), which at first looked like a flat contradiction of the joint fit's 38°.
+
+**The methods reconcile under matched-$K$ differential calibration against the cusp** (true
+$\theta=50°$). What is robust is the *offset*, not the absolute value — Borel–Padé reads $+8.8°$ high
+on the cusp itself:
+
+| method (matched $K=6$) | cusp | swallowtail | offset | ⇒ $\theta_{\rm swtl}$ |
+|---|---|---|---|---|
+| Borel–Padé poles | 58.8° | 50.7° | **−8.1°** | 41.9° |
+| Darboux, variance-only | 49.8° | 39.2° | **−10.6°** | 39.4° |
+| joint variance+skew | 54.7° | 37.6° | **−17.1°** | 32.9° |
+
+Every method puts the swallowtail **8–17° below** the cusp; the sign and rough magnitude of that
+differential are method-independent even though the absolute values disagree by 9°. So
+**$\theta_{\rm swtl}<\theta_{\rm cusp}$ is the solid claim**, with the absolute value 33–42°.
+The best-calibrated single estimator is Darboux variance-only (bias just $-0.2°$ on the cusp) →
+**39.4°**.
 
 ⚠ **Honest limits.** (i) The joint fit's max relative residual is 0.8–0.9 (the cusp's is 0.7–1.1),
 so the shared-$(|\zeta|,\theta)$ model describes the data only roughly; the *stability* in $n$, not

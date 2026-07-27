@@ -107,11 +107,25 @@ Completed 2026-07-27 against `pilot_borel/twin_scrubber.html`. First web artifac
    R is clipped at |R|=12, and since R ≈ −1/(Y−z) near a zero, the curve exits about 1/12 ≈ 0.083
    before the actual pole. A viewer may read that offset as a real mismatch between the blow-up
    and the zero. It is not.
-3. **With noise on, one realisation is shown, not an ensemble.** "New noise" reseeds it. Nothing
-   on the page indicates whether the displayed run is typical — the still figure's row 3 carries
-   that information, the interactive does not.
-4. **Only the recessive (Ai) boundary condition**, as in the still panel — but here the caption
-   from row 1 is *absent*. Carry it over before this ships.
+3. ~~**With noise on, one realisation is shown, not an ensemble.**~~ **RESOLVED 2026-07-27.**
+   16 peers now draw in grey behind the scrubbed run, the η=0 solution stays visible as a dashed
+   blue reference, the peers' first zeros appear as a red tick strip on the zero line, and the
+   readout states the run's first zero against the peers' span, median, and its own percentile —
+   so "is this typical?" is answered numerically rather than left to be assumed. Colour encodes
+   role exactly as in the still: **blue = the trajectory in hand, grey = scatter, red = zeros.**
+4. ~~**Only the recessive (Ai) boundary condition** … the caption from row 1 is *absent*.~~
+   **RESOLVED 2026-07-27.** Carried over verbatim beneath the title.
+   *General lesson filed below.*
 5. **The noise discretisation is crude.** Euler–Maruyama at this step size is not trustworthy for
    η beyond roughly 1, which is why the slider stops at 1.2 rather than going further. The scheme
    is chosen to match the Python exactly, not to be the best available integrator.
+
+---
+
+## Standing entry — fixes do not propagate from a still to its interactive
+The boundary-condition caption was added to `twin_panel.py` and then shipped missing from
+`twin_scrubber.html`, reintroducing in the interactive a defect that had just been closed in the
+figure. Nothing catches this: the two artifacts share a kernel contract (golden vectors) but no
+*narrative* contract, so captions, caveats and on-screen distortion statements can silently
+diverge. Until something better exists, **every ledger entry closed on a still must be re-checked
+against its interactive before that interactive ships**, and vice versa.

@@ -39,6 +39,11 @@
     <b>Drag across the plot.</b> The cursor is the same <i>Y</i> in both panels.
     Watch <i>R</i> as <i>u</i> approaches a crossing.
   </p>
+  <p class="sub" style="color:var(--red);font-size:11.8px;margin:-10px 0 14px">
+    <i>u</i> is the solution that <b>decays</b> as <i>Y</i>&nbsp;&rarr;&nbsp;+&infin; &mdash; the escape problem
+    picks that one. A different boundary condition has different zeros, so these are not
+    &ldquo;the&rdquo; zeros, they are this condition&rsquo;s zeros.
+  </p>
 
   <div class="card">
     <canvas id="cv" height="520"></canvas>
@@ -48,6 +53,7 @@
       <span style="color:var(--sec)">Y = <span id="ry">—</span></span>
       <span id="msg" style="color:var(--red)"></span>
     </div>
+    <div class="readout" id="typ" style="margin-top:4px;color:var(--sec)"></div>
   </div>
 
   <div class="card">
@@ -124,7 +130,15 @@ function makeRng(seed){
 })();
 
 // ---------------------------------------------------------------- state
-let eta = 0, rngSeed = 12345, sol = integrate(0, () => 0), cursor = -2.0;
+const N_ENS = 16, STRIDE = 12;          // ensemble size; draw decimation (data stays full-res)
+const DET = integrate(0, () => 0);      // the eta=0 reference, computed once
+let eta = 0, rngSeed = 12345, sol = DET, ens = [], cursor = -2.0;
+
+function firstZero(w){                  // first crossing met sweeping Y downward
+  for (let i = w.u.length - 1; i > 0; i--)
+    if ((w.u[i-1] < 0) !== (w.u[i] < 0)) return w.Y[i];
+  return NaN;
+}
 
 const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
 function resize(){
@@ -168,17 +182,47 @@ function draw(){
 
   // ---- top: u
   let lo = Infinity, hi = -Infinity;
-  for (let i = 0; i < REF.N; i++){ if (sol.u[i] < lo) lo = sol.u[i]; if (sol.u[i] > hi) hi = sol.u[i]; }
+  for (const w of [sol, ...ens])
+    for (let i = 0; i < REF.N; i += 4){ if (w.u[i] < lo) lo = w.u[i]; if (w.u[i] > hi) hi = w.u[i]; }
   const pad = 0.12 * (hi - lo); lo -= pad; hi += pad;
   const yzA = frame(L, L.yA, L.ph, 'u(Y)', lo, hi);
   const Yu = v => L.yA + L.ph * (hi - v) / (hi - lo);
 
-  ctx.strokeStyle = '#2f6fb0'; ctx.lineWidth = 2; ctx.beginPath();
-  for (let i = 0; i < REF.N; i++){
-    const px = X(sol.Y[i], L), py = Yu(sol.u[i]);
-    i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+  // COLOUR ENCODES ROLE, matching the still figure (see DESIGN_inner_chain.md sec.2):
+  //   blue = the trajectory you are scrubbing   grey = ensemble scatter   red = zeros
+  // and when noise is on, the eta=0 solution stays visible as a dashed blue reference so the
+  // displayed run can be judged against both its own ancestor and its peers.
+  const poly = (w, stride) => {
+    ctx.beginPath();
+    for (let i = 0; i < REF.N; i += stride){
+      const px = X(w.Y[i], L), py = Yu(w.u[i]);
+      i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+    }
+    ctx.stroke();
+  };
+
+  ctx.strokeStyle = 'rgba(92,100,112,.32)'; ctx.lineWidth = .9;
+  for (const w of ens) poly(w, STRIDE);
+
+  if (eta > 0){
+    ctx.save(); ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = 'rgba(47,111,176,.55)'; ctx.lineWidth = 1.3;
+    poly(DET, STRIDE); ctx.restore();
   }
-  ctx.stroke();
+
+  ctx.strokeStyle = '#2f6fb0'; ctx.lineWidth = 2; poly(sol, 1);
+
+  // ensemble first zeros, as a tick strip on the zero line
+  if (ens.length){
+    ctx.strokeStyle = 'rgba(216,75,63,.55)'; ctx.lineWidth = 1.1;
+    for (const w of ens){
+      const z = firstZero(w);
+      if (isFinite(z)){
+        const px = X(z, L);
+        ctx.beginPath(); ctx.moveTo(px, yzA - 6); ctx.lineTo(px, yzA + 6); ctx.stroke();
+      }
+    }
+  }
 
   // zero crossings of the CURRENT solution
   const cross = [];
@@ -248,6 +292,25 @@ function draw(){
   }
   let near = Infinity; for (const z of cross) near = Math.min(near, Math.abs(cursor - z));
   msg.textContent = near < 0.06 ? '← u is crossing zero. That is why R is blowing up.' : '';
+
+  // is the displayed run typical?  say so explicitly rather than leaving it to be assumed.
+  const typ = document.getElementById('typ');
+  if (!ens.length && eta === 0){
+    typ.textContent = 'η = 0: this is the deterministic solution. First zero '
+                    + firstZero(sol).toFixed(3) + '.';
+  } else if (!ens.length){
+    typ.textContent = 'first zero — this run ' + firstZero(sol).toFixed(3)
+                    + ' · comparing against ' + N_ENS + ' more…';
+  } else {
+    const zs = ens.map(firstZero).filter(isFinite).sort((a, b) => a - b);
+    const z0 = firstZero(sol);
+    const rank = zs.filter(z => z < z0).length;
+    typ.textContent = 'first zero — this run ' + z0.toFixed(3)
+      + ' · ' + zs.length + ' others span [' + zs[0].toFixed(3) + ', '
+      + zs[zs.length-1].toFixed(3) + '], median ' + zs[zs.length >> 1].toFixed(3)
+      + ' · this run sits at ' + Math.round(100 * rank / zs.length) + '% of them'
+      + ' · dashed blue = η 0';
+  }
 }
 
 // ---------------------------------------------------------------- interaction
@@ -263,9 +326,21 @@ cv.addEventListener('pointermove', e => { if (dragging) setFromEvent(e); });
 cv.addEventListener('pointerup', () => dragging = false);
 cv.addEventListener('pointerleave', () => dragging = false);
 
+// The hero costs ~4ms and must track the slider; the 16-strong ensemble costs ~70ms, which
+// would drop the drag to ~14fps.  So the hero recomputes on every input and the ensemble is
+// debounced to the pause after it.
+let ensTimer = null;
 function recompute(){
-  sol = integrate(eta, eta > 0 ? makeRng(rngSeed) : () => 0);
+  if (ensTimer){ clearTimeout(ensTimer); ensTimer = null; }
+  if (eta === 0){ sol = DET; ens = []; draw(); return; }
+  sol = integrate(eta, makeRng(rngSeed));
+  ens = [];
   draw();
+  ensTimer = setTimeout(() => {
+    const built = [];
+    for (let j = 0; j < N_ENS; j++) built.push(integrate(eta, makeRng(rngSeed + 7919 * (j + 1))));
+    ens = built; ensTimer = null; draw();
+  }, 130);
 }
 document.getElementById('eta').addEventListener('input', e => {
   eta = +e.target.value;

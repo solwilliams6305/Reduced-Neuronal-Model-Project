@@ -59,3 +59,27 @@ a small inset showing **where the drawn slice sits** in the full space. Without 
 silently concludes the 2D picture *is* the object — the same class of error as showing a
 swallowtail surface as though it were the unfolding. Suspected to be part of why the chain was
 hard to hold in the first place. See `DESIGN_inner_chain.md` §5.
+
+---
+
+## Module α4a (R↔u twin panel) — distortion statement
+Completed 2026-07-27 against `pilot_borel/twin_panel.py`. Rows 1–2 are exact; row 3 is honest
+but weaker than it looks.
+
+1. **Row 3 does NOT exhibit Tracy–Widom, and must never be captioned as though it did.**
+   At η=0.55 on this grid we are nowhere near the scaling regime. Measured skew +0.11 against a
+   standard error of 0.12 over 400 runs — *not significantly different from zero*, and well short
+   of TW's positive skew. The panel now says "not the scaling limit — this is not TW" on its face.
+   What row 3 legitimately shows is only that **the first zero fluctuates**; that its limit law is
+   TW is the content of the theorem, not of this picture.
+2. **Every Airy zero inside the window must be marked.** An early draft computed four zeros while
+   five lay in range, leaving one asymptote in row 2 with no dot above it — which silently
+   falsifies the panel's entire claim. Guarded now by filtering `ai_zeros(12)` to the window
+   rather than taking a fixed count. *Any change to `Y_LO` must preserve this.*
+3. **The rows must never drift out of vertical register.** The shared x-axis *is* the argument.
+   If the module is ever animated or re-laid-out, alignment is load-bearing, not cosmetic.
+4. **R is clipped at |R|>12 for legibility**, so the asymptotes are drawn as finite excursions.
+   The clipping is a rendering choice; the divergence is real and unbounded.
+5. **Only the recessive (Ai) solution is shown.** The general solution mixes in Bi, whose zeros
+   sit elsewhere. The panel silently privileges one boundary condition — which is the right one
+   for the escape problem, but the choice is invisible to the viewer.

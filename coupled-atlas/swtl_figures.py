@@ -126,7 +126,7 @@ def fig_resum():
     ax[1].text(0.39, -78, r'$x=0.36$', fontsize=8, color=GREY)
     ax[1].set_xlabel(r'$x=\eta^2$'); ax[1].set_ylabel('relative error (%)')
     ax[1].legend(fontsize=8); ax[1].grid(alpha=0.25, ls=':')
-    ax[1].set_title('The 8-coefficient error is monotone in $x$', fontsize=10)
+    ax[1].set_title('8-coefficient error: systematic, not erratic', fontsize=10)
     fig.tight_layout(); fig.savefig('../swtl_fig_resum.pdf')
     print('wrote swtl_fig_resum.pdf')
 

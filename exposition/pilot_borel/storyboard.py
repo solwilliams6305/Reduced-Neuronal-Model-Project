@@ -20,7 +20,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.patches import Wedge, FancyArrowPatch
+# (no patch primitives needed: the conjugate-pair wedges were removed from panel 6)
 
 plt.rcParams.update({
     'font.family': 'serif', 'font.size': 9, 'axes.linewidth': 0.8,
@@ -119,29 +119,28 @@ a.set_title(r'5.  Divide by $k!$', loc='left', fontsize=10)
 a.text(0.05, 0.20, 'now they decay: the Borel\nseries converges, with a\n'
                    'radius set by the nearest\nsingularity',
        transform=a.transAxes, fontsize=7.5, color=GREY, **BG, va='bottom')
-a.text(0.05, 0.95, 'the wobble is the conjugate pair',
+a.text(0.05, 0.95, "they decay, but not smoothly —\nhold that thought",
        transform=a.transAxes, fontsize=7, color=GREY, **BG, va='top')
 
 # ---------------------------------------------------------------- 6. the Borel plane + CUT
 a = ax[5]
-for t1, t2 in ((TH_PAIR - 2, TH_PAIR + 2), (-TH_PAIR - 2, -TH_PAIR + 2)):
-    a.add_patch(Wedge((0, 0), Z_HI, t1, t2, width=Z_HI - Z_LO, facecolor=BLUE, alpha=0.18,
-                      edgecolor=BLUE, lw=0.7, zorder=1))
-for s in (+1, -1):
-    th = np.deg2rad(s * TH_PAIR)
-    a.plot(1.9 * np.cos(th), 1.9 * np.sin(th), '*', color=BLUE, ms=8, mec='white', mew=0.5,
-           zorder=5)
+# The complex-conjugate pair is DELIBERATELY ABSENT here.  It is off-contour, so it causes no
+# ambiguity for real positive x -- but drawn as shaded wedges it is the most salient object on
+# the panel and viewers misattribute the ambiguity to it.  One mechanism at a time; the pair
+# belongs to the later module on reading the plane's finer structure.  See DISTORTION_LEDGER.md.
 # THE CUT -- mandatory, see DISTORTION_LEDGER.md
 a.plot([A, 3.4], [0, 0], color=RED, lw=3.0, solid_capstyle='butt', zorder=4)
 for xc in np.linspace(A, 3.35, 11):
     a.plot([xc, xc + 0.10], [0.0, 0.14], color=RED, lw=0.8, zorder=4)
 a.plot(A, 0, 's', color=RED, ms=7, zorder=6)
-a.annotate('branch point\n+ its CUT', xy=(2.5, 0.06), xytext=(1.75, 1.15), fontsize=7.5,
+a.annotate('branch point\n+ its CUT', xy=(2.5, 0.06), xytext=(1.70, 0.85), fontsize=7.5,
            color=RED, arrowprops=dict(arrowstyle='->', color=RED, lw=0.8))
 a.axhline(0, color='k', lw=0.6); a.axvline(0, color='k', lw=0.6)
-a.set_xlim(-0.5, 3.6); a.set_ylim(-2.3, 2.3); a.set_aspect('equal')
+a.set_xlim(-0.5, 3.6); a.set_ylim(-1.7, 1.7); a.set_aspect('equal')
 a.set_xlabel(r'$\mathrm{Re}\,\zeta$'); a.set_ylabel(r'$\mathrm{Im}\,\zeta$')
 a.set_title('6.  Where it stops converging', loc='left', fontsize=10)
+a.text(0.03, 0.05, 'one obstruction, sitting exactly on the path.\n(this plane has more in it — later)',
+       transform=a.transAxes, fontsize=7.5, color=GREY, **BG)
 
 # ---------------------------------------------------------------- 7. contour + two choices
 a = ax[6]
@@ -151,12 +150,12 @@ tt = np.linspace(0, 3.3, 240)
 for sgn, col, lab in ((+1, BLUE, 'pass above'), (-1, '#d9851f', 'pass below')):
     a.plot(tt, sgn * 0.50 * np.exp(-((tt - A) / 0.70)**2), color=col, lw=2.0, zorder=5,
            label=lab)
-a.annotate('the contour must\ngo round it', xy=(A, 0.42), xytext=(0.15, 1.35), fontsize=8,
+a.annotate('the contour must\ngo round it', xy=(A, 0.45), xytext=(0.05, 1.10), fontsize=8,
            arrowprops=dict(arrowstyle='->', color='k', lw=0.8))
-a.text(0.30, -1.85, r'$\int_0^\infty B(\zeta)\,e^{-\zeta/x}\,d\zeta$', fontsize=12, **BG)
+a.text(0.25, -1.35, r'$\int_0^\infty B(\zeta)\,e^{-\zeta/x}\,d\zeta$', fontsize=12, **BG)
 a.legend(fontsize=7.5, loc='upper right')
 a.axhline(0, color='k', lw=0.6); a.axvline(0, color='k', lw=0.6)
-a.set_xlim(-0.5, 3.6); a.set_ylim(-2.3, 2.3); a.set_aspect('equal')
+a.set_xlim(-0.5, 3.6); a.set_ylim(-1.7, 1.7); a.set_aspect('equal')
 a.set_xlabel(r'$\mathrm{Re}\,\zeta$')
 a.set_title('7.  Two choices, no reason to prefer either', loc='left', fontsize=9.5)
 a.text(0.02, 0.03, 'schematic', transform=a.transAxes, **SCHEM, **BG)

@@ -20,11 +20,18 @@ expert as each module is designed.
 ## Module γ2+γ3 (pilot) — distortion statement
 Completed 2026-07-27 against `pilot_borel/storyboard.py`. **Needs expert correction.**
 
-1. **The conjugate pair is a red herring in this arc, and it is the most visually salient thing
-   on panel 6.** The ambiguity comes *only* from the real singularity sitting **on** the
-   integration contour; the pair at 1.9e^{±i50°} is off-contour and causes no ambiguity for real
-   positive x. A viewer will naturally misattribute. Either de-emphasise the pair here or say
-   explicitly on-panel that it is not what is being crossed.
+1. ~~**The conjugate pair is a red herring in this arc, and it is the most visually salient thing
+   on panel 6.**~~ **RESOLVED 2026-07-27 — expert confirmed this was the main defect.** The pair
+   is now *absent* from the pilot entirely. Rationale: the ambiguity comes **only** from the real
+   singularity sitting *on* the integration contour; the pair at 1.9e^{±i50°} is off-contour and
+   causes no ambiguity for real positive x. It is a fact about *this series*, not about the
+   *mechanism* — so showing it here is the classic error of displaying the full object before the
+   simple case has landed. Panel 6 now carries one obstruction and nothing else.
+   Two seeds planted instead of an explanation: panel 5 says "they decay, but not smoothly —
+   hold that thought" (previously "the wobble is the conjugate pair", which introduced a term
+   with no referent), and panel 6 says "this plane has more in it — later". The pair, and the
+   coefficient wobble it causes, become the payoff of a later module on the plane's finer
+   structure.
 2. **The model series is not our series.** Panel 2–3 use m_k = k!/A^{k+1}, a prototype with a
    *single* real singularity. Labelled on-panel, but the viewer must not conclude our v_k behave
    this way — panel 4 exists precisely because they do not.

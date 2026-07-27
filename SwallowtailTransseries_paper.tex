@@ -145,24 +145,53 @@ swallowtail$\to$cusp$\to$fold. There is no Painlev\'e $\tau$-flow to reduce onto
 
 The genuinely new obstruction is the third, and it is the structural finding of this paper.
 
-\begin{proposition}[Loss of the closed-form connection datum]\label{prop:connection}
+\begin{proposition}[Change of type of the connection datum]\label{prop:connection}
 For the cusp, the deterministic connection problem is the parabolic-cylinder (Weber) problem, and
 the resonance condition is an explicit $\Gamma$-function equation whose root
 $\lambda_0=0.8896052(1-i)$ has phase \emph{exactly} $-\pi/4$. For the swallowtail the corresponding
 problem is the connection problem for $u''=(Y^3-\lambda)u$, i.e.\ the \emph{cubic anharmonic
-oscillator} (Bender--Wu, Voros). Its connection coefficients are genuinely transcendental and admit
-no $\Gamma$-function closed form; the resonance root is complex but carries no clean closed phase.
-\tagP\;(structure)\;/\;\tagN\;(root)
+oscillator}. Its Stokes data is \emph{exactly characterised but not of $\Gamma$-type}: the Stokes
+multiplier is the Wronskian of Sibuya subdominant solutions, an entire function of $\lambda$ equal
+to a spectral determinant, determined by a $T$--$Q$/Bethe-ansatz or TBA/NLIE system rather than by
+any closed elementary formula \cite{DoreyDunningTateo,Masoero2010,ItoMarinoShu}. Equivalently, the
+five Stokes multipliers $\sigma_k$ ($k\in\mathbb Z/5\mathbb Z$) are cross-ratios of four asymptotic
+values and coincide, up to inversion and a factor $i$, with Fock--Goncharov/Voros cluster
+coordinates \cite{AllegrettiBridgeland}. \tagC
 \end{proposition}
+
+\begin{remark}[The anchor exists, transcendentally]\label{rem:anchorexists}
+It would be wrong to say the swallowtail has \emph{no} deterministic anchor. Voros
+\cite{Voros1999} gives, for the cubic, the complete constant set --- $\mu=5/6$, $\varphi=4\pi/5$,
+$L=5$, $\kappa=1/5$, $b_0=2^{2/3}\sqrt3\,\Gamma(1/3)^3/(5\pi)$ --- together with an exact
+quantisation condition $2\Sigma_\pm(\lambda_k)=k+\tfrac12\pm\tfrac\kappa2$ which reproduces the
+spectrum to $10^{-6}$--$10^{-7}$. Two of these constants are independent confirmations of
+Section~\ref{sec:skeleton}: $L=5$ is our $\mathbb Z_5$ sector count, and $\varphi=4\pi/5$ is exactly
+the $\lambda$-rotation phase of Prop.~\ref{prop:z5}. So an anchor of the cusp's \emph{kind} ---
+a closed $\Gamma$-root with an exact phase --- is unavailable, while an anchor of TBA/quantisation
+kind is available and numerically exact. Importing it is the natural next step and is not attempted
+here. \tagC
+\end{remark}
 
 \begin{remark}[One level less integrable]\label{rem:lessintegrable}
 Propositions~\ref{prop:nofredholm}--\ref{prop:connection} say that the swallowtail is not merely
-``another member of the family''. The cusp retains an exactly solvable deterministic anchor
-(\eqref{eq:lz} of the companion paper) against which the stochastic Borel data can be compared; the
-swallowtail loses even that. Every statement about its Borel plane must therefore be established
-numerically, from the coefficient ladder, without a closed-form deterministic reference. This is
-the sense in which the multicritical family does not simply continue: it degrades in solvability as
-$q$ increases.
+``another member of the family''. The cusp retains a \emph{closed-form} deterministic anchor
+against which the stochastic Borel data can be compared --- a $\Gamma$-function root with an exact
+phase $-\pi/4$; at $q=3$ that anchor changes type, becoming transcendental (TBA/spectral-determinant)
+rather than closed. It does not disappear (Rem.~\ref{rem:anchorexists}), but it ceases to supply a
+closed phase to compare against, so every statement about the swallowtail Borel plane in this paper
+is established numerically from the coefficient ladder. This is the sense in which the multicritical
+family does not simply continue: its deterministic input degrades in \emph{type} as $q$ increases,
+from special-function-closed to integrable-transcendental.
+\end{remark}
+
+\begin{remark}[A mechanism for non-inheritance]\label{rem:mechanism}
+There is a structural reason to expect the Borel phase \emph{not} to transfer from $q=2$ to $q=3$
+(Claim~\ref{claim:theta}). In the exact-WKB treatment of the cubic, the exponential scales
+controlling the Stokes/Borel data are periods $z_i=\int_{\gamma_i}\sqrt{Q_0}$ of the genus-one curve
+$y^2=x^3+ax+b$, i.e.\ complete elliptic integrals whose phases vary with the moduli $(a,b)$
+\cite{AllegrettiBridgeland}; at $q=2$ the corresponding action is elementary. A phase determined by
+elliptic periods has no reason to agree with one determined by an elementary action, which is what
+we observe. \tagC\;/\;\tagX
 \end{remark}
 
 \section{The exact weak-noise ladder}\label{sec:ladder}
@@ -376,6 +405,14 @@ remainder from the observable (the residual shows no oscillation and is method e
 term). Both fail for the same circular reason --- each needs $(A,\theta)$ as input. (iv) No
 stochastic exact-WKB, as for the cusp.
 
+\emph{The identified route.} The most concrete way past (i) and (iii) is not more rungs but the
+deterministic anchor of Rem.~\ref{rem:anchorexists}. Importing the cubic TBA/quantisation data
+\cite{Voros1999,Masoero2010,ItoMarinoShu,AllegrettiBridgeland} would supply $(A,\theta)$
+\emph{independently} of the ladder, which is precisely the input both refuted methods needed and
+could not generate from within. That converts the circular obstruction into a finite piece of work:
+compute the cubic Stokes data by TBA, then use it to prescribe the conformal map or the
+non-perturbative subtraction. We flag this as the single highest-value continuation.
+
 \begin{remark}[What the swallowtail adds to the cusp programme]
 Three things. First, a structural one: solvability degrades with $q$
 (Rem.~\ref{rem:lessintegrable}), so the multicritical family is not a uniform sequence of
@@ -390,5 +427,45 @@ diagnostic is cheapest to obtain.
 \section*{Acknowledgements}
 Computations use the $q$-parameterised Wiener-chaos engine and the Fokker--Planck ground-truth
 solver of the cusp programme, extended as described in the companion technical notes.
+
+\begin{thebibliography}{99}
+
+\bibitem{AllegrettiBridgeland} D.~Allegretti, T.~Bridgeland, \emph{The monodromy of meromorphic
+projective structures}, arXiv:2006.10648. (Cubic-oscillator Stokes multipliers as cross-ratios and
+Fock--Goncharov/Voros cluster coordinates, $\mathbb Z/5\mathbb Z$ pentagon structure; all-order WKB
+expansion of the cluster coordinates with elliptic-period exponential scales.)
+
+\bibitem{Voros1999} A.~Voros, \emph{Exact quantization condition for anharmonic oscillators (in one
+dimension)}, arXiv:math-ph/9811001. (Complete constant set for the cubic: $\mu=5/6$,
+$\varphi=4\pi/5$, $L=5$, $\kappa=1/5$, $b_0=2^{2/3}\sqrt3\,\Gamma(1/3)^3/(5\pi)$; exact quantisation
+reproducing the spectrum to $10^{-6}$--$10^{-7}$.)
+
+\bibitem{DoreyDunningTateo} P.~Dorey, C.~Dunning, R.~Tateo, \emph{The ODE/IM correspondence},
+J.~Phys.~A \textbf{40} (2007) R205, arXiv:hep-th/0703066. (Stokes multiplier as an entire spectral
+determinant of a lateral problem, fixed by $T$--$Q$/Bethe-ansatz or TBA/NLIE.)
+
+\bibitem{Masoero2010} D.~Masoero, \emph{Y-system and deformed thermodynamic Bethe ansatz},
+Lett.~Math.~Phys.~\textbf{94} (2010) 151--164.
+
+\bibitem{ItoMarinoShu} K.~Ito, M.~Mari\~no, H.~Shu, \emph{TBA equations and resurgent quantum
+mechanics}, JHEP \textbf{01} (2019) 228, arXiv:1811.04812.
+
+\bibitem{Sibuya} Y.~Sibuya, \emph{Global Theory of a Second Order Linear Ordinary Differential
+Equation with a Polynomial Coefficient}, North-Holland, 1975.
+
+\bibitem{BenderWu} C.~M.~Bender, T.~T.~Wu, \emph{Anharmonic oscillator}, Phys.~Rev.~\textbf{184}
+(1969) 1231.
+
+\bibitem{Dingle} R.~B.~Dingle, \emph{Asymptotic Expansions: Their Derivation and Interpretation},
+Academic Press, 1973. (Late-terms/Darboux analysis used in \S\ref{sec:borel}.)
+
+\bibitem{FW} M.~I.~Freidlin, A.~D.~Wentzell, \emph{Random Perturbations of Dynamical Systems},
+3rd ed., Springer, 2012.
+
+\bibitem{vanLeer} B.~van Leer, \emph{Towards the ultimate conservative difference scheme.~V},
+J.~Comput.~Phys.~\textbf{32} (1979) 101--136. (MUSCL/limiter scheme used for the ground-truth
+solver in \S\ref{sec:resum}.)
+
+\end{thebibliography}
 
 \end{document}

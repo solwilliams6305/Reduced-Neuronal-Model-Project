@@ -20,9 +20,9 @@ import pathlib
 HERE = pathlib.Path(__file__).parent
 CAPS = json.loads((HERE.parent / 'captions.json').read_text())
 
-missing = [k for k in ('headline', 'naive_fails', 'the_find', 'what_it_is',
-                       'epsilon_missing', 'payoff', 'distortion_not_added')
-           if k not in CAPS.get('alpha3', {})]
+REQUIRED = ('headline', 'naive_fails', 'the_find', 'third_weight', 'the_real_point',
+            'what_it_is', 'payoff', 'distortion_not_added', 'distortion_no_sphere')
+missing = [k for k in REQUIRED if k not in CAPS.get('alpha3', {})]
 if missing:
     raise SystemExit(f'captions.json is missing alpha3 keys: {missing}')
 
@@ -32,4 +32,7 @@ out = tpl.replace('/*__CAPTIONS__*/', json.dumps(CAPS['alpha3']))
 
 print('wrote blowup.html')
 print(f'  captions injected: {len(CAPS["alpha3"])} keys from ../captions.json')
-print('  no numerics: the whole widget is the exact identity  Y = lambda^(p-2) X^2')
+print('  exact identities driving the widget:')
+print('    manifold   Y = lambda^(p-2) X^2')
+print('    dynamics   dX/dT = X^2 - lambda^(2-p) Y ,  dY/dT = -lambda^(1+p-q) epsbar')
+print('    lambda leaves the equation iff  p = 2  and  q = 3')

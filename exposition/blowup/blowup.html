@@ -9,7 +9,7 @@
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
        font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
-  .wrap{max-width:960px;margin:0 auto;padding:22px 18px 44px}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 18px 46px}
   h1{font-size:19px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
   .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
@@ -17,20 +17,24 @@
   canvas{display:block;width:100%;border-radius:6px}
   .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
   .ctl{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sec)}
-  input[type=range]{width:190px;accent-color:var(--amb)}
+  input[type=range]{width:150px;accent-color:var(--amb)}
   button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--line);
          background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
   button:hover{background:#f4f2ee}
   button.go{border-color:#c8d8ea;background:#f2f7fc;color:var(--blue);font-weight:600}
   .mono{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace}
+  .eqbox{background:#faf8f5;border:1px solid var(--line);border-radius:9px;
+         padding:11px 14px;font:15px ui-monospace,SFMono-Regular,Menlo,monospace;line-height:2}
+  .exp{font-size:11.5px;vertical-align:super}
+  .live{color:var(--red);font-weight:700}
+  .dead{color:var(--grn);font-weight:700}
   .verdict{font-size:15px;font-weight:600;letter-spacing:-.2px}
   .step{margin:0 0 9px;font-size:12.8px}
-  .step b{font-weight:600}
   .muted{color:var(--sec)}
-  .warn{color:var(--red)}
-  .ok{color:var(--grn)}
-  .hint{font-size:11.5px;color:var(--sec);margin-top:9px}
-  .k{display:inline-block;min-width:112px;color:var(--sec);font-size:11.5px}
+  .ok{color:var(--grn)} .warn{color:var(--red)}
+  .hint{font-size:11.7px;color:var(--sec);margin-top:9px}
+  .k{display:inline-block;min-width:96px;color:var(--sec);font-size:11.5px}
+  label.chk{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--sec);cursor:pointer}
 </style>
 
 <div class="wrap">
@@ -38,26 +42,37 @@
   <p class="sub" id="sub"></p>
 
   <div class="card">
-    <canvas id="cv" height="380"></canvas>
-    <div class="row" style="margin-top:10px;justify-content:space-between">
-      <span class="mono"><span class="k">stretch on y</span> Y = λ<sup id="pw">1.00</sup>·y</span>
-      <span class="mono"><span class="k">curve in view</span> Y = <b id="cval">1.000</b>·X²</span>
+    <canvas id="cv" height="360"></canvas>
+    <div class="row" style="margin-top:9px;justify-content:space-between">
+      <span class="mono"><span class="k">manifold</span>Y = <b id="cval">1.000</b>·X²</span>
       <span class="verdict" id="verdict"></span>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="eqbox" id="eq"></div>
+    <p class="hint" id="eqhint"></p>
   </div>
 
   <div class="card">
     <div class="row">
       <span class="ctl">zoom λ
         <input id="lam" type="range" min="0" max="3" step="0.01" value="0">
-        <span class="mono" id="lamv" style="width:56px">1</span>
+        <span class="mono" id="lamv" style="width:52px">1</span>
       </span>
       <span class="ctl">y-weight p
         <input id="p" type="range" min="0.5" max="3.5" step="0.05" value="1">
         <span class="mono" id="pv" style="width:34px">1.00</span>
       </span>
+      <span class="ctl">ε-weight q
+        <input id="q" type="range" min="0.5" max="4.5" step="0.05" value="1">
+        <span class="mono" id="qv" style="width:34px">1.00</span>
+      </span>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label class="chk"><input type="checkbox" id="traj"> show a trajectory</label>
       <button class="go" id="sweep">sweep the zoom</button>
-      <button id="snap">set p = 2</button>
+      <button id="snap">set the blow-up weights (1, 2, 3)</button>
       <button id="reset">reset</button>
     </div>
     <p class="hint" id="hint"></p>
@@ -67,65 +82,82 @@
     <p class="step" id="s1"></p>
     <p class="step" id="s2"></p>
     <p class="step" id="s3"></p>
-    <p class="step warn" id="s4"></p>
+    <p class="step" id="s4"></p>
     <p class="step" id="s5"></p>
     <p class="step muted" style="font-size:11.8px" id="s6"></p>
   </div>
 </div>
 
 <script>
-const CAP = {"headline": "Blow-up is anisotropic zoom.", "naive_fails": "Zoom in on the fold with both axes magnified equally and the critical manifold flattens toward a straight line. Every zoom level looks the same and shows less. The tool fails.", "the_find": "Magnify y as the SQUARE of x and the parabola stops moving. It is now invariant under zoom. That exponent - weight 2 on y against weight 1 on x - is the blow-up weight, and you found it by feel rather than by being told.", "what_it_is": "That is all a blow-up is: a zoom whose magnification differs per direction, chosen so the structure stays O(1) instead of degenerating. The charts K1/K2/K3 are which face of that zoom you look through, and the exceptional divisor is the set of approach directions the naive zoom collapses to a point.", "epsilon_missing": "One weight is missing here. The slow parameter eps carries its own weight (3), so holding it fixed while zooming is not the full blow-up - the manifold is invariant at p=2 but a trajectory would still drift. That third weight is the next beat.", "payoff": "Zoom with the correct weights and the equation in the resulting chart is the Riccati R' = R^2 - Y - the same one whose blow-ups you traded for zeros in the previous module.", "distortion_not_added": "Nothing is being ADDED to the space. The blow-down map is a diffeomorphism away from the origin; this is the same neighbourhood seen through a distorting lens, not new geometry."};
-
-document.getElementById('h1').textContent  = CAP.headline;
-document.getElementById('sub').innerHTML   =
-  'The critical manifold of a fold is <b>y = x²</b>. Zoom in on the fold point and watch what ' +
-  'happens to it. <b>Drag the zoom.</b> Then change how hard the <i>y</i> axis is stretched.';
+const CAP = {"headline": "Blow-up is anisotropic zoom.", "naive_fails": "Zoom in on the fold with both axes magnified equally and the critical manifold flattens toward a straight line. Every zoom level looks the same and shows less. The tool fails.", "the_find": "Magnify y as the SQUARE of x and the parabola stops moving. It is now invariant under zoom. That exponent - weight 2 on y against weight 1 on x - is the blow-up weight, and you found it by feel rather than by being told.", "third_weight": "The manifold is not the whole picture. Turn the trajectory on and it still drifts, because the slow parameter eps carries a weight of its own. Give it weight 3 and the trajectory settles too.", "the_real_point": "Watch the equation, not the picture. Every lambda in it carries an exponent built from the weights you chose. At p=2 and q=3 both exponents hit zero and lambda DISAPPEARS FROM THE EQUATION. That is what a blow-up is for: not a nicer picture, but a system that no longer knows how far in you zoomed.", "what_it_is": "The charts K1/K2/K3 are which face of that zoom you look through, and the exceptional divisor is the set of approach directions the naive zoom collapses to a single point.", "payoff": "The lambda-free equation you are left with is X' = X^2 - Y, Y' = -eps. That is the inner Riccati - the same equation whose blow-ups you traded for zeros in the previous module.", "distortion_not_added": "Nothing is being ADDED to the space. The blow-down map is a diffeomorphism away from the origin; this is the same neighbourhood seen through a distorting lens, not new geometry.", "distortion_no_sphere": "The sphere of the usual construction is not drawn. This is one chart. Opening on the sphere is the standard way this topic loses people."};
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').innerHTML =
+  'A fold has critical manifold <b>y = x²</b> and dynamics <b>ẋ = x² − y</b>, <b>ẏ = −ε</b>. ' +
+  'Look at it through a lens that magnifies each direction by a different power of λ, and ' +
+  'choose those powers yourself.';
 document.getElementById('s1').innerHTML = '<b>1.</b> ' + CAP.naive_fails;
 document.getElementById('s2').innerHTML = '<b>2.</b> ' + CAP.the_find;
-document.getElementById('s3').innerHTML = '<b>3.</b> ' + CAP.what_it_is;
-document.getElementById('s4').innerHTML = '<b>Not the whole story.</b> ' + CAP.epsilon_missing;
-document.getElementById('s5').innerHTML = '<b>Payoff.</b> ' + CAP.payoff;
-document.getElementById('s6').textContent = CAP.distortion_not_added;
+document.getElementById('s3').innerHTML = '<b>3.</b> ' + CAP.third_weight;
+document.getElementById('s4').innerHTML = '<b>4. The real point.</b> ' + CAP.the_real_point;
+document.getElementById('s5').innerHTML = '<b>Payoff.</b> ' + CAP.payoff + ' ' + CAP.what_it_is;
+document.getElementById('s6').textContent = CAP.distortion_not_added + ' ' + CAP.distortion_no_sphere;
 
-// ---------------------------------------------------------------- the one line of maths
-// View window is FIXED.  We look at the fold through a lens magnifying x by λ and y by λ^p:
-//        X = λ·x ,  Y = λ^p·y
-// The critical manifold y = x² therefore appears in view as
-//        Y = λ^(p−2)·X²
-// so the whole picture is controlled by one number, c = λ^(p−2):
-//        p < 2  → c → 0    the parabola flattens to a line   (naive zoom loses everything)
-//        p = 2  → c = 1    INVARIANT under zoom               (the blow-up weight)
-//        p > 2  → c → ∞    the parabola is flung out of view  (over-stretched)
-// Nothing here is fitted or approximated; c is exact.
-const curveC = (lam, p) => Math.pow(lam, p - 2);
+// ---------------------------------------------------------------- the maths, exactly
+// Lens:  X = λ·x ,  Y = λ^p·y ,  ε = λ^(−q)·ε̄ ,  T = t/λ.
+// Substituting into  ẋ = x² − y ,  ẏ = −ε  gives the system AS SEEN IN THE VIEW:
+//        dX/dT = X² − λ^(2−p)·Y
+//        dY/dT =    − λ^(1+p−q)·ε̄
+// Two exponents, both built from the weights. They vanish together exactly at p = 2, q = 3,
+// and then λ is absent from the equation: the system no longer knows how far you zoomed.
+// The manifold X² − λ^(2−p)Y = 0 is Y = λ^(p−2)X², recovering the act-one picture.
+const EBAR = 0.13;
+const expA = (p) => 2 - p;              // exponent on the Y term
+const expB = (p, q) => 1 + p - q;       // exponent on the slow rate
+const coefA = (lam, p) => Math.pow(lam, expA(p));
+const coefB = (lam, p, q) => Math.pow(lam, expB(p, q)) * EBAR;
 
-const VX = 1.55, VY_LO = -0.45, VY_HI = 2.45;   // fixed view window in (X, Y)
-const MARK_X = [0.55, 1.0, 1.38];               // trackers: easier to see motion than a whole curve
-
-let lam = 1, p = 1, sweeping = false, sweepT = 0;
+const VX = 1.55, VY_LO = -0.5, VY_HI = 2.45;
+const MARK_X = [0.55, 1.0, 1.38];
+let lam = 1, p = 1, q = 1, showTraj = false, sweeping = false, sweepT = 0;
 
 const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
 function resize(){
   const r = cv.getBoundingClientRect(), dpr = devicePixelRatio || 1;
-  cv.width = r.width * dpr; cv.height = 380 * dpr;
+  cv.width = r.width * dpr; cv.height = 360 * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   draw();
 }
 addEventListener('resize', resize);
-
-const M = {l: 46, r: 18, t: 16, b: 30};
+const M = {l: 46, r: 18, t: 14, b: 28};
 function L(){
-  const W = cv.width / (devicePixelRatio || 1), H = 380;
+  const W = cv.width / (devicePixelRatio || 1), H = 360;
   return {W, H, x0: M.l, x1: W - M.r, y0: M.t, y1: H - M.b};
 }
 const px = (X, l) => l.x0 + (X + VX) / (2 * VX) * (l.x1 - l.x0);
 const py = (Y, l) => l.y1 - (Y - VY_LO) / (VY_HI - VY_LO) * (l.y1 - l.y0);
 
-function draw(){
-  const l = L(), c = curveC(lam, p);
-  ctx.clearRect(0, 0, l.W, l.H);
+// trajectory of the VIEW system, integrated with RK4 from a fixed point in view coordinates
+function trajectory(A, B){
+  const f = (X, Y) => [X * X - A * Y, -B];
+  let X = -1.34, Y = 2.30, dT = 0.004;
+  const pts = [[X, Y]];
+  for (let n = 0; n < 60000; n++){
+    const [k1x, k1y] = f(X, Y);
+    const [k2x, k2y] = f(X + dT/2*k1x, Y + dT/2*k1y);
+    const [k3x, k3y] = f(X + dT/2*k2x, Y + dT/2*k2y);
+    const [k4x, k4y] = f(X + dT*k3x,   Y + dT*k3y);
+    X += dT/6*(k1x + 2*k2x + 2*k3x + k4x);
+    Y += dT/6*(k1y + 2*k2y + 2*k3y + k4y);
+    if (!isFinite(X) || !isFinite(Y)) break;
+    pts.push([X, Y]);
+    if (X > VX * 1.4 || X < -VX * 1.4 || Y < VY_LO - 0.4 || Y > VY_HI + 0.6) break;
+  }
+  return pts;
+}
 
-  // frame + axes
+function draw(){
+  const l = L(), A = coefA(lam, p), B = coefB(lam, p, q), c = A === 0 ? Infinity : 1 / A;
+  ctx.clearRect(0, 0, l.W, l.H);
   ctx.fillStyle = '#fff'; ctx.fillRect(l.x0, l.y0, l.x1 - l.x0, l.y1 - l.y0);
   ctx.strokeStyle = '#e3e0da'; ctx.lineWidth = 1;
   ctx.strokeRect(l.x0, l.y0, l.x1 - l.x0, l.y1 - l.y0);
@@ -133,85 +165,113 @@ function draw(){
   ctx.beginPath(); ctx.moveTo(l.x0, py(0, l)); ctx.lineTo(l.x1, py(0, l)); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(px(0, l), l.y0); ctx.lineTo(px(0, l), l.y1); ctx.stroke();
 
-  // the manifold, in two branches: x<0 attracting, x>0 repelling
-  const branch = (sign, style) => {
+  const branch = (sign, rep) => {
     ctx.save();
-    if (style === 'rep'){ ctx.setLineDash([6, 4]); ctx.strokeStyle = '#d84b3f'; }
+    if (rep){ ctx.setLineDash([6, 4]); ctx.strokeStyle = '#d84b3f'; }
     else ctx.strokeStyle = '#2f6fb0';
     ctx.lineWidth = 2.4; ctx.beginPath();
     let started = false;
-    for (let k = 0; k <= 260; k++){
-      const X = sign * (k / 260) * VX, Y = c * X * X;
-      if (Y > VY_HI * 1.6){ break; }
+    for (let k = 0; k <= 300; k++){
+      const X = sign * (k / 300) * VX, Y = c * X * X;
+      if (!isFinite(Y) || Y > VY_HI * 1.6) break;
       const sx = px(X, l), sy = py(Y, l);
-      started ? ctx.lineTo(sx, sy) : ctx.moveTo(sx, sy);
-      started = true;
+      started ? ctx.lineTo(sx, sy) : ctx.moveTo(sx, sy); started = true;
     }
     ctx.stroke(); ctx.restore();
   };
-  branch(-1, 'att'); branch(+1, 'rep');
+  branch(-1, false); branch(+1, true);
 
-  // trackers -- three fixed X positions; their HEIGHT is what moves when the picture is not invariant
-  for (const X of MARK_X){
-    for (const s of [-1, 1]){
-      const Y = c * X * X;
-      if (Y > VY_HI * 1.05 || Y < VY_LO) continue;
-      ctx.fillStyle = s < 0 ? '#2f6fb0' : '#d84b3f';
-      ctx.beginPath(); ctx.arc(px(s * X, l), py(Y, l), 4.2, 0, 7); ctx.fill();
-    }
+  for (const X of MARK_X) for (const s of [-1, 1]){
+    const Y = c * X * X;
+    if (!isFinite(Y) || Y > VY_HI * 1.05 || Y < VY_LO) continue;
+    ctx.fillStyle = s < 0 ? '#2f6fb0' : '#d84b3f';
+    ctx.beginPath(); ctx.arc(px(s * X, l), py(Y, l), 4.2, 0, 7); ctx.fill();
   }
 
-  // the fold point
-  ctx.fillStyle = '#20242b';
-  ctx.beginPath(); ctx.arc(px(0, l), py(0, l), 4.6, 0, 7); ctx.fill();
-  ctx.fillStyle = '#5c6470'; ctx.font = '11px ui-sans-serif,system-ui'; ctx.textAlign = 'left';
-  ctx.fillText('the fold', px(0, l) + 8, py(0, l) + 14);
+  let trajNote = '';
+  if (showTraj){
+    const pts = trajectory(A, B);
+    // At badly-chosen weights the trajectory leaves the frame in a couple of steps.  That IS the
+    // message, but an empty canvas reads as a broken widget, so say what happened.
+    if (pts.length < 40){
+      const eBn = expB(p, q);
+      trajNote = Math.abs(eBn) > 0.026
+        ? 'The trajectory is gone before it can be drawn: the slow rate carries λ<sup>'
+          + eBn.toFixed(2) + '</sup>, so it is ' + (eBn > 0 ? 'far too fast' : 'far too slow')
+          + ' at this zoom.'
+        : 'The trajectory leaves the frame immediately — the fast direction is mis-weighted.';
+    }
+    ctx.strokeStyle = '#7a5cc0'; ctx.lineWidth = 2.1; ctx.beginPath();
+    pts.forEach(([X, Y], i) => i ? ctx.lineTo(px(X, l), py(Y, l)) : ctx.moveTo(px(X, l), py(Y, l)));
+    ctx.stroke();
+    const [ex, ey] = pts[pts.length - 1];
+    ctx.fillStyle = '#7a5cc0';
+    ctx.beginPath(); ctx.arc(px(ex, l), py(ey, l), 4.4, 0, 7); ctx.fill();
+  }
 
-  // labels
-  ctx.textAlign = 'center'; ctx.fillStyle = '#2f6fb0';
-  ctx.fillText('attracting', px(-1.05, l), py(Math.min(c * 1.1, VY_HI - .35), l) - 9);
-  ctx.fillStyle = '#d84b3f';
-  ctx.fillText('repelling', px(1.05, l), py(Math.min(c * 1.1, VY_HI - .35), l) - 9);
-  ctx.fillStyle = '#5c6470'; ctx.textAlign = 'center';
-  ctx.fillText('X = λ·x', (l.x0 + l.x1) / 2, l.y1 + 20);
+  ctx.fillStyle = '#20242b';
+  ctx.beginPath(); ctx.arc(px(0, l), py(0, l), 4.4, 0, 7); ctx.fill();
+  ctx.fillStyle = '#5c6470'; ctx.font = '11px ui-sans-serif,system-ui';
+  ctx.textAlign = 'left'; ctx.fillText('the fold', px(0, l) + 8, py(0, l) + 14);
+  ctx.textAlign = 'center';
+  ctx.fillText('X = λ·x', (l.x0 + l.x1) / 2, l.y1 + 19);
   ctx.save(); ctx.translate(13, (l.y0 + l.y1) / 2); ctx.rotate(-Math.PI / 2);
   ctx.fillText('Y = λᵖ·y', 0, 0); ctx.restore();
 
-  // readouts
+  // ---- the equation, with its live exponents
+  const eA = expA(p), eB = expB(p, q);
+  const z = v => Math.abs(v) < 0.026;
+  const term = (e, body) => z(e)
+    ? '<span class="dead">' + body + '</span>'
+    : '<span class="live">λ<span class="exp">' + e.toFixed(2) + '</span>·' + body + '</span>';
+  document.getElementById('eq').innerHTML =
+    'dX/dT  =  X²  −  ' + term(eA, 'Y') + '<br>' +
+    'dY/dT  =  −  ' + term(eB, 'ε̄');
+  document.getElementById('eqhint').innerHTML = (z(eA) && z(eB))
+    ? '<b class="ok">λ is gone.</b> The equation no longer contains the zoom level, so every ' +
+      'magnification shows the same system. <i>That</i> is what the blow-up bought.'
+    : 'Red terms still carry λ — the equation still depends on how far you zoomed. ' +
+      'Exponents are 2−p and 1+p−q; drive both to zero.';
+
   document.getElementById('cval').textContent =
-    c >= 1000 ? c.toExponential(1) : c < 0.001 ? c.toExponential(1) : c.toFixed(3);
-  document.getElementById('pw').textContent = p.toFixed(2);
+    !isFinite(c) ? '∞' : c >= 1000 || c < 0.001 ? c.toExponential(1) : c.toFixed(3);
   const v = document.getElementById('verdict');
-  if (Math.abs(p - 2) < 0.03){ v.textContent = 'INVARIANT — nothing moves'; v.className = 'verdict ok'; }
-  else if (p < 2){ v.textContent = 'flattening…'; v.className = 'verdict warn'; }
+  if (z(eA) && z(eB)){ v.textContent = 'INVARIANT — λ has left the equation'; v.className = 'verdict ok'; }
+  else if (z(eA)){ v.textContent = 'manifold fixed, dynamics still drifting'; v.className = 'verdict warn'; }
+  else if (eA > 0){ v.textContent = 'flattening…'; v.className = 'verdict warn'; }
   else { v.textContent = 'flung out of view'; v.className = 'verdict warn'; }
 
-  const hint = document.getElementById('hint');
-  if (Math.abs(p - 2) < 0.03)
-    hint.innerHTML = '<b class="ok">That is the blow-up weight.</b> Sweep the zoom now — the ' +
-      'curve does not move, because c = λ<sup>p−2</sup> = λ<sup>0</sup> = 1 for every λ. ' +
-      'You found the exponent by feel, not by being told it.';
-  else
-    hint.innerHTML = 'Sweep the zoom and watch the three dots. They drift because ' +
-      'c = λ<sup>p−2</sup> is still changing with λ. Find the <i>p</i> that holds them still.';
+  if (trajNote){ document.getElementById('hint').innerHTML = '<b class="warn">' + trajNote + '</b>'; return; }
+  document.getElementById('hint').innerHTML = (z(eA) && z(eB))
+    ? '<b class="ok">Weights (1, 2, 3).</b> Sweep the zoom: nothing moves at all now — not the ' +
+      'manifold, not the trajectory.'
+    : showTraj
+      ? 'Sweep the zoom and watch the purple trajectory as well as the dots.'
+      : 'Sweep the zoom and watch the three dots. Then switch the trajectory on.';
 }
 
-// ---------------------------------------------------------------- controls
-const lamEl = document.getElementById('lam'), pEl = document.getElementById('p');
+const lamEl = document.getElementById('lam'), pEl = document.getElementById('p'),
+      qEl = document.getElementById('q');
 function syncLam(){
   lam = Math.pow(10, +lamEl.value);
   document.getElementById('lamv').textContent =
     lam >= 100 ? Math.round(lam) : lam.toFixed(lam < 10 ? 2 : 1);
 }
 lamEl.addEventListener('input', () => { sweeping = false; syncLam(); draw(); });
-pEl.addEventListener('input', () => {
-  p = +pEl.value; document.getElementById('pv').textContent = p.toFixed(2); draw();
-});
+pEl.addEventListener('input', () => { p = +pEl.value; document.getElementById('pv').textContent = p.toFixed(2); draw(); });
+qEl.addEventListener('input', () => { q = +qEl.value; document.getElementById('qv').textContent = q.toFixed(2); draw(); });
+document.getElementById('traj').addEventListener('change', e => { showTraj = e.target.checked; draw(); });
 document.getElementById('snap').addEventListener('click', () => {
-  p = 2; pEl.value = 2; document.getElementById('pv').textContent = '2.00'; draw();
+  p = 2; q = 3; pEl.value = 2; qEl.value = 3;
+  document.getElementById('pv').textContent = '2.00';
+  document.getElementById('qv').textContent = '3.00';
+  document.getElementById('traj').checked = true; showTraj = true; draw();
 });
 document.getElementById('reset').addEventListener('click', () => {
-  sweeping = false; p = 1; pEl.value = 1; document.getElementById('pv').textContent = '1.00';
+  sweeping = false; p = q = 1; pEl.value = 1; qEl.value = 1;
+  document.getElementById('pv').textContent = '1.00';
+  document.getElementById('qv').textContent = '1.00';
+  document.getElementById('traj').checked = false; showTraj = false;
   lamEl.value = 0; syncLam(); draw();
 });
 document.getElementById('sweep').addEventListener('click', () => {
@@ -221,11 +281,9 @@ document.getElementById('sweep').addEventListener('click', () => {
 });
 function tick(){
   if (!sweeping) return;
-  sweepT += 0.018;
-  const s = 1.5 + 1.5 * Math.sin(sweepT);          // log10 λ oscillating over [0, 3]
-  lamEl.value = s; syncLam(); draw();
-  requestAnimationFrame(tick);
+  sweepT += 0.016;
+  lamEl.value = 1.5 + 1.5 * Math.sin(sweepT);
+  syncLam(); draw(); requestAnimationFrame(tick);
 }
-
 syncLam(); resize();
 </script>

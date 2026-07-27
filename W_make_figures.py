@@ -81,36 +81,43 @@ print('wrote W_fig_ladder.pdf', 'envelope popt=', np.round(popt,3) if 'popt' in 
 # =====================================================================
 # Figure 2 -- Borel plane
 # =====================================================================
-fig2, ax2 = plt.subplots(figsize=(5.4, 4.8))
+fig2, ax2 = plt.subplots(figsize=(5.4, 5.4))   # extra height for the out-of-axes legend
 
-# stochastic conjugate pair: theta ~ 50 +- 2 deg, |zeta| ~ 1.8-2.6 (central 1.9)
+# stochastic conjugate pair: theta = 50 +- 2 deg, |zeta| in [1.8, 2.6], best 1.9.
+# NB the modulus interval is strongly asymmetric about the best value (+0.7/-0.1), so the
+# admissible REGION is the primary datum and the best-fit point is subordinate to it: the
+# wedge is drawn with an edge (a stated region, not shading) and the marker is kept small,
+# so the figure cannot be read as asserting precision the interval disclaims.
 th0 = 50.0; zabs = 1.9
+Z_LO, Z_HI = 1.8, 2.6          # |zeta| interval
+TH_LO, TH_HI = 48.0, 52.0      # theta interval (deg)
 def polar(rr, deg):
     a = np.deg2rad(deg); return rr*np.cos(a), rr*np.sin(a)
-# uncertainty wedge (theta 48-52, |zeta| 1.8-2.6) upper + lower
-for sgn in (+1, -1):
-    w = Wedge((0,0), 2.6, sgn*48 if sgn>0 else -52, sgn*52 if sgn>0 else -48,
-              width=2.6-1.8, facecolor=BLUE, alpha=0.13, edgecolor='none', zorder=1)
-    # Wedge angles must be increasing; handle both lobes explicitly below instead
-ax2.add_patch(Wedge((0,0), 2.6, 48, 52, width=0.8, facecolor=BLUE, alpha=0.15, ec='none', zorder=1))
-ax2.add_patch(Wedge((0,0), 2.6, -52, -48, width=0.8, facecolor=BLUE, alpha=0.15, ec='none', zorder=1))
+# admissible region, upper + lower lobe (Wedge takes increasing angles, hence two calls)
+for t1, t2 in ((TH_LO, TH_HI), (-TH_HI, -TH_LO)):
+    ax2.add_patch(Wedge((0, 0), Z_HI, t1, t2, width=Z_HI-Z_LO, facecolor=BLUE, alpha=0.18,
+                        edgecolor=BLUE, lw=0.7, zorder=1))
 
-# pair central markers
+# best-fit point -- deliberately subordinate to the wedge above
 for sgn in (+1, -1):
     x, y = polar(zabs, sgn*th0)
-    ax2.plot(x, y, '*', color=BLUE, ms=15, zorder=5,
-             label=(r'stochastic Borel pair  $\zeta\approx1.9\,e^{\pm i\,50^\circ}$' if sgn>0 else None))
+    ax2.plot(x, y, '*', color=BLUE, ms=9, mec='white', mew=0.5, zorder=5,
+             label=('stochastic Borel pair\n'
+                    r'$|\zeta|\in[1.8,2.6]$, best $1.9$' '\n'
+                    r'$\theta=50^\circ\!\pm\!2^\circ$'
+                    if sgn > 0 else None))
 
 # deterministic lambda_0 at +-45 deg, |lambda_0|=1.258 (open circles, for contrast)
 labs = 1.258
 for sgn in (+1, -1):
     x, y = polar(labs, sgn*45)
     ax2.plot(x, y, 'o', mfc='none', mec='0.35', mew=1.4, ms=9, zorder=4,
-             label=(r'deterministic root  $\lambda_0=1.258\,e^{\pm i\,45^\circ}$' if sgn>0 else None))
+             label=('deterministic root\n' r'$\lambda_0=1.258\,e^{\pm i\,45^\circ}$'
+                    if sgn > 0 else None))
 
 # real s^5/10 instanton on positive real axis (competes at ~same modulus)
 ax2.plot(1.9, 0.0, 's', color=RED, ms=9, zorder=5,
-         label=r'real instanton  $S=s^5/10$')
+         label='real instanton\n' r'$S=s^5/10$')
 
 # radial guide lines at 45 and 50 deg to show the phase gap
 for deg, c, ls in ((45, '0.35', '--'), (50, BLUE, '-')):
@@ -128,8 +135,13 @@ ax2.set_xlim(-0.6, 2.9); ax2.set_ylim(-2.4, 2.4)
 ax2.set_aspect('equal')
 ax2.set_xlabel(r'$\mathrm{Re}\,\zeta$'); ax2.set_ylabel(r'$\mathrm{Im}\,\zeta$')
 ax2.set_title(r'Borel plane of $\mathcal{W}$: conjugate pair $+$ real instanton', fontsize=10.5)
-ax2.legend(loc='lower right', fontsize=7.6, framealpha=0.92)
+# Legend sits OUTSIDE, below the axes. The conjugate pair occupies both right-hand
+# quadrants and the guide rays cross the upper-left, so every in-axes corner occludes
+# something -- in particular a lower-right legend hides the lower lobe and makes the
+# pair read as asymmetric.
+ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13), ncol=3, fontsize=7.4,
+           framealpha=0.92, handlelength=1.2, columnspacing=1.4, borderpad=0.5)
 ax2.grid(True, ls=':', lw=0.4, alpha=0.5)
-fig2.subplots_adjust(left=0.13, right=0.97, top=0.92, bottom=0.11)
+fig2.subplots_adjust(left=0.13, right=0.97, top=0.93, bottom=0.23)
 fig2.savefig('W_fig_borel.pdf'); fig2.savefig('W_fig_borel.png', dpi=150)
 print('wrote W_fig_borel.pdf')

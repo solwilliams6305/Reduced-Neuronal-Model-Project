@@ -49,3 +49,12 @@ Completed 2026-07-27 against `pilot_borel/storyboard.py`. **Needs expert correct
 ## Standing rule
 If a visual is compatible with every possible outcome, it is decoration, not evidence — the
 falsification probe exists to catch this. See `PROBE_PROTOCOL.md`.
+
+---
+
+## Standing entry — unacknowledged slicing (all α3–α4 panels)
+The inner chain's real object lives in more dimensions than can be drawn. Every panel must carry
+a small inset showing **where the drawn slice sits** in the full space. Without it the viewer
+silently concludes the 2D picture *is* the object — the same class of error as showing a
+swallowtail surface as though it were the unfolding. Suspected to be part of why the chain was
+hard to hold in the first place. See `DESIGN_inner_chain.md` §5.

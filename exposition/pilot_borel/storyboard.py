@@ -163,14 +163,18 @@ a.text(0.02, 0.03, 'schematic', transform=a.transAxes, **SCHEM, **BG)
 # ---------------------------------------------------------------- 8. the identity
 a = ax[7]
 amb = np.exp(-A / xs)
-a.semilogy(xs, amb, color=RED, lw=2.0)
+a.semilogy(xs, amb, color=RED, ls='--', lw=1.3, label=r'$e^{-A/x}$ alone')
+a.semilogy(xs, 0.8 * xs**0.5 * amb, color=RED, lw=2.2, label=r'$C\,x^{b}e^{-A/x}$')
+a.legend(fontsize=7, loc='lower right')
 a.set_xlabel(r'$x=\eta^2$'); a.set_ylabel('difference between the two')
 a.set_ylim(1e-5, 2.0)
 a.set_title('8.  Their difference — the whole point', loc='left', fontsize=9.5)
-a.text(0.05, 0.94, r'$\Delta = e^{-A/x}$', transform=a.transAxes, fontsize=15, color=RED,
-       va='top')
-a.text(0.05, 0.74, 'the SAME exponential as the\nfloor in panel 3 — and $A$ is the\n'
-                   'singularity we just located',
+a.text(0.05, 0.94, r'$\Delta \sim C\,x^{b}\,e^{-A/x}$', transform=a.transAxes, fontsize=13.5,
+       color=RED, **BG, va='top')
+a.text(0.05, 0.75, 'the SAME exponential as the\nfloor in panel 3 — and $A$ is the\n'
+                   'singularity we just located.\n'
+                   r'$C$ (a Stokes constant) and $b$ are'
+                   '\nrefinements; the exponential\nis the content.',
        transform=a.transAxes, fontsize=7.8, color=GREY, **BG, va='top')
 a.text(0.05, 0.50, 'so the power series alone\ncannot be the answer:\n'
                    'it is ambiguous at exactly\nthat size.\n\n'

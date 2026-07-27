@@ -67,11 +67,36 @@ of the tanh-kink escape instanton `P⋆=−tanh τ` (`‖ψ₀‖²=∫sech⁴=4
    / Nonlinearity / a resurgence-friendly venue); (iii) the 4 refinements below are tagged `[to prove]`/
    `[frontier]` in-text and can ship as remarks. Gotcha: the classical citations (TW1994, FN1980, JMU1981,
    FIKN, Clarkson) were web-verified this program (2 title patches applied) — don't re-paraphrase.
-2. **[tractable rigor] Uniform-in-`a` noise Borel-summability.** Task #5 proved the dynamical sector in
-   the *scaling regime* `g=βa^{3/2}→∞` (frozen escape exact). Extend to **fixed finite `a`**: combine the
-   Airy/median proof with the T1 PII map (level structure) and control the Borot–Nadal `R_m(2/β)` regular
-   part + the `O(a^{−3/2})` x-extension corrections (the GY zero-mode dressing). Upgrades T3 from
-   scaling-regime to a uniform theorem. This is the natural completion of Thread 2.
+2. **[tractable rigor] Uniform-in-`a` noise Borel-summability — REDUCED 2026-07-22**
+   (`PROGRAM2_TWBETA_UNIFORM_IN_A_NOTES.md`, `coupled-atlas/_tw_uniform_in_a.py`). Worked from the
+   **exact** Borot–Nadal tail (1111.2761 Prop 1.1; `R_m(2/β)` are IN the paper for `m≤3`, validated at
+   β=2 vs GUE: `R_1(1)=−35/24`, `R_2(1)=35/16`). **Done:** (i) reduction — the Coulomb-gas prefactor and
+   `−(3β/4)log a` are a-independent/`β^{≥0}`, so ALL `1/β`-Borel content is the exact noise coeffs
+   `σ_n(a)=2^nΣ_{m≥n}r_{m,n+1}a^{-3m/2}` (`r_{m,ℓ}=[X^ℓ]R_m`, `X=2/β`; self-checked); (ii) **sector
+   uniformity is structural** — the dynamical singularity is at the *real* WKB action `Φ(a)∈ℝ₊` (moves
+   with `a`, never leaves the ray), Coulomb-gas fixed on `iℝ` ⇒ median sector uniform for `a≥a₀`.
+   **FINDING:** the frozen boundary-escape series is **NOT** the exact noise series beyond `n=1` — the
+   exact diagonal `2^n r_{n,n+1}` matches frozen `δ_n` at `n=1,3` but **not `n=2`** (`R_2` has degree
+   deficit `2<m+1=3` ⇒ exact 2-loop scaling coeff **=0**, frozen `−5/8`). So T3's Airy proof covers the
+   *frozen* object; the exact large-order must be read off BN. **RESIDUAL (one estimate):** a uniform
+   Gevrey-1 bound `|σ_n(a)|≤KΓ(n)Φ(a)^{-n}` on the exact `σ_n` — needs the **BN loop-equation recursion**
+   (§1.3 of 1111.2761) for `R_{m≥4}` (large-order `r_{n,n+1}` growth + off-diagonal `O(a^{-3/2})`
+   uniformity; the `n=1` off-diagonal is `σ_1=(−5/12)a^{-3/2}[1−(33/8)a^{-3/2}+(1555/64)a^{-3}+…]`).
+   **Next actor:** derive/port the BN recursion, generate `R_4..R_~20`, extract `r_{n,n+1}` growth and
+   confirm the on-axis singularity numerically. This is now the natural completion of Thread 2.
+   **BN-RECURSION PORT — STARTED 2026-07-22** (`PROGRAM2_TWBETA_BN_RECURSION_NOTES.md`,
+   `coupled-atlas/_tw_bn_brackets.py`; full 1111.2761 PDF extracted). The recursion is **not printed** —
+   it is a **β-deformed topological recursion** (§2.3): loop eqs 2-8/2-9, Gaussian 1-pt recursion 2-19 in
+   uniformization `x=√t(z+1/z)`, assembly Prop 2.1 eq 2-32. **Clean wins:** (a) Coulomb-gas sector = the
+   Bernoulli term `−B_{m+1}/(m(m+1))(2/β)^m` (Prop 2.1) — **a-independent**, = the `Γ(β/2)` Stirling
+   tail, independently confirming the uniform-note decomposition; (b) page-5 β=1,2,4 brackets to
+   `O(s^{-21/2})` give exact `R_m` at `X=2,1,1/2` for m≤6 (validated `R_1..R_3`; new `R_4,R_5,R_6` at 3
+   points — e.g. `R_4(1)=2905/128`). **Blocker:** faithful port needs two standard β-TR subtleties the
+   paper states only abstractly — a **branch-point projection** (naive `RHS/Y` is short by `+b/2` residue
+   at `z=±1`; verified at k=1 vs eq 2-26) and a **`W_2` coincident-limit (Bergman) regularization** (k=2).
+   `R_4` needs `ω_1^{[5]}` (paper prints `∫ω_1^{[≤4]}→R_3` only). 3 finite-β points can't fix `R_{m≥4}`
+   (deg ≤ m+1) nor the `X→∞` diagonal. **To finish:** fix the two subtleties, validate vs 2-26..2-30 +
+   `R_1..R_3`, run to `ω_1^{[5+]}`, edge-extract via Prop 2.1, cross-check vs the bracket data.
 3. **[structural] `α=1/2` vs `α=0` family assignment** (paper Rem.~in §5). The tail *saddle* is the
    α=1/2 Airy solution; the β=2 *distribution* is α=0 (HM). Pin the correspondence via the PII
    coalescence / Airy-solution structure. Does NOT block T1 (Costin's class covers all α); sharpens

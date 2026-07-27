@@ -573,16 +573,30 @@ uniform-in-$a$ off-diagonal both reduce to it. \emph{Refinements remaining:} the
 value of $S(a)$'s subleading $a$-corrections (needs the all-order $R_m$). \emph{Open frontier:}
 Conjecture~\ref{conj:frontier}.
 
-\paragraph{Positioning.} This is, to our knowledge, the first Borel-summable resurgent trans-series
-for a random-operator edge law, and it is resurgent in two directions at once: the Painlev\'e~II
-level resurgence (Stokes constant $C=\sqrt{2/(3\pi^3)}$) and the weak-noise loop resurgence (two
-sectors, dynamical escape and Coulomb-gas). It is the theorem-grade sibling of the cusp companion,
-where the absence of a Painlev\'e reduction forces a numerical partial resurgent representation; here
-the Airy/PII backbone makes the analogous statements theorems, and a clean structural dichotomy
-emerges --- the cusp's complexity is a \emph{resonance} (non-self-adjoint, unbounded-below)
-phenomenon, whereas $\TW$'s is a \emph{trans-series} (self-adjoint, median-resummation) one. The one
-genuinely open piece common to both is Conjecture~\ref{conj:frontier}: a direct exact-WKB of the
-random operator.
+\paragraph{Positioning.} Our contribution is \emph{not} the value of the Stokes constant
+$C=\tfrac1\pi\sqrt{2/(3\pi)}$ --- that is the known Hastings--McLeod datum
+\cite{Dunne2025,KapaevHM,FIKN}, re-derived here --- but three things: (i) the exact affine Lax map
+(Lemma~\ref{lem:lax}) identifying the tail's fluctuation operator \emph{as} the Painlev\'e~II
+linearization and the instanton as the $\alpha=\tfrac12$ Airy solution; (ii) the resulting
+two-directional resurgent trans-series --- level (PII, Stokes constant $C=\sqrt{2/(3\pi^3)}$) and
+noise ($1/\beta$, two sectors: dynamical escape and Coulomb-gas) --- for a \emph{random-operator}
+edge law; and (iii) the Gelfand--Yaglom / collective-coordinate route to $C$ (Prop.~\ref{prop:gy}).
+To our knowledge this is the first Borel-summable resurgent trans-series for a random-operator edge
+law, and it sits apart from three neighbouring lines. \emph{Deterministic kernel-determinant
+resurgence:} Painlev\'e~II resurgence in matrix models / minimal strings \cite{SchiappaVaz} treats
+the string-equation solution, not Hastings--McLeod; the ``generalized Tracy--Widom'' resurgence of
+the gauge-theory Bessel-kernel determinants \cite{BajnokTW,BajnokUniv} expands in the 't~Hooft
+coupling, not the Dyson index, and concerns a deterministic Fredholm determinant rather than the
+stochastic-Airy tail. \emph{Rate-function-only instantons:} the orthogonal-polynomial / Coulomb-gas
+instanton analysis of extreme eigenvalues \cite{AtkinZohren} identifies the right-tail rate with an
+instanton action but stops short of the fluctuation-determinant Stokes data. \emph{The large-$\beta$
+reduction:} \cite{CLDS} reduce the rate function and $O(1/\beta)$ cumulants to PII with no resurgence
+analysis; we supply the operator-level linearization and the Borel-summable trans-series built on it.
+It is also the theorem-grade sibling of the cusp companion, where the absence of a Painlev\'e
+reduction forces a numerical partial resurgent representation; the clean structural dichotomy
+persists --- the cusp's complexity a \emph{resonance} (non-self-adjoint, unbounded-below) phenomenon,
+$\TW$'s a \emph{trans-series} (self-adjoint, median-resummation) one --- and the one genuinely open
+piece common to both is Conjecture~\ref{conj:frontier}: a direct exact-WKB of the random operator.
 
 \begin{thebibliography}{99}
 
@@ -643,6 +657,19 @@ solution of the second Painlev\'e equation}, arXiv:nlin/0411009 (2004).
 
 \bibitem{BothnerRHP} T.~Bothner, \emph{On the origins of Riemann--Hilbert problems in mathematics},
 Nonlinearity \textbf{34} (2021) R1--R73; arXiv:2003.14374.
+
+\bibitem{SchiappaVaz} R.~Schiappa, R.~Vaz, \emph{The resurgence of instantons: multi-cut Stokes
+phases and the Painlev\'e~II equation}, Comm. Math. Phys. \textbf{330} (2014) 655--721;
+arXiv:1302.5138.
+
+\bibitem{AtkinZohren} M.~R.~Atkin, S.~Zohren, \emph{Instantons and extreme value statistics of
+random matrices}, J. High Energy Phys. \textbf{2014} (2014) 118; arXiv:1307.3118.
+
+\bibitem{BajnokTW} Z.~Bajnok, B.~Boldis, G.~P.~Korchemsky, \emph{Tracy--Widom distribution in
+four-dimensional super-Yang--Mills theories}, arXiv:2403.13050 (2024).
+
+\bibitem{BajnokUniv} Z.~Bajnok, B.~Boldis, D.~le~Plat, \emph{Universality in the resurgence of
+generalized Tracy--Widom distributions}, arXiv:2509.20302 (2025).
 
 \end{thebibliography}
 

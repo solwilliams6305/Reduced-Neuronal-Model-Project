@@ -35,9 +35,10 @@ Completed 2026-07-27 against `pilot_borel/storyboard.py`. **Needs expert correct
 2. **The model series is not our series.** Panel 2–3 use m_k = k!/A^{k+1}, a prototype with a
    *single* real singularity. Labelled on-panel, but the viewer must not conclude our v_k behave
    this way — panel 4 exists precisely because they do not.
-3. **Δ = e^{−A/x} is stated too cleanly on panel 8.** The true ambiguity carries a Stokes constant
-   and an algebraic prefactor, Δ ∼ C·x^b·e^{−A/x}. Panel 3 already concedes "differ by an
-   algebraic prefactor only"; panel 8 currently does not.
+3. ~~**Δ = e^{−A/x} is stated too cleanly on panel 8.**~~ **RESOLVED 2026-07-27.** Panel 8 now
+   states Δ ∼ C·x^b·e^{−A/x} and plots both curves; their near-parallelism on log axes shows the
+   prefactor does not touch the exponential character, so the concession costs the punchline
+   nothing. C is named as a Stokes constant, and C and b are both marked as refinements.
 4. **The cut's placement is a choice, not a fact.** Drawing it along the positive real axis from A
    to ∞ is conventional; the branch point is canonical, the cut is not. A viewer may think the
    ray itself is intrinsic.

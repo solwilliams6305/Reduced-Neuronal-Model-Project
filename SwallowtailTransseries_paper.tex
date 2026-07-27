@@ -335,6 +335,39 @@ $-0.2^\circ$; the joint fit is the most $n$-stable ($\theta=37.2,37.9,38.0,38.1^
 $\kappa_3$ grids) but carries a $+4.7^\circ$ cusp bias. The spread in \eqref{eq:theta} is dominated
 by this method systematic, not by grid convergence.
 
+\subsection{A deterministic anchor phase, and a small noise rotation.}
+Voros's constant set for the cubic (Rem.~\ref{rem:anchorexists}) fixes the $\lambda$-plane rotation
+at $\varphi=4\pi/(q+2)$, which is $4\pi/5=144^\circ$ at $q=3$ and $\pi$ at $q=2$. The cusp's
+deterministic resonance root sits at \emph{exactly} $-\pi/4$, i.e.\ at $\varphi/4$. Taking that
+identification as the $q$-uniform statement gives a predicted deterministic anchor phase
+\begin{equation}\label{eq:anchorphase}
+\theta_{\rm det}(q)=\frac{\varphi}{4}=\frac{\pi}{q+2}
+\quad\Longrightarrow\quad 45^\circ\ (q{=}2),\qquad \mathbf{36^\circ}\ (q{=}3),\qquad 30^\circ\ (q{=}4),
+\end{equation}
+against which the measured \emph{stochastic} phases are
+
+\begin{center}
+\begin{tabular}{lccc}
+\hline\noalign{\smallskip}
+ & $\theta_{\rm det}=\pi/(q{+}2)$ & measured $\theta$ & noise rotation\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+cusp $q=2$        & $45.0^\circ$ & $50.0^\circ$ & $+5.0^\circ$\\
+swallowtail $q=3$ & $36.0^\circ$ & $39.4^\circ$ & $+3.4^\circ$\\
+\noalign{\smallskip}\hline
+\end{tabular}
+\end{center}
+
+The predicted $36^\circ$ lies inside our measured band \eqref{eq:theta}, and in both catastrophes the
+noise rotates the phase by a small \emph{positive} amount that shrinks with $q$. This reproduces, and
+extends to $q=3$, the cusp paper's ``near-inheritance with a small noise rotation''.
+\eqref{eq:anchorphase} is a testable prediction: it forecasts $30^\circ$ at $q=4$. \tagC\;/\;\tagX
+
+\begin{remark}[Status of \eqref{eq:anchorphase}]\label{rem:anchorstatus}
+This is a pattern fixed by a single exactly-known case ($q=2$) and consistent with one measurement
+($q=3$); it is not derived. What is imported is $\varphi=4\pi/(q+2)$ \cite{Voros1999}; the
+identification of the root phase with $\varphi/4$ is ours and is conjectural.
+\end{remark}
+
 \section{Validation: what the trans-series reconstructs}\label{sec:resum}
 
 Ground truth is Monte-Carlo free, from the escape Fokker--Planck PDE with a second-order
@@ -405,13 +438,29 @@ remainder from the observable (the residual shows no oscillation and is method e
 term). Both fail for the same circular reason --- each needs $(A,\theta)$ as input. (iv) No
 stochastic exact-WKB, as for the cusp.
 
-\emph{The identified route.} The most concrete way past (i) and (iii) is not more rungs but the
-deterministic anchor of Rem.~\ref{rem:anchorexists}. Importing the cubic TBA/quantisation data
-\cite{Voros1999,Masoero2010,ItoMarinoShu,AllegrettiBridgeland} would supply $(A,\theta)$
-\emph{independently} of the ladder, which is precisely the input both refuted methods needed and
-could not generate from within. That converts the circular obstruction into a finite piece of work:
-compute the cubic Stokes data by TBA, then use it to prescribe the conformal map or the
-non-perturbative subtraction. We flag this as the single highest-value continuation.
+\emph{The anchor was imported, and it does not rescue the resummation.} Since both refuted methods
+needed $(A,\theta)$ as external input, we imported it (Rem.~\ref{rem:anchorexists}) and retried, in
+two forms: a prescribed-singularity Borel ansatz
+$B(u)=A_r(1-u/z_r)^{-g}+2\,\mathrm{Re}[A_p(1-u/\zeta)^{-g}]+\text{poly}$ with the pair angle fixed at
+$\theta=\pi/(q+2)$ and the rest fitted; and a fully constrained version with $\theta,|\zeta|,z_r,g$
+all fixed and only the (linear) amplitudes fitted. \emph{Both fail the cusp gate.} The fitted version
+overfits catastrophically --- the residual goes to zero while $|\zeta|$ runs to $14$ and $f(2)$ to
+$+1090\%$ --- because $8$ coefficients cannot support $9$--$11$ parameters. The constrained version
+is far better behaved but still gives $+5\%$ at best on the cusp, against plain diagonal
+Borel--Pad\'e's $-1.0\%$, and swings over $[-55\%,+43\%]$ across equally defensible choices of
+$(|\zeta|,z_r,g)$.
+
+\begin{remark}[Why structural priors do not substitute for coefficients]\label{rem:whypriorsfail}
+The sensitivity just quoted is the explanation for all three refuted methods. At $x=2$ the resummed
+value is exquisitely sensitive to Borel data we know only to $\sim20\%$ ($|\zeta|$) or hardly at all
+($z_r$), so importing an exact $\theta$ does not help: the error budget is dominated by the
+\emph{other} singularity data. Plain diagonal Pad\'e is hard to beat here precisely because it has
+exactly as many parameters as coefficients and imports nothing. The binding constraint is therefore
+the coefficient count itself, and structural priors enter with uncertainties that the sensitivity
+amplifies rather than suppresses. Beating Pad\'e at $\beta=2$ would require $|\zeta|$ and $z_r$ to a
+precision comparable to $\theta$'s --- i.e.\ a full TBA solution of the cubic Stokes data, not just
+its phase. \tagN
+\end{remark}
 
 \begin{remark}[What the swallowtail adds to the cusp programme]
 Three things. First, a structural one: solvability degrades with $q$

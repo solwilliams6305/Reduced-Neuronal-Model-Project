@@ -25,6 +25,7 @@
 \newcommand{\Bi}{\mathrm{Bi}}
 \newcommand{\TW}{\mathrm{TW}}
 \newcommand{\W}{\mathcal{W}}
+\newcommand{\Sw}{\mathcal{S}}
 \newcommand{\eps}{\varepsilon}
 \newcommand{\Ynode}{Y^\star}
 
@@ -324,7 +325,41 @@ node is the exact first Airy zero. \tagPr
 The swallowtail rung ($q{=}3$, $A_4$) is verified in full: the skeleton is Bessel-$1/5$ (its first
 five peel-off levels match the matched Bessel combination---the symmetric $J_{1/5}+J_{-1/5}$---to
 $10^{-14}$), and the standardized escape moments at $\beta{=}2$ are skewness $+0.951$ (predicted
-$+0.95$) and excess kurtosis $+0.156$ (predicted $+0.16$), from $2.8\times10^6$ samples. \tagN
+$+0.95$) and excess kurtosis $+0.156$ (predicted $+0.16$), from $2.8\times10^6$ samples. \tagN\
+These moments are now independently confirmed Monte-Carlo-\emph{free}, by a second-order
+Fokker--Planck solve of the escape problem: skewness $+0.945$ and excess kurtosis $+0.150$, agreeing
+to $0.6\%$ and $3.8\%$ with the sampled values above, with $\Var(\beta{=}2)=0.3294$. \tagN
+
+\subsection*{What the swallowtail rung adds: one uniformity, one broken uniformity.}
+The rung has since been developed to the depth of the cusp \cite{SwallowtailPaper}: eight exact
+weak-noise variance coefficients, a six-coefficient $\kappa_3$ ladder, and a Borel plane. Two
+findings bear on the ladder as a whole, and they point in opposite directions.
+
+\emph{A fourth uniformity.} The left-tail constant of Rem.~\ref{rem:fwconstant} is not merely
+asserted but verified across five rungs, $q=1,\dots,5$, and the corresponding statement of the
+Borel plane---a complex-conjugate pair together with a competing real instanton, with the
+coefficient ladder carrying the $\cos(k\theta-\varphi)$ envelope of that pair---holds at $q=2$ and
+$q=3$ alike. At $q=3$ the envelope is confirmed \emph{twice over}: the variance and $\kappa_3$
+ladders first turn negative at the same rung, which no Pad\'e approximant is involved in
+establishing.
+
+\emph{A broken uniformity.} The Borel \emph{phase} is not inherited. Calibrated at matched
+truncation order against the cusp, every estimator places the swallowtail pair $8$--$17^\circ$ below
+the cusp's $\theta\approx50^\circ$, giving $\theta_{\Sw}\approx33$--$42^\circ$. A candidate
+organising principle is that the \emph{deterministic} anchor phase is $\pi/(q{+}2)$---exactly
+$-\pi/4$ at $q=2$, where the Weber connection root is closed-form, and $36^\circ$ at $q=3$, which
+lies inside the measured band---with noise rotating it by a small positive amount that shrinks with
+$q$ ($+5.0^\circ$ at $q=2$, $+3.4^\circ$ at $q=3$). This predicts $30^\circ$ at $q=4$ and is
+falsifiable. \tagN\;/\;\tagX
+
+\emph{And a change of type in the deterministic input.} At $q=2$ the connection datum is the
+closed-form Weber $\Gamma$-equation. At $q=3$ it is the cubic-oscillator connection problem, whose
+Stokes data is exactly characterised---an entire spectral determinant fixed by a $T$--$Q$/TBA
+system, equivalently Fock--Goncharov cluster coordinates on a $\mathbb Z/5\mathbb Z$
+pentagon \cite{Voros1999cap}---but not of $\Gamma$-type. So the ladder's \emph{structural} layers persist while its
+\emph{solvability} degrades: special-function-closed at $q=2$, integrable-transcendental at $q=3$.
+Two of Voros's cubic constants, $L=5$ and $\varphi=4\pi/5$, independently reproduce the
+$\mathbb Z_5$ sector count and $\lambda$-rotation derived here. \tagP
 
 \begin{figure}[t]
 \centering
@@ -470,6 +505,14 @@ J. Comput. Appl. Math. \textbf{153} (2003) 127--140.
 
 \bibitem{Hao} Q.~Hao, \emph{Exact WKB of solutions by Borel summation and open TBA},
 arXiv:2507.06922 (2025).
+
+\bibitem{SwallowtailPaper} S.~Williams, \emph{The resurgent trans-series structure of the
+swallowtail escape law: eight weak-noise coefficients, a second cumulant ladder, and the
+multicritical instanton law}, companion paper, 2026.
+
+\bibitem{Voros1999cap} A.~Voros, \emph{Exact quantization condition for anharmonic oscillators
+(in one dimension)}, arXiv:math-ph/9811001. (Cubic constants $\varphi=4\pi/5$, $L=5$,
+$\kappa=1/5$, $b_0=2^{2/3}\sqrt3\,\Gamma(1/3)^3/(5\pi)$.)
 
 \bibitem{BerryUpstill} M.~V.~Berry, C.~Upstill, \emph{Catastrophe optics: morphologies of caustics
 and their diffraction patterns}, Prog. Optics \textbf{18} (1980) 257--346.

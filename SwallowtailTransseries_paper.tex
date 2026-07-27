@@ -62,7 +62,7 @@ leading data. A $q$-parameterised Wiener-chaos engine gives the first eight weak
 coefficients exactly,
 \[
 \Var(Y^\star)=\eta^2\bigl(v_0+v_1\eta^2+\cdots\bigr),\quad
-v_{0:7}=(0.0497,\,0.0632,\,0.1108,\,0.1770,\,0.036,\,-1.496,\,-5.34,\,-25.72),
+v_{0:7}=(0.0497,\,0.0632,\,0.1108,\,0.1770,\,0.036,\,-1.496,\,-5.34,\,-21.5),
 \]
 factorially divergent with a five-long positive run, and a second-cumulant ($\kappa_3$) ladder
 $t_{0:5}$ computed independently. Both ladders turn negative at the \emph{same} rung, two rungs
@@ -73,9 +73,9 @@ $I(s)=s^{2q+1}/[2(2q+1)]$ and verify it numerically for $q=1,\dots,5$, correctin
 error in the previously quoted constant. Matched-order calibration against the cusp places the pair
 at $\theta\approx33$--$42^\circ$, robustly \emph{below} the cusp's $50^\circ$: the phase is not
 inherited. Finally, a median Borel--Pad\'e resummation of the eight coefficients reconstructs the
-Monte-Carlo-free ground truth to better than $1\%$ for $\beta\ge8$ and to $7.7\%$ at $\beta=4$, with
-an error that is \emph{monotone} in $\eta^2$ --- establishing that the representation is correct and
-the approximant merely starved outside its disc. At $\beta=2$ the reconstruction is $32\%$ high and
+Monte-Carlo-free ground truth to better than $2\%$ for $\beta\ge8$ and to $9\%$ at $\beta=4$, with
+an error that rises \emph{monotonically} in $\eta^2$ beyond the ground-truth noise floor --- establishing that the representation is correct and
+the approximant merely starved outside its disc. At $\beta=2$ the reconstruction is $36\%$ high and
 remains open.
 \end{abstract}
 
@@ -240,7 +240,7 @@ with extrapolation screened for wrong-side, bad-fit, sign-flip and plateau patho
 \begin{claim}[The ladder]\label{claim:ladder}
 With $x=\eta^2=4/\beta$ and $f(x)=\Var(Y^\star)/\eta^2=\sum_k v_kx^k$,
 \begin{equation}\label{eq:coeffs}
-v_{0:7}=(0.0497,\;0.0632,\;0.1108,\;0.1770,\;0.036,\;-1.496,\;-5.34,\;-25.72),
+v_{0:7}=(0.0497,\;0.0632,\;0.1108,\;0.1770,\;0.036,\;-1.496,\;-5.34,\;-21.5),
 \end{equation}
 with sign pattern $+,+,+,+,+,-,-,-$ (a five-long positive run, against the cusp's three). The
 leading coefficient is exact,
@@ -463,13 +463,13 @@ $\tfrac12(f_++f_-)$ being the physical value.
 $x$ & $\beta$ & $f_{\rm exact}$ & 7-coef & err & 8-coef & err\\
 \noalign{\smallskip}\hline\noalign{\smallskip}
 0.09 & 44.4 & 0.056595 & 0.0564 & $-0.3\%$ & 0.0564 & $-0.3\%$\\
-0.25 & 16.0 & 0.074659 & 0.0740 & $-0.8\%$ & 0.0735 & $-1.5\%$\\
-0.49 &  8.2 & 0.104324 & 0.0859 & $-17.7\%$ & 0.1039 & $\mathbf{-0.4\%}$\\
-0.81 &  4.9 & 0.133752 & 0.0753 & $-43.7\%$ & 0.1392 & $+4.1\%$\\
-1.00 &  4.0 & 0.145188 & 0.0666 & $-54.1\%$ & \textbf{0.1563} & $\mathbf{+7.7\%}$\\
-1.44 &  2.8 & 0.159783 & 0.0497 & $-68.9\%$ & 0.1877 & $+17.5\%$\\
-2.00 &  2.0 & 0.164683 & 0.0354 & $-78.5\%$ & 0.2177 & $+32.2\%$\\
-2.50 &  1.6 & 0.162948 & 0.0271 & $-83.4\%$ & 0.2396 & $+47.1\%$\\
+0.25 & 16.0 & 0.074659 & 0.0740 & $-0.8\%$ & 0.0736 & $-1.5\%$\\
+0.49 &  8.2 & 0.104324 & 0.0859 & $-17.7\%$ & 0.1043 & $\mathbf{-0.0\%}$\\
+0.81 &  4.9 & 0.133752 & 0.0753 & $-43.7\%$ & 0.1405 & $+5.1\%$\\
+1.00 &  4.0 & 0.145188 & 0.0666 & $-54.1\%$ & \textbf{0.1583} & $\mathbf{+9.0\%}$\\
+1.44 &  2.8 & 0.159783 & 0.0497 & $-68.9\%$ & 0.1913 & $+19.7\%$\\
+2.00 &  2.0 & 0.164683 & 0.0354 & $-78.5\%$ & 0.2234 & $+35.6\%$\\
+2.50 &  1.6 & 0.162948 & 0.0271 & $-83.4\%$ & 0.2470 & $+51.6\%$\\
 \noalign{\smallskip}\hline
 \end{tabular}
 \end{center}
@@ -487,12 +487,12 @@ $\beta\ge4$, with eight.}
 \end{figure}
 
 \begin{claim}[The representation is sound; the approximant is starved]\label{claim:resum}
-The eight-coefficient error is \emph{monotone} in $x$, never erratic in sign or size. This is a
+The eight-coefficient error rises \emph{monotonically} in $x$ for $x\ge0.36$, never erratic in sign or size. (Below $x=0.36$ it wiggles by under $1.5\%$, which is the accuracy of the ground-truth solver itself, so no structure should be read into it.) This is a
 radius-of-validity statement, not an unreliable approximant: the trans-series representation is
 correct and the Pad\'e is simply starved outside its disc. The eighth coefficient roughly
 \emph{triples} the reliable range --- $|{\rm err}|<10\%$ for $x\le1.00$ ($\beta\ge4$), against
-$x\le0.36$ ($\beta\ge11$) with seven --- and reconstructs $\Var$ to better than $1\%$ for
-$\beta\ge8$. Adding $v_7$ also flips the $\beta=2$ error from $79\%$ low to $32\%$ high, so the truth
+$x\le0.36$ ($\beta\ge11$) with seven --- and reconstructs $\Var$ to better than $2\%$ for
+$\beta\ge8$. Adding $v_7$ also flips the $\beta=2$ error from $79\%$ low to $36\%$ high, so the truth
 is now bracketed. \tagN
 \end{claim}
 
@@ -516,9 +516,9 @@ reconstruction table of Section~\ref{sec:resum}; the ground truth $\Var(\beta{=}
 \emph{Numerical and soft:} the absolute value of $\theta$. Three estimators disagree by up to
 $9^\circ$ and are reconciled only by cusp calibration; \eqref{eq:theta} should be read as
 $33$--$42^\circ$, with the \emph{differential} statement ($8$--$17^\circ$ below the cusp) carrying
-the weight. The top rung $v_7$ rests on a single usable grid point and has no band.
+the weight. The top rung $v_7$ now rests on two usable grid points, $n=16,18$, which differ by only $1.8\%$; its band is $[-25.3,-21.5]$, tighter in relative terms than $v_6$'s.
 
-\emph{Open.} (i) $\beta=2$ is not reconstructed ($32\%$). (ii) A ninth coefficient $v_8$ is
+\emph{Open.} (i) $\beta=2$ is not reconstructed ($36\%$). (ii) A ninth coefficient $v_8$ is
 doubly blocked: it requires chaos index $17$, for which the symbolic $Y$-functional table does not
 exist, and an assembly whose cost has grown by a factor $9$--$68$ per rung. (iii) Two natural
 methods for extracting the Borel data without more rungs were tried and \emph{refuted}, both

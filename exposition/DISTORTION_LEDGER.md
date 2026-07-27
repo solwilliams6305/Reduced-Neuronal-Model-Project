@@ -83,3 +83,11 @@ but weaker than it looks.
 5. **Only the recessive (Ai) solution is shown.** The general solution mixes in Bi, whose zeros
    sit elsewhere. The panel silently privileges one boundary condition — which is the right one
    for the escape problem, but the choice is invisible to the viewer.
+6. ~~**Row 3 broke the one-invariant discipline.**~~ **RESOLVED 2026-07-27.** Row 3 previously
+   drew 14 noisy realisations in the same blue as rows 1–2 while the curve from rows 1–2 was
+   absent — so the row introduced a fresh cast of objects at exactly the point where the design
+   depends on one object persisting. Now the deterministic curve is plotted in row 3 in the same
+   colour and weight as row 1, carrying the same red first-zero dot, and the ensemble is demoted
+   to grey scatter *around* it. Colour now encodes role: **blue = the invariant, grey = scatter,
+   red = zeros.** This is load-bearing for the whole α3–α4 chain — the fix was applied here
+   before the pattern could propagate. See `DESIGN_inner_chain.md` §2.

@@ -56,7 +56,8 @@ a.axhline(0, color='k', lw=0.7)
 a.plot(zeros, np.zeros_like(zeros), 'o', color=RED, ms=7, zorder=5)
 a.set_ylabel(r'$u(Y)=\mathrm{Ai}(Y)$')
 a.set_title("$u$ is smooth. It crosses zero.", loc='left', fontsize=11.5)
-a.text(0.015, 0.07, f'nothing dramatic happens here —\njust {len(zeros)} ordinary crossings',
+a.text(0.015, 0.07, f'nothing dramatic happens here —\njust {len(zeros)} ordinary crossings.\n'
+                    'this one curve carries through all three rows.',
        transform=a.transAxes, fontsize=8.5, color=GREY, **BG)
 
 # ------------------------------------------------------------------ row 2: R blows up there
@@ -93,21 +94,27 @@ idx = (N - 2) - np.argmax(cross[:, ::-1], axis=1)  # rightmost crossing = first 
 first_zeros = Y[idx][has]
 
 un = u / np.max(np.abs(u), axis=1, keepdims=True)
-for j in range(14):
-    a.plot(Y, un[j], color=BLUE, lw=0.8, alpha=0.42)
+for j in range(14):                                 # the ensemble is SCATTER, hence grey
+    a.plot(Y, un[j], color=GREY, lw=0.7, alpha=0.40, zorder=2)
+# THE INVARIANT: the very same curve drawn in rows 1 and 2, in the same colour and weight.
+# Row 3 must not introduce a new object -- it shows this one trajectory with noise scattered
+# around it.  See DESIGN_inner_chain.md sec.2.
+a.plot(Y, Ai / np.max(np.abs(Ai)), color=BLUE, lw=2.0, zorder=6)
+a.plot(Z_FIRST, 0, 'o', color=RED, ms=7, zorder=7)
 a.axhline(0, color='k', lw=0.7)
 a.axvline(Z_FIRST, color=RED, lw=1.4, ls='--', zorder=4)
 a.plot(first_zeros, np.zeros_like(first_zeros), '|', color=RED, ms=11, mew=0.9, alpha=0.35,
        zorder=5)
 a.set_ylim(-1.15, 1.15); a.set_xlim(Y_LO, Y_HI)
 a.set_xlabel(r'$Y$   (the swept parameter)')
-a.set_ylabel('noisy $u$, normalised')
+a.set_ylabel('$u$, normalised')
 a.set_title('Add noise: the first zero wanders. That wandering is the escape law.',
             loc='left', fontsize=11.5)
-a.text(0.015, 0.06, rf"$u''=(Y+\eta\,\xi)u$,  $\eta={eta}$,  {has.sum()} runs"
-                    "\n14 shown; ticks mark every first zero",
+a.text(0.015, 0.06, "blue: the SAME $u$ as rows 1–2.  grey: 14 noisy runs.\n"
+                    rf"$u''=(Y+\eta\,\xi)u$,  $\eta={eta}$,  {has.sum()} runs;"
+                    "  ticks mark every first zero",
        transform=a.transAxes, fontsize=8.5, color=GREY, **BG)
-a.annotate('deterministic\nfirst zero', xy=(Z_FIRST, 0.80), xytext=(Z_FIRST - 3.4, 0.93),
+a.annotate('its first zero —\nthe same red dot', xy=(Z_FIRST, 0.42), xytext=(Z_FIRST - 3.6, 0.90),
            fontsize=8.5, color=RED, arrowprops=dict(arrowstyle='->', color=RED, lw=0.9))
 
 # histogram of the first zero -- placed clear of the tick row at y=0

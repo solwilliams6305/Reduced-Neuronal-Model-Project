@@ -108,6 +108,31 @@ resulting trans-series against Monte-Carlo-free ground truth across a range of $
 Throughout, statements carry provenance tags: \tagP\ proved, \tagC\ cited, \tagN\ numerical,
 \tagX\ conjectural. The honest ledger is Section~\ref{sec:ledger}.
 
+\subsection{Positioning: three ``multicritical'' families that must not be conflated.}
+The word \emph{multicritical} attaches to at least three distinct constructions in this area, and
+ours is the least integrable of them. We state the distinction early because the naming overlap is
+severe.
+
+\begin{enumerate}
+\item[(i)] \emph{Higher-order analogues of Tracy--Widom} (random-matrix multicritical edges). When
+the equilibrium density vanishes to higher order at the edge, the limiting fluctuation laws are
+Fredholm determinants of higher Airy-type kernels built from the Painlev\'e~I/II hierarchies, with
+Lax pairs and integrable structure throughout \cite{ClaeysKuijlaarsVanlessen,BertolaCafasso,
+CafassoClaeys,MulticriticalSchur}. These are \emph{integrable} laws.
+\item[(ii)] \emph{Genuine diffraction catastrophes} (Berry--Upstill): $u^{(n)}=(Y-\eta\xi)u$, an
+$n$-th order equation --- Airy, Pearcey, the swallowtail function. This family coincides with ours
+only at the fold and diverges from it thereafter.
+\item[(iii)] \emph{Swept multicritical edge laws} --- the present family, $u''=(\mathrm{sign}(Y)|Y|^q
+-\eta\xi)u$: second order, with the multicriticality in the \emph{swept turning potential} rather
+than in an equilibrium density or in the order of the equation.
+\end{enumerate}
+
+The separation from (i) is not cosmetic and is the reason this paper exists: family (i) is
+integrable by construction, whereas Propositions~\ref{prop:nofredholm}--\ref{prop:nopainleve} show
+that (iii) admits \emph{neither} a Fredholm/soft-edge determinant \emph{nor} a Painlev\'e
+$\sigma$-reduction. A reader who expects ``multicritical edge $\Rightarrow$ Painlev\'e hierarchy''
+will expect the wrong answer here. The separation from (ii) is established in the companion capstone.
+
 \section{The skeleton and its Stokes structure}\label{sec:skeleton}
 
 \begin{proposition}[Bessel-$1/(q{+}2)$ backbone]\label{prop:bessel}
@@ -255,9 +280,13 @@ $\kappa_3(Y^\star)=\eta^4\sum_j t_j\eta^{2j}$, $t_j=\sum_{a+b+c=4+2j}\mathrm{cum
 t_{0:5}=(+0.0169,\;+0.0566,\;+0.1689,\;+0.4045,\;+0.5182,\;-5.225).
 \end{equation}
 It is markedly cheaper than the variance ladder --- $t_j$ requires chaos index only $2+2j$ against
-$v_k$'s $2k+1$ --- and it is not a restatement of the variance data: resurgence places the Borel
-\emph{singularity locations} in the action, not the observable, so $\kappa_3$ constrains the same
-$(|\zeta|,\theta)$ through different amplitudes.
+$v_k$'s $2k+1$. That two observables of the same problem may share Borel singularity locations while
+carrying different amplitudes is standard resurgence, not a new principle
+\cite{AnicetoBaseSchiappa,GaugeResurgence}; what is worth stressing is that it is an
+\emph{assumption to be tested rather than assumed} here. Different observables of the same theory
+can in fact carry different singularity structures, so we do not take the sharing for granted: the
+same-rung sign flip of Claim~\ref{claim:sharedenvelope} is the \emph{evidence} that the two ladders
+see one geometry, and it is obtained without any approximant.
 
 \begin{claim}[Shared envelope across observables]\label{claim:sharedenvelope}
 Within each catastrophe, the variance and $\kappa_3$ ladders first turn negative at the \emph{same}
@@ -559,6 +588,28 @@ mechanics}, JHEP \textbf{01} (2019) 228, arXiv:1811.04812.
 
 \bibitem{Sibuya} Y.~Sibuya, \emph{Global Theory of a Second Order Linear Ordinary Differential
 Equation with a Polynomial Coefficient}, North-Holland, 1975.
+
+\bibitem{ClaeysKuijlaarsVanlessen} T.~Claeys, A.~B.~J.~Kuijlaars, M.~Vanlessen, \emph{Multi-critical
+unitary random matrix ensembles and the general Painlev\'e II equation}, Ann.\ of Math.\
+\textbf{168} (2008) 601--641.
+
+\bibitem{BertolaCafasso} M.~Bertola, M.~Cafasso, \emph{Fredholm determinants and pole-free solutions
+to the noncommutative Painlev\'e II hierarchy}, Comm.\ Math.\ Phys.\ \textbf{309} (2012) 793--833;
+see also \emph{Higher order analogues of the Tracy--Widom distribution and the Painlev\'e II
+hierarchy}, arXiv:0901.2473.
+
+\bibitem{CafassoClaeys} \emph{Higher order analogues of Tracy--Widom distributions via the Lax
+method}, arXiv:1208.3645.
+
+\bibitem{MulticriticalSchur} \emph{Multicritical Schur measures and higher-order analogues of the
+Tracy--Widom distribution}, arXiv:2307.05303.
+
+\bibitem{AnicetoBaseSchiappa} I.~Aniceto, G.~Ba\c sar, R.~Schiappa, \emph{A primer on resurgent
+transseries and their asymptotics}, Phys.\ Rep.\ \textbf{809} (2019) 1--135.
+
+\bibitem{GaugeResurgence} \emph{Resurgent analysis of localizable observables in supersymmetric
+gauge theories}, arXiv:1410.5834. (Different observables of one theory, shared and unshared Borel
+singularity structure.)
 
 \bibitem{BenderWu} C.~M.~Bender, T.~T.~Wu, \emph{Anharmonic oscillator}, Phys.~Rev.~\textbf{184}
 (1969) 1231.

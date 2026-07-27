@@ -59,6 +59,15 @@ a.set_title("$u$ is smooth. It crosses zero.", loc='left', fontsize=11.5)
 a.text(0.015, 0.07, f'nothing dramatic happens here —\njust {len(zeros)} ordinary crossings.\n'
                     'this one curve carries through all three rows.',
        transform=a.transAxes, fontsize=8.5, color=GREY, **BG)
+# The boundary condition is a CHOICE and must not be invisible: Ai is the recessive solution,
+# and it is the escape problem that selects it.  Bi, or any mixture, has different zeros --
+# so these are not "the" zeros, they are this boundary condition's zeros.
+a.text(0.985, 0.34, r'$u=\mathrm{Ai}$ is the solution that DECAYS as $Y\to+\infty$.'
+                    '\nthe escape problem picks that one. a different\n'
+                    r'boundary condition ($\mathrm{Bi}$, or a mixture) has'
+                    '\ndifferent zeros — so these are not "the" zeros,\n'
+                    'they are this condition\'s zeros.',
+       transform=a.transAxes, fontsize=7.2, color=RED, ha='right', va='top', **BG)
 
 # ------------------------------------------------------------------ row 2: R blows up there
 a = ax[1]

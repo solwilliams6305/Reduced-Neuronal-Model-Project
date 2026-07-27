@@ -80,9 +80,11 @@ but weaker than it looks.
    If the module is ever animated or re-laid-out, alignment is load-bearing, not cosmetic.
 4. **R is clipped at |R|>12 for legibility**, so the asymptotes are drawn as finite excursions.
    The clipping is a rendering choice; the divergence is real and unbounded.
-5. **Only the recessive (Ai) solution is shown.** The general solution mixes in Bi, whose zeros
-   sit elsewhere. The panel silently privileges one boundary condition — which is the right one
-   for the escape problem, but the choice is invisible to the viewer.
+5. ~~**Only the recessive (Ai) solution is shown.**~~ **RESOLVED 2026-07-27 — expert requested a
+   caption.** Row 1 now states on its face that u = Ai is the solution which *decays* as Y→+∞,
+   that the escape problem is what selects it, and that a different boundary condition (Bi, or a
+   mixture) has different zeros — "so these are not *the* zeros, they are this condition's zeros."
+   The choice is no longer invisible.
 6. ~~**Row 3 broke the one-invariant discipline.**~~ **RESOLVED 2026-07-27.** Row 3 previously
    drew 14 noisy realisations in the same blue as rows 1–2 while the curve from rows 1–2 was
    absent — so the row introduced a fresh cast of objects at exactly the point where the design

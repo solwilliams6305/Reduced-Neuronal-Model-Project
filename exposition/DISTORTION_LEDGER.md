@@ -93,3 +93,25 @@ but weaker than it looks.
    to grey scatter *around* it. Colour now encodes role: **blue = the invariant, grey = scatter,
    red = zeros.** This is load-bearing for the whole α3–α4 chain — the fix was applied here
    before the pattern could propagate. See `DESIGN_inner_chain.md` §2.
+
+---
+
+## Module α4a-interactive (twin-panel scrubber) — distortion statement
+Completed 2026-07-27 against `pilot_borel/twin_scrubber.html`. First web artifact.
+
+1. **The blue curve is not Ai.** It is the first-order Euler solution of the same ODE, differing
+   from the true Airy function by ~0.4% relative at N=30000. Stated in the page's own note. The
+   R↔u correspondence is unaffected — it is exact for *any* u solving the equation — but the
+   curve should not be read as a plot of a special function.
+2. **The gap between where R leaves the frame and the dashed line is a rendering artifact.**
+   R is clipped at |R|=12, and since R ≈ −1/(Y−z) near a zero, the curve exits about 1/12 ≈ 0.083
+   before the actual pole. A viewer may read that offset as a real mismatch between the blow-up
+   and the zero. It is not.
+3. **With noise on, one realisation is shown, not an ensemble.** "New noise" reseeds it. Nothing
+   on the page indicates whether the displayed run is typical — the still figure's row 3 carries
+   that information, the interactive does not.
+4. **Only the recessive (Ai) boundary condition**, as in the still panel — but here the caption
+   from row 1 is *absent*. Carry it over before this ships.
+5. **The noise discretisation is crude.** Euler–Maruyama at this step size is not trustworthy for
+   η beyond roughly 1, which is why the slider stops at 1.2 rather than going further. The scheme
+   is chosen to match the Python exactly, not to be the best available integrator.

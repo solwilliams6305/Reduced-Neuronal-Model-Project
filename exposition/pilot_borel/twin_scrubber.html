@@ -1,0 +1,295 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>The trade: blow-ups for zeros</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.5 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 18px 40px}
+  h1{font-size:19px;margin:0 0 2px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 16px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:12px 14px;margin-bottom:12px}
+  canvas{display:block;width:100%;cursor:crosshair;touch-action:none}
+  .row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  .ctl{display:flex;gap:7px;align-items:center;font-size:12px;color:var(--sec)}
+  input[type=range]{width:150px;accent-color:var(--amb)}
+  button{font:inherit;font-size:12px;padding:5px 11px;border:1px solid var(--line);
+         background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
+  button:hover{background:#f4f2ee}
+  .readout{display:flex;gap:22px;flex-wrap:wrap;
+           font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+  .readout b{font-weight:600}
+  .big{font-size:15px}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  .fail{color:var(--red);border-color:#f2c9c4;background:#fdf3f2}
+  .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+  .warn{color:var(--red)}
+  code{font:11.5px ui-monospace,Menlo,monospace;background:#f4f2ee;padding:1px 5px;border-radius:4px}
+</style>
+
+<div class="wrap">
+  <h1>The trade: blow-ups for zeros</h1>
+  <p class="sub">
+    <b>Drag across the plot.</b> The cursor is the same <i>Y</i> in both panels.
+    Watch <i>R</i> as <i>u</i> approaches a crossing.
+  </p>
+
+  <div class="card">
+    <canvas id="cv" height="520"></canvas>
+    <div class="readout" style="margin-top:8px">
+      <span><b style="color:var(--blue)">u(Y)</b> = <span id="ru">—</span></span>
+      <span><b style="color:var(--amb)">R(Y)</b> = <span id="rr" class="big">—</span></span>
+      <span style="color:var(--sec)">Y = <span id="ry">—</span></span>
+      <span id="msg" style="color:var(--red)"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <span class="ctl">noise η
+        <input id="eta" type="range" min="0" max="1.2" step="0.05" value="0">
+        <span id="etav" style="font:12px ui-monospace,monospace;width:30px">0.00</span>
+      </span>
+      <button id="reseed">new noise</button>
+      <button id="snap">snap to nearest zero</button>
+      <button id="reset">reset</button>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+    <div class="note" id="note"></div>
+  </div>
+</div>
+
+<script>
+const REF = {"Y_LO": -9.0, "Y_HI": 2.0, "N": 30000, "seed": {"u": 0.03492413042327436, "p": -0.05309038443365388}, "zeros": [-7.944133587112781, -6.786708090071912, -5.520559828095515, -4.08794944413097, -2.3381074104597674], "golden": [{"i": 0, "Y": -9.0, "u": -0.022477796690001273, "p": -0.9827913084481014}, {"i": 1249, "Y": -8.54201806726891, "u": -0.32863956321373466, "p": -0.15050234538846952}, {"i": 2499, "Y": -8.083669455648522, "u": -0.12937385451217265, "p": 0.8795224152642805}, {"i": 3749, "Y": -7.625320844028135, "u": 0.2652313299518162, "p": 0.6017390215515038}, {"i": 4999, "Y": -7.166972232407747, "u": 0.29224515258412387, "p": -0.48759575268594424}, {"i": 6249, "Y": -6.7086236207873595, "u": -0.0710857911450147, "p": -0.895717336807031}, {"i": 7499, "Y": -6.250275009166972, "u": -0.3508106740907502, "p": -0.19195059627201552}, {"i": 8749, "Y": -5.791926397546584, "u": -0.21934728226920244, "p": 0.6920838792421692}, {"i": 9999, "Y": -5.333577785926197, "u": 0.15724658653208287, "p": 0.786682905569622}, {"i": 11249, "Y": -4.87522917430581, "u": 0.378413960939503, "p": 0.10128608591386377}, {"i": 12499, "Y": -4.416880562685423, "u": 0.24466843364724736, "p": -0.6243054629658774}, {"i": 13749, "Y": -3.9585319510650354, "u": -0.1030524941690483, "p": -0.7773050099209996}, {"i": 14999, "Y": -3.500183339444648, "u": -0.3759149882507164, "p": -0.343791862460148}, {"i": 16249, "Y": -3.041834727824261, "u": -0.3912049912540704, "p": 0.2663334711944375}, {"i": 17499, "Y": -2.583486116203874, "u": -0.16781002256108027, "p": 0.6494566301787235}, {"i": 18749, "Y": -2.1251375045834857, "u": 0.14699730471961892, "p": 0.6667266732381804}, {"i": 19999, "Y": -1.6667888929630985, "u": 0.40319340662002806, "p": 0.4239313414959029}, {"i": 21249, "Y": -1.2084402813427113, "u": 0.525302327794096, "p": 0.11226169249333427}, {"i": 22499, "Y": -0.7500916697223232, "u": 0.5177315590986967, "p": -0.1260188452363299}, {"i": 23749, "Y": -0.291743058101936, "u": 0.4288251629359968, "p": -0.24159389045323132}, {"i": 24999, "Y": 0.1666055535184512, "u": 0.3120848110185451, "p": -0.25425301264400196}, {"i": 26249, "Y": 0.6249541651388384, "u": 0.204476281145, "p": -0.20958854427770562}, {"i": 27499, "Y": 1.0833027767592256, "u": 0.12247479606525465, "p": -0.14795215139972023}, {"i": 28749, "Y": 1.5416513883796128, "u": 0.0677766512462764, "p": -0.09295472246623952}, {"i": 29999, "Y": 2.0, "u": 0.03492413042327436, "p": -0.05309038443365388}], "schemeAbsErrVsAiry": 0.0021830059458588513, "schemeRelErrVsAiry": 0.004075382854829762};
+
+// ---------------------------------------------------------------- Class A kernel (live)
+// This MUST stay in lockstep with euler_deterministic() in build_scrubber.py.
+// The self-test below is what enforces that; do not "improve" the scheme on one side only.
+function integrate(eta, rng){
+  const {Y_LO, Y_HI, N, seed} = REF;
+  const h = (Y_HI - Y_LO) / (N - 1);
+  const Y = new Float64Array(N), u = new Float64Array(N), p = new Float64Array(N);
+  for (let i = 0; i < N; i++) Y[i] = Y_LO + i * h;
+  u[N-1] = seed.u; p[N-1] = seed.p;
+  const s = eta / Math.sqrt(h);
+  for (let i = N - 1; i > 0; i--){
+    const xi = eta > 0 ? s * rng() : 0;
+    p[i-1] = p[i] - h * (Y[i] + xi) * u[i];
+    u[i-1] = u[i] - h * p[i];
+  }
+  return {Y, u, p, h};
+}
+
+// deterministic normal sampler with a settable seed (Box–Muller on a small LCG)
+function makeRng(seed){
+  let s = seed >>> 0;
+  const unif = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296;
+  let spare = null;
+  return () => {
+    if (spare !== null){ const v = spare; spare = null; return v; }
+    let a = 0, b = 0;
+    do { a = unif(); } while (a <= 1e-12);
+    b = unif();
+    const r = Math.sqrt(-2 * Math.log(a));
+    spare = r * Math.sin(2 * Math.PI * b);
+    return r * Math.cos(2 * Math.PI * b);
+  };
+}
+
+// ---------------------------------------------------------------- self-test vs golden vectors
+(function selfTest(){
+  const {u, p} = integrate(0, () => 0);
+  let worst = 0;
+  for (const g of REF.golden){
+    worst = Math.max(worst, Math.abs(u[g.i] - g.u), Math.abs(p[g.i] - g.p));
+  }
+  const el = document.getElementById('selftest');
+  const ok = worst < 1e-9;
+  el.textContent = (ok ? 'port OK · Δ=' : 'PORT MISMATCH · Δ=') + worst.toExponential(1);
+  el.className = 'tag ' + (ok ? 'pass' : 'fail');
+  document.getElementById('note').innerHTML =
+    'The badge compares this browser’s integrator against ' + REF.golden.length +
+    ' golden vectors emitted by <code>build_scrubber.py</code> — it checks that the two ' +
+    'implementations <i>agree</i>, not that either is exact. Separately, this first-order ' +
+    'scheme differs from the true Airy function by ' +
+    REF.schemeAbsErrVsAiry.toExponential(2) + ' absolute (' +
+    (100 * REF.schemeRelErrVsAiry).toFixed(2) + '% relative): the curve you see is the ' +
+    'discretised solution, not Ai itself.';
+})();
+
+// ---------------------------------------------------------------- state
+let eta = 0, rngSeed = 12345, sol = integrate(0, () => 0), cursor = -2.0;
+
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+function resize(){
+  const r = cv.getBoundingClientRect(), dpr = devicePixelRatio || 1;
+  cv.width = r.width * dpr; cv.height = 520 * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+addEventListener('resize', resize);
+
+const M = {l: 58, r: 16, t: 22, b: 30}, GAP = 26;
+function layout(){
+  const W = cv.width / (devicePixelRatio || 1), H = 520;
+  const ph = (H - M.t - M.b - GAP) / 2;
+  return {W, H, ph, x0: M.l, x1: W - M.r, yA: M.t, yB: M.t + ph + GAP};
+}
+const X = (Y, L) => L.x0 + (Y - REF.Y_LO) / (REF.Y_HI - REF.Y_LO) * (L.x1 - L.x0);
+const invX = (px, L) => REF.Y_LO + (px - L.x0) / (L.x1 - L.x0) * (REF.Y_HI - REF.Y_LO);
+
+function idxOf(Y){
+  const t = (Y - REF.Y_LO) / (REF.Y_HI - REF.Y_LO) * (REF.N - 1);
+  return Math.max(0, Math.min(REF.N - 1, Math.round(t)));
+}
+
+function frame(L, top, h, lab, lo, hi){
+  ctx.strokeStyle = '#e3e0da'; ctx.lineWidth = 1;
+  ctx.strokeRect(L.x0, top, L.x1 - L.x0, h);
+  ctx.fillStyle = '#5c6470'; ctx.font = '11px ui-sans-serif,system-ui';
+  ctx.save(); ctx.translate(14, top + h / 2); ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center'; ctx.fillText(lab, 0, 0); ctx.restore();
+  // zero line
+  const yz = top + h * (hi / (hi - lo));
+  ctx.strokeStyle = '#20242b'; ctx.lineWidth = .8;
+  ctx.beginPath(); ctx.moveTo(L.x0, yz); ctx.lineTo(L.x1, yz); ctx.stroke();
+  return yz;
+}
+
+function draw(){
+  const L = layout();
+  ctx.clearRect(0, 0, L.W, L.H);
+
+  // ---- top: u
+  let lo = Infinity, hi = -Infinity;
+  for (let i = 0; i < REF.N; i++){ if (sol.u[i] < lo) lo = sol.u[i]; if (sol.u[i] > hi) hi = sol.u[i]; }
+  const pad = 0.12 * (hi - lo); lo -= pad; hi += pad;
+  const yzA = frame(L, L.yA, L.ph, 'u(Y)', lo, hi);
+  const Yu = v => L.yA + L.ph * (hi - v) / (hi - lo);
+
+  ctx.strokeStyle = '#2f6fb0'; ctx.lineWidth = 2; ctx.beginPath();
+  for (let i = 0; i < REF.N; i++){
+    const px = X(sol.Y[i], L), py = Yu(sol.u[i]);
+    i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+  }
+  ctx.stroke();
+
+  // zero crossings of the CURRENT solution
+  const cross = [];
+  for (let i = 1; i < REF.N; i++)
+    if ((sol.u[i-1] < 0) !== (sol.u[i] < 0)) cross.push(sol.Y[i]);
+  ctx.fillStyle = '#d84b3f';
+  for (const z of cross){ ctx.beginPath(); ctx.arc(X(z, L), yzA, 4.5, 0, 7); ctx.fill(); }
+
+  // ---- bottom: R = -p/u
+  const RCLIP = 12;
+  const yzB = frame(L, L.yB, L.ph, 'R(Y) = -u′/u', -RCLIP, RCLIP);
+  const Yr = v => L.yB + L.ph * (RCLIP - v) / (2 * RCLIP);
+
+  ctx.strokeStyle = '#d9851f'; ctx.lineWidth = 2;
+  let pen = false; ctx.beginPath();
+  for (let i = 0; i < REF.N; i++){
+    const R = -sol.p[i] / sol.u[i];
+    if (!isFinite(R) || Math.abs(R) > RCLIP){ pen = false; continue; }
+    const px = X(sol.Y[i], L), py = Yr(R);
+    pen ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+    pen = true;
+  }
+  ctx.stroke();
+
+  // dashed verticals at the crossings, through BOTH panels
+  ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(216,75,63,.75)'; ctx.lineWidth = 1;
+  for (const z of cross){
+    const px = X(z, L);
+    ctx.beginPath(); ctx.moveTo(px, L.yB); ctx.lineTo(px, L.yB + L.ph); ctx.stroke();
+  }
+  ctx.restore();
+
+  // ---- the cursor: one Y, both panels
+  const px = X(cursor, L);
+  ctx.strokeStyle = '#20242b'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(px, L.yA); ctx.lineTo(px, L.yA + L.ph); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px, L.yB); ctx.lineTo(px, L.yB + L.ph); ctx.stroke();
+
+  const i = idxOf(cursor), uv = sol.u[i], Rv = -sol.p[i] / sol.u[i];
+  ctx.fillStyle = '#2f6fb0';
+  ctx.beginPath(); ctx.arc(px, Yu(uv), 4.5, 0, 7); ctx.fill();
+  if (isFinite(Rv) && Math.abs(Rv) <= RCLIP){
+    ctx.fillStyle = '#d9851f';
+    ctx.beginPath(); ctx.arc(px, Yr(Rv), 4.5, 0, 7); ctx.fill();
+  } else {
+    ctx.fillStyle = '#d84b3f'; ctx.font = '600 11px ui-sans-serif,system-ui';
+    ctx.textAlign = Math.abs(px - L.x1) < 90 ? 'right' : 'left';
+    ctx.fillText('off scale', px + (ctx.textAlign === 'right' ? -6 : 6),
+                 Rv > 0 ? L.yB + 14 : L.yB + L.ph - 6);
+  }
+
+  // x ticks
+  ctx.fillStyle = '#5c6470'; ctx.font = '11px ui-sans-serif,system-ui'; ctx.textAlign = 'center';
+  for (let t = -8; t <= 2; t += 2)
+    ctx.fillText(String(t), X(t, L), L.yB + L.ph + 16);
+  ctx.fillText('Y  (the swept parameter)', (L.x0 + L.x1) / 2, L.yB + L.ph + 28);
+
+  // readout
+  document.getElementById('ry').textContent = cursor.toFixed(3);
+  document.getElementById('ru').textContent = uv.toExponential(3);
+  const rr = document.getElementById('rr'), msg = document.getElementById('msg');
+  if (!isFinite(Rv) || Math.abs(Rv) > 400){
+    rr.textContent = (Rv > 0 ? '+' : '−') + '∞ (diverging)';
+    rr.style.color = '#d84b3f';
+  } else {
+    rr.textContent = Rv.toFixed(3); rr.style.color = '#20242b';
+  }
+  let near = Infinity; for (const z of cross) near = Math.min(near, Math.abs(cursor - z));
+  msg.textContent = near < 0.06 ? '← u is crossing zero. That is why R is blowing up.' : '';
+}
+
+// ---------------------------------------------------------------- interaction
+function setFromEvent(e){
+  const r = cv.getBoundingClientRect(), L = layout();
+  const px = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+  cursor = Math.max(REF.Y_LO, Math.min(REF.Y_HI, invX(px, L)));
+  draw();
+}
+let dragging = false;
+cv.addEventListener('pointerdown', e => { dragging = true; cv.setPointerCapture(e.pointerId); setFromEvent(e); });
+cv.addEventListener('pointermove', e => { if (dragging) setFromEvent(e); });
+cv.addEventListener('pointerup', () => dragging = false);
+cv.addEventListener('pointerleave', () => dragging = false);
+
+function recompute(){
+  sol = integrate(eta, eta > 0 ? makeRng(rngSeed) : () => 0);
+  draw();
+}
+document.getElementById('eta').addEventListener('input', e => {
+  eta = +e.target.value;
+  document.getElementById('etav').textContent = eta.toFixed(2);
+  recompute();
+});
+document.getElementById('reseed').addEventListener('click', () => {
+  rngSeed = (rngSeed * 7919 + 13) >>> 0; recompute();
+});
+document.getElementById('snap').addEventListener('click', () => {
+  let best = cursor, d = Infinity;
+  for (let i = 1; i < REF.N; i++)
+    if ((sol.u[i-1] < 0) !== (sol.u[i] < 0)){
+      const z = sol.Y[i];
+      if (Math.abs(z - cursor) < d){ d = Math.abs(z - cursor); best = z; }
+    }
+  cursor = best - 0.012; draw();
+});
+document.getElementById('reset').addEventListener('click', () => {
+  eta = 0; rngSeed = 12345; cursor = -2.0;
+  document.getElementById('eta').value = 0;
+  document.getElementById('etav').textContent = '0.00';
+  recompute();
+});
+
+resize();
+</script>

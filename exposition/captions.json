@@ -1,0 +1,20 @@
+{
+  "_README": "Shared narrative contract. Golden vectors keep the NUMBERS in lockstep between a still figure and its interactive; this file keeps the WORDS in lockstep. Every caption, caveat and on-screen distortion statement that must appear in more than one artifact lives here and is read by both the Python figure scripts and the HTML builders. Added after the boundary-condition caveat was fixed in twin_panel.py and shipped missing from twin_scrubber.html. See DISTORTION_LEDGER.md, standing entry on propagation.",
+
+  "alpha4a": {
+    "boundary_condition": "u is the solution that DECAYS as Y -> +infinity. The escape problem picks that one. A different boundary condition (Bi, or a mixture) has different zeros - so these are not \"the\" zeros, they are this condition's zeros.",
+    "boundary_condition_html": "<i>u</i> is the solution that <b>decays</b> as <i>Y</i>&nbsp;&rarr;&nbsp;+&infin; &mdash; the escape problem picks that one. A different boundary condition has different zeros, so these are not &ldquo;the&rdquo; zeros, they are this condition&rsquo;s zeros.",
+    "the_trade": "blow-ups are hard to see. zeros are easy. Cole-Hopf buys you zeros.",
+    "not_tw": "not the scaling limit - this is not TW"
+  },
+
+  "alpha3": {
+    "headline": "Blow-up is anisotropic zoom.",
+    "naive_fails": "Zoom in on the fold with both axes magnified equally and the critical manifold flattens toward a straight line. Every zoom level looks the same and shows less. The tool fails.",
+    "the_find": "Magnify y as the SQUARE of x and the parabola stops moving. It is now invariant under zoom. That exponent - weight 2 on y against weight 1 on x - is the blow-up weight, and you found it by feel rather than by being told.",
+    "what_it_is": "That is all a blow-up is: a zoom whose magnification differs per direction, chosen so the structure stays O(1) instead of degenerating. The charts K1/K2/K3 are which face of that zoom you look through, and the exceptional divisor is the set of approach directions the naive zoom collapses to a point.",
+    "epsilon_missing": "One weight is missing here. The slow parameter eps carries its own weight (3), so holding it fixed while zooming is not the full blow-up - the manifold is invariant at p=2 but a trajectory would still drift. That third weight is the next beat.",
+    "payoff": "Zoom with the correct weights and the equation in the resulting chart is the Riccati R' = R^2 - Y - the same one whose blow-ups you traded for zeros in the previous module.",
+    "distortion_not_added": "Nothing is being ADDED to the space. The blow-down map is a diffeomorphism away from the origin; this is the same neighbourhood seen through a distorting lens, not new geometry."
+  }
+}

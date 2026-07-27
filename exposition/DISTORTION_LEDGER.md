@@ -129,3 +129,26 @@ figure. Nothing catches this: the two artifacts share a kernel contract (golden 
 *narrative* contract, so captions, caveats and on-screen distortion statements can silently
 diverge. Until something better exists, **every ledger entry closed on a still must be re-checked
 against its interactive before that interactive ships**, and vice versa.
+
+---
+
+## Module α3 (blow-up as anisotropic zoom) — distortion statement
+Completed 2026-07-27 against `blowup/blowup.html`. **Wants expert correction.**
+
+1. **The sphere never appears.** This shows a *chart* — a weighted rescaling of (x, y) — not the
+   blow-up construction as usually presented. A viewer may conclude blow-up *is* this 2D
+   rescaling. It is the part that carries the intuition, but the full object glues several such
+   charts onto an exceptional divisor. Deliberate: DESIGN_inner_chain.md §4 says opening on the
+   sphere is the standard reason this topic loses people.
+2. **ε is held fixed, so this is not the whole blow-up.** The slow parameter carries its own
+   weight (3); with it frozen, the *manifold* is invariant at p=2 but a *trajectory* would still
+   drift. Stated on-screen ("Not the whole story"), and it is the next beat.
+3. **Only the critical manifold is drawn — there are no dynamics.** What is shown to be invariant
+   is the manifold, not the flow. The attracting/repelling labels assert stability that nothing
+   on screen demonstrates.
+4. **y = x² is the normal form, not a generic fold.** A real fold is only locally, and after
+   coordinate changes, of this shape. The widget silently works in already-normalised coordinates.
+5. **Nothing is added to the space** — captioned on-screen, per the standing blow-up entry above.
+6. **p is continuous, which is a pedagogical fiction worth keeping.** Letting the viewer slide
+   through non-integer weights is what makes p=2 *discoverable*; but the weights of a blow-up are
+   determined by the equation, not tuned. The widget is a search device, not a model of practice.

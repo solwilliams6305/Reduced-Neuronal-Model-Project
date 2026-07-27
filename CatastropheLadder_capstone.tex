@@ -1,0 +1,487 @@
+\documentclass[11pt,reqno]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Ai}{\mathrm{Ai}}
+\newcommand{\Bi}{\mathrm{Bi}}
+\newcommand{\TW}{\mathrm{TW}}
+\newcommand{\W}{\mathcal{W}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Ynode}{Y^\star}
+
+% ---- provenance tags (inherited from the TWbeta paper) ----
+\newcommand{\tagPr}{{\footnotesize\textsf{[established here]}}}
+\newcommand{\tagP}{{\footnotesize\textsf{[proved elsewhere, cited]}}}
+\newcommand{\tagN}{{\footnotesize\textsf{[numerical]}}}
+\newcommand{\tagX}{{\footnotesize\textsf{[conjectural / frontier]}}}
+
+\begin{document}
+
+\title[The catastrophe ladder of noise-induced escape]{The catastrophe ladder of
+noise-induced escape:\\ from Tracy--Widom to resurgence}
+\author{Solomon Williams}
+\address{School of Mathematics, University of Edinburgh, Edinburgh EH9 3FD, United Kingdom}
+\email{solomonjwilliams635@outlook.com}
+\date{Draft, \today}
+
+\begin{abstract}
+Noise-induced escape at a slow--fast catastrophe singularity is governed by one reusable
+pipeline: geometric blow-up, a Cole--Hopf/Riccati linearization, a stochastic edge operator,
+an edge law, and a resurgent trans-series. Instantiated at the fold ($A_2$) the edge law is
+exactly Tracy--Widom; at the cusp ($A_3$) it is a new, provably non-integrable law $\W$ whose
+only closed form is a resurgent trans-series; and the whole family is organized by the turning
+order $q$ into a ladder of \emph{swept multicritical} edge laws with Bessel-$1/(q{+}2)$
+skeletons and exact Freidlin--Wentzell tails. We collect the proved spine, the resurgent
+structure and its Stokes data, a leading-order edge-variance formula uniform across the ladder,
+and a sharp separation between this swept ladder and the genuine (Berry--Upstill)
+diffraction-catastrophe ladder. Throughout we distinguish what is proved, what is numerical,
+and where the program crosses into a neighbouring field; provenance is tagged on every claim.
+\end{abstract}
+
+\maketitle
+
+% =====================================================================
+\section{Introduction: one family, one pipeline}\label{sec:intro}
+
+This program occupies one specific intersection: \emph{noise-induced escape at slow--fast
+catastrophe singularities}, studied through a single characterization pipeline,
+\[
+\text{geometric blow-up} \;\to\; \text{Cole--Hopf/Riccati} \;\to\;
+\text{stochastic edge operator} \;\to\; \text{edge law} \;\to\; \text{resurgence}.
+\]
+That pipeline is the program's identity, and this paper is its synthesis. Its purpose is to
+state, in one place and with honest provenance, what has been proved, what is established only
+numerically, and where the natural questions cross out of the subject into random matrix theory,
+resurgence proper, integrable probability, or computational neuroscience.
+
+The organizing parameter is the turning order $q$ of the swept inner equation, indexing the
+$A_{q+1}$ singularity: $q{=}1$ fold ($A_2$), $q{=}2$ cusp ($A_3$), $q{=}3$ swallowtail ($A_4$),
+and so on. The fold rung is rigorous---the escape law is exactly Tracy--Widom
+(\S\ref{sec:fold})---and carries a full resurgent structure with an exact Stokes constant
+(\S\ref{sec:twbeta}). The cusp rung is a genuinely new, \emph{provably non-integrable} law $\W$
+(\S\ref{sec:cusp}), whose only viable closed form is a resurgent trans-series. Above the cusp the
+family is a ladder of swept multicritical edge laws (\S\ref{sec:ladder}); we give a leading-order
+edge-variance formula valid on every rung, verify the swallowtail rung, and separate this swept
+ladder sharply from the genuine higher diffraction catastrophes (Pearcey, swallowtail function),
+which form a distinct family. Section~\ref{sec:physical} anchors the theory in the coupled
+neuron model---honestly, as a consolidation within the Berglund--Gentz--Kuehn / Freidlin--Wentzell
+framework, not as new phenomena---and \S\ref{sec:open} demarcates the open program.
+
+A word on the two standards of rigour we invoke. ``Proved'' means a theorem, sometimes modulo a
+cited black box (Ram\'irez--Rider--Vir\'ag for the stochastic Airy operator; Costin for the
+summability of the Painlev\'e~II trans-series). ``Numerical'' means a high-precision computation,
+often exact in the sense of Monte-Carlo-free Wiener-chaos evaluation, but not a proof. We never
+declare a theorem where a gap remains.
+
+% =====================================================================
+\section{The universal pipeline}\label{sec:pipeline}
+
+We state the machinery once, abstractly; each later section is an instantiation.
+
+\smallskip
+\noindent\textbf{1. Normal form.} Near a slow--fast fold the reduced dynamics is
+$\dd r=(b(\theta)r^2-a(\theta)y)\dd t+\sigma\,\dd W$, $\dd y=-\eps_2 c(\theta)\dd t$, with
+$a,b,c>0$ smooth on the slow circle. The deterministic part is the standard folded normal form;
+the additive noise is the added ingredient.
+
+\smallskip
+\noindent\textbf{2. Geometric blow-up.} The Krupa--Szmolyan quasi-homogeneous blow-up~\cite{KS,JKK}
+with weights $(1,2,3)$ on $(r,y,\eps_2)$ resolves the fold; the central rescaling chart $K_2$
+($\rho=\eps_2^{1/3}$) carries the inner dynamics.
+
+\smallskip
+\noindent\textbf{3. Canonical inner Riccati.} In $K_2$ the SDE becomes
+$\dd R=(R^2-Y)\dd T+\eta\,\dd B$, $Y=Y_0-T$, with effective noise $\eta=\sigma/\sqrt{\eps_2}$ (an
+exact It\^o change of variables). The deterministic inner solution is the canard
+$R=\Ai'(Y)/\Ai(Y)$, escaping at the first Airy zero $a_1\approx-2.3381$.
+
+\smallskip
+\noindent\textbf{4. Cole--Hopf linearization.} The substitution $R=-u'/u$ turns the Riccati into a
+\emph{linear} stochastic Schr\"odinger equation $u''=(Y-\eta\xi)u$, $\xi=\dd B/\dd T$, with
+\emph{no} It\^o--Stratonovich correction; a finite-time blow-up $R\to+\infty$ is exactly a simple
+zero (node) of $u$. Escape becomes the first node $\Ynode$ swept downward.
+
+\smallskip
+\noindent\textbf{5. Stochastic edge operator.} Writing $x=T$, this is the eigenvalue equation for
+the stochastic Airy operator $H_\beta=-\partial_x^2+x+\tfrac{2}{\sqrt\beta}b'(x)$ on $[0,\infty)$
+with Dirichlet boundary condition~\cite{RRV}, under the dictionary $\eta=2/\sqrt\beta$.
+
+\smallskip
+\noindent\textbf{6. Edge law.} A shooting characterization identifies the \emph{swept} first-node
+law with the \emph{fixed} half-line operator's ground state, via the monotone Dirichlet
+ground-state function; because the sweep level is deterministic, white-noise stationarity gives
+$\Ynode=_d-\Lambda(\beta)=_d\TW_\beta$.
+
+\smallskip
+The claim of the pipeline is a universality statement: any slow passage whose inner equation is
+the Airy/Riccati canard, perturbed by white noise, Cole--Hopf-linearizes to a Schr\"odinger
+operator with white-noise potential, hence to the stochastic Airy operator and the same $\TW_\beta$
+exit law, with $\beta$ fixed by the noise-to-curvature ratio. Replacing the fold's linear turning
+potential $Y$ by the multicritical $\mathrm{sign}(Y)|Y|^q$ generates the whole ladder of
+\S\ref{sec:ladder}.
+
+% =====================================================================
+\section{The proved rung: fold $\to$ Tracy--Widom}\label{sec:fold}
+
+\begin{theorem}[Fold escape is Tracy--Widom; RRV cited]\label{thm:fold}
+For the inner Riccati with $\eta=2/\sqrt\beta$, the peel-off level satisfies
+$\Ynode=_d-\Lambda(\beta)=_d\TW_\beta$, where $\Lambda(\beta)$ is the ground-state eigenvalue of
+$H_\beta$. Consequently the early-escape probability is $1-F_\beta(0)$ and, as $\eta\to0$, the
+escape rate is $\exp(-c/\eta^2)$ with $c$ a Painlev\'e~II action. \tagP
+\end{theorem}
+
+Here $\Lambda(\beta)$ is characterized by Ram\'irez--Rider--Vir\'ag~\cite{RRV}, the leading right-tail
+rate agrees with Dumaz--Vir\'ag~\cite{DV}, and at $\beta{=}2$ the law is Tracy--Widom~\cite{TW1994,Bornemann}.
+
+The rate constant $c$ deserves a sharper statement than ``a Painlev\'e~II action, numerically
+$5.44$.'' The optimal-fluctuation minimizer solves $-g''+xg=g^3$ on $[0,\infty)$, $g(0)=0$,
+$g\to0$, and $c=\int_0^\infty g'^2$.
+
+\begin{proposition}[The rate-constant identity chain]\label{prop:c}
+With $g$ the minimizer above,
+\[
+c=\int_0^\infty g'^2=\int_0^\infty x\,g^2=\tfrac12\int_0^\infty g^4 ,
+\]
+i.e.\ $A=B=\tfrac12 D$ in the notation $A=\int g'^2$, $B=\int xg^2$, $D=\int g^4$. Numerically
+$c=5.4438973582$; $c$ has no elementary closed form (inverse-symbolic search against
+$\pi$-powers, $\Gamma(1/3)^3$, $\zeta(3)$, $\log2$ to $10$ digits is null). \tagPr
+\end{proposition}
+
+\begin{proof}
+Multiplying the Euler--Lagrange equation by $g$ and integrating by parts gives $A+B=D$ (identity I).
+Multiplying by $xg'$ and integrating by parts gives $\tfrac12A+\tfrac14D=B$ (identity II, the
+Pohozaev/dilation identity). Eliminating $D=A+B$ from (II) yields $\tfrac34A=\tfrac34B$, so $A=B$
+and $D=2A$. \qed
+\end{proof}
+
+At the process level, the leading escape of a spatially extended folded medium realizes the full
+Airy$_2$ process---not merely its $\TW_2$ marginal---\emph{if and only if} the transverse coupling
+is disordered, long-range, and stochastically drifting; the increment-variance exponent (Brownian
+$1$ vs.\ ballistic $2$), not the shared marginal, is the discriminant. These process-level
+statements are numerical; rigorous convergence to the Airy$_2$ process (Brownian Gibbs / line
+ensemble) is open (\S\ref{sec:open}).
+
+% =====================================================================
+\section{Resurgent depth at the fold}\label{sec:twbeta}
+
+The $\TW_\beta$ right tail carries resurgent structure in \emph{two} independent directions: a
+\emph{level} direction ($a\to\infty$ at fixed $\beta$), governed by Painlev\'e~II and closed by
+Costin's theorem~\cite{Costin,CCK}, and a \emph{noise} direction ($\beta\to\infty$ at fixed $a$),
+whose $1/\beta$ loop expansion is separately median Borel summable by elementary
+means~\cite{Sokal}. The all-orders soft-tail form is that of Borot--Nadal~\cite{BorotNadal}, with the
+large-$\beta$ reduction to PII from Comtet--Le~Doussal--Smith~\cite{CLDS}. The level direction rests
+on an exact linearization: the Jacobi operator $\mathcal J=-\partial_x^2+6p_\star^2-2(x+a)$
+\emph{is} the Painlev\'e~II linearization $\mu^2(-\partial_s^2+6q^2+s)$, the instanton being the
+$\alpha=\tfrac12$ Airy special solution of PII~\cite{FN1980,JMU1981,FIKN,Clarkson}.
+
+\begin{theorem}[Stokes constant of the backbone; exact]\label{thm:C}
+The $s\to-\infty$ Hastings--McLeod coefficients are non-sign-alternating; the Borel singularity
+sits on the positive axis at action $A=2\sqrt2/3$, index $\gamma=-\tfrac12$, with Stokes constant
+\[
+C=\sqrt{\tfrac{2}{3\pi^3}}=\tfrac1\pi\sqrt{\tfrac{2}{3\pi}}=0.146632271193848478\ldots
+\]
+matching the Hastings--McLeod value~\cite{CleriDunne,Dunne2025,KapaevHM} and refuting the natural
+guess $1/(4\sqrt\pi)$. The $a$-dependence is algebraic: $C$ factorizes as a transverse Kramers
+determinant $1/\pi$ times a Gelfand--Yaglom zero-mode Jacobian $\sqrt{2/(3\pi)}=\|\psi_0\|/\sqrt{2\pi}$
+of the $\tanh$-kink escape instanton~\cite{SGG}. \tagPr\,/\,\tagP
+\end{theorem}
+
+The $O(1/\beta)$ noise-averaged shift of the connection root admits a closed \emph{form} (though
+not a closed number).
+
+\begin{proposition}[The connection-root shift $\Omega_1$]\label{prop:om1}
+Writing $\E[\Lambda_0]=\Lambda_0^{\det}+\beta^{-1}\Omega_1+O(\beta^{-2})$ with
+$\Lambda_0=2.3381074105$, second-order Rayleigh--Schr\"odinger perturbation over the Airy
+eigenbasis gives $\Omega_1=-4\int_0^\infty\psi_0^2\,G_{\mathrm{red}}$, which reduces to
+\[
+\Omega_1=\frac{4\pi}{\Ai'(-\Lambda_0)^2}
+\left[\frac{\Bi'(-\Lambda_0)}{\Ai'(-\Lambda_0)}\int_{a_1}^\infty\!\Ai^4
+-\int_{a_1}^\infty\!\Ai^3\Bi\right],
+\]
+the third natural term $\int_{a_1}^\infty\Ai^3\Ai'$ vanishing exactly because $a_1$ is a zero of
+$\Ai$. Numerically $\Omega_1=-1.124813904375434066$ ($27$ digits). The quartic moment
+$\int_{a_1}^\infty\Ai^4$ is provably not boundary-reducible, so $\Omega_1$ is a genuine
+Airy-quartic transcendental. \tagPr
+\end{proposition}
+
+\begin{proposition}[Which Painlev\'e~II: saddle vs.\ distribution]\label{prop:alpha}
+The leading tail \emph{saddle} is the $\alpha=\tfrac12$ Airy special solution; the full $\beta{=}2$
+\emph{distribution} is the $\alpha=0$ Hastings--McLeod transcendent. These are consistent: the
+$\alpha=\tfrac12$ saddle action gives
+$\mathcal T_\beta(a)\sim a^{-3\beta/4}e^{-(2\beta/3)a^{3/2}}$, which at $\beta{=}2$ reproduces the
+classical $\TW_2$ right tail $e^{-(4/3)a^{3/2}}/(16\pi a^{3/2})$ in both exponent and prefactor
+power (verified: the ratio $\to1$, e.g.\ $0.941,0.957,0.967$ at $a=8,10,12$). Thus $\alpha=\tfrac12$
+governs the saddle/rate and $\alpha=0$ the distribution; this is the ordinary saddle-vs-distribution
+distinction, not a $\beta$-dependence. \tagPr
+\end{proposition}
+
+The two directions share the single action $\Phi(a)=\tfrac23a^{3/2}$, and the tail is a
+Borel-summable resurgent trans-series, uniformly in $a$ for $a\ge a_0\approx1$.
+
+% =====================================================================
+\section{The cusp: a provably non-integrable law $\W$}\label{sec:cusp}
+
+At the cusp the inner equation is the stochastic Weber operator
+$u''=(\mathrm{sign}(Y)Y^2-\eta\xi)u$, $\beta=4/\eta^2$, and the escape law $\W_\beta$ is a genuinely
+new object. Two obstructions make this a pair of theorems, not a gap.
+
+\begin{proposition}[No integrable closed form]\label{prop:noint}
+\emph{(i)} The deterministic Weber skeleton is an isomonodromy fixed point~\cite{JMU1981} (the only
+relevant deformation flows cusp$\to$fold), so $\W$ is not the $\sigma$-function of a Painlev\'e
+transcendent.
+\emph{(ii)} $\W$ is a first-passage law of an operator unbounded below (escape occurs down the
+$-Y^2$ side), hence not a soft-edge Fredholm determinant. \tagP
+\end{proposition}
+
+In particular the ladder analogy ``$\mathrm{Airy}{:}\mathrm{PII}::\mathrm{Weber}{:}\mathrm{PIV}$''
+does \emph{not} extend to the law: $\W$ is not a Painlev\'e~IV $\sigma$-function. What survives is a
+closed-form \emph{deterministic connection}. The recessive log-derivative at $Y=0$ on the confluent
+($Y>0$) side is $R(\lambda)=-2\,\Gamma(\tfrac34-\tfrac\lambda4)/\Gamma(\tfrac14-\tfrac\lambda4)$; the
+oscillatory ($Y<0$) side is the confluent equation rotated by $e^{-i\pi/4}$ with $\lambda\to i\lambda$,
+giving $L(\lambda)=2e^{-i\pi/4}\,\Gamma(\tfrac34-\tfrac{i\lambda}4)/\Gamma(\tfrac14-\tfrac{i\lambda}4)$.
+
+\begin{proposition}[The cusp resonance root is an exact Gamma-equation root]\label{prop:lz}
+The resonance condition $L(\lambda)=R(\lambda)$ is the explicit equation
+\[
+e^{-i\pi/4}\,\frac{\Gamma(\tfrac34-\tfrac{i\lambda}4)}{\Gamma(\tfrac14-\tfrac{i\lambda}4)}
++\frac{\Gamma(\tfrac34-\tfrac\lambda4)}{\Gamma(\tfrac14-\tfrac\lambda4)}=0,
+\]
+with root $\lambda_0=0.8896052163757951\,(1-i)$. Its phase is \emph{exactly} $-\pi/4$: on the ray
+$\lambda=\mu(1-i)$ the two $\Gamma$-arguments are complex conjugates, so the equation reduces to the
+real condition $\arg\bigl[\Gamma(\tfrac34-\tfrac{\mu(1-i)}4)/\Gamma(\tfrac14-\tfrac{\mu(1-i)}4)\bigr]
+=3\pi/8$. Moreover $\arg D'(\lambda_0)=-7\pi/8$ exactly. The modulus $|\lambda_0|=1.2580918$ has no
+elementary closed form. \tagPr
+\end{proposition}
+
+The stochastic data are then a resurgent trans-series in $\eta^2$. The leading weak-noise variance,
+$\Var(\Ynode)=\eta^2(v_0+v_1\eta^2+\cdots)$, has an exact one-loop form (see \S\ref{sec:ladder});
+$v_0=0.13429234295678519$, transcendental. The first noise correction to the connection root,
+$\E[\lambda]=\lambda_0+\eta^2\Omega_2+O(\eta^4)$, is $\Omega_2=-0.451+0.352i$ (also transcendental);
+Proposition~\ref{prop:lz} makes its prefactor $-1/D'(\lambda_0)$ exact (the deterministic Weber
+Stokes normalization is that of Hao~\cite{Hao}). A median Borel resummation of seven exact weak-noise
+coefficients reconstructs $\Var$ at $\beta{=}2$---outside the perturbative radius---to about $1\%$,
+which is the sense in which the trans-series \emph{is} $\W$. \tagN
+
+% =====================================================================
+\section{The ladder and its two directions}\label{sec:ladder}
+
+Replacing the turning potential by $V_q(Y)=\mathrm{sign}(Y)|Y|^q$ gives the swept multicritical
+family $u''=(V_q-\eta\xi)u$. Three structural layers are uniform across it:
+\emph{(1)} the deterministic skeleton is a Bessel function of order $1/(q{+}2)$, and the peel-off
+levels are its zeros (at $q{=}1$, the exact Airy zeros); \emph{(2)} the exact Freidlin--Wentzell
+tails are
+\[
+\Prob(Y^\star<-s)\approx\exp\Bigl(-\frac{|s|^{2q+1}}{2(2q{+}1)\,\eta^2}\Bigr)
+=\exp\Bigl(-\frac{\beta\,|s|^{2q+1}}{8(2q{+}1)}\Bigr)\quad\text{(left)},
+\qquad \exp(-\tfrac43|s|^{3q/2})\quad\text{(right)};
+\]
+\emph{(3)} the edge law is a resurgent trans-series. To these we add a uniform leading-order
+statement.
+
+\begin{remark}[The left-tail constant, made $\eta$-explicit]\label{rem:fwconstant}
+Earlier drafts of this section quoted the left tail as $\exp(-|s|^{2q+1}/[4(2q{+}1)])$, with no
+$\eta$. That expression is the $\beta{=}2$ specialisation of the law above, not a general-$\eta$
+statement, and taken literally it disagrees with the cusp paper's
+$-\log\Prob\to s^5/(10\eta^2)=\beta s^5/40$. The $\eta$-explicit form reconciles the two: at $q=2$
+it gives exactly $\beta s^5/40$, and at $\beta=2$ it reproduces the earlier numbers. The constant
+$1/[2(2q{+}1)]$ is verified numerically for $q=1,\dots,5$ by boundary-value solution of the
+Euler--Lagrange system (measured/predicted ratios $0.839$, $0.930$, $0.981$, $0.997$, $0.9995$,
+approaching $1$ from below since at fixed $s$ the steeper $q$ reaches its asymptote sooner).
+\tagN
+\end{remark}
+
+\begin{proposition}[Uniform leading edge-variance]\label{prop:v0q}
+Let $\varphi_q$ be the recessive solution of $\varphi''=\mathrm{sign}(Y)|Y|^q\varphi$ and $Y_\star^0$
+its first node swept from $+\infty$. Then the leading weak-noise variance coefficient is
+\[
+v_0^{(q)}=\frac{\int_{Y_\star^0}^\infty \varphi_q(Y)^4\,\dd Y}{\varphi_q'(Y_\star^0)^4}.
+\]
+The derivation is a first-order node-shift computation in which the Wronskian identity at the node,
+$W=-\varphi'(Y_\star^0)\psi(Y_\star^0)$, cancels the dominant-solution factor. Numerically
+$v_0^{(1)}=0.41743$, $v_0^{(2)}=0.13429$, $v_0^{(3)}=0.04953$, $v_0^{(4)}=0.02097$; the $q{=}1$
+node is the exact first Airy zero. \tagPr
+\end{proposition}
+
+The swallowtail rung ($q{=}3$, $A_4$) is verified in full: the skeleton is Bessel-$1/5$ (its first
+five peel-off levels match the matched Bessel combination---the symmetric $J_{1/5}+J_{-1/5}$---to
+$10^{-14}$), and the standardized escape moments at $\beta{=}2$ are skewness $+0.951$ (predicted
+$+0.95$) and excess kurtosis $+0.156$ (predicted $+0.16$), from $2.8\times10^6$ samples. \tagN
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{cap_fig_skeleton.pdf}
+\caption{The swept ladder. (A) The swallowtail ($q{=}3$) deterministic skeleton
+$\varphi''=Y^3\varphi$: recessive (decaying) for $Y>0$, oscillatory for $Y<0$; its peel-off levels
+are the zeros of the Bessel-$1/5$ combination (first five agree to $10^{-14}$). (B) The uniform
+leading edge-variance $v_0^{(q)}$ of Proposition~\ref{prop:v0q} across the ladder.}
+\label{fig:skeleton}
+\end{figure}
+
+\subsection*{Swept versus genuine.} This swept ladder must not be confused with the genuine
+Berry--Upstill diffraction-catastrophe ladder~\cite{BerryUpstill} $u^{(n)}=(Y-\eta\xi)u$, an $n$-th
+order equation:
+fold ($A_2$) is Airy, cusp ($A_3$) is \emph{Pearcey} (third order), swallowtail ($A_4$) is the
+swallowtail function (fourth order). The two families \emph{coincide only at the fold and diverge in
+opposite directions}. As $q$ rises the swept laws grow more skewed and sub-Gaussian (skewness
+$+0.20,+0.61,+0.95$); as the order $n$ rises the genuine laws trend toward Gaussian (skewness
+$+0.225,+0.120,+0.058$, the first matching $\TW_2$ and validating the integrator). \tagN\
+The interpretation is structural: the scalar one-fast-variable pipeline of \S\ref{sec:pipeline}
+(Cole--Hopf of a scalar Riccati) produces a \emph{second-order} Schr\"odinger operator, hence the
+swept ladder; the genuine swallowtail requires a fourth-order linear inner equation, which does not
+arise from a scalar canard and needs higher-order fast structure. The family therefore does not
+terminate---it \emph{splits}, and genuine $A_4$ is the point at which the scalar theory bridges out
+(Figure~\ref{fig:ladders}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{cap_fig_ladders.pdf}
+\caption{The two ladders. (A) Peel-off skewness: the swept turning-point ladder (2nd order) grows
+more sub-Gaussian with $q$, while the genuine Berry--Upstill ladder ($n$-th order) trends toward
+Gaussian; they coincide only at the fold ($=\TW_2$). (B) The swept standardized edge laws
+fold$\to$cusp$\to$swallowtail, from $2.8\times10^6$ Monte-Carlo escapes each at $\beta{=}2$.}
+\label{fig:ladders}
+\end{figure}
+
+% =====================================================================
+\section{Physical realization, honestly positioned}\label{sec:physical}
+
+The turning order is not abstract: in the coupled fold--Hopf--relaxation neuron model the electrical
+coupling $g$ sets the turning structure through $\Delta(g)=2\sqrt{-2g/3}$, so tuning $g$ moves the
+system along the swept ladder---fold ($\TW$) escape statistics at weak coupling, through the cusp
+(sub-Gaussian, negative excess kurtosis) at $g_{\mathrm{crit}}$. The sign of the escape-timing
+excess kurtosis is the observable rung signature.
+
+We position this carefully. The single most novel content of the program is the
+\emph{theory spine}: the fold$=\TW$ theorem, the resurgent structure with its exact Stokes constant,
+and the non-integrable cusp law $\W$. The \emph{neuron realization}, by contrast, sits squarely
+within the Berglund--Gentz~\cite{BG} and Berglund--Gentz--Kuehn~\cite{BGK} slow--fast noise
+framework; the folded-node / mixed-mode noise phenomenology it touches is their territory, and the
+clean closed forms found there (e.g.\ the universal fold-escape prefactor $\sqrt{4\pi\ln2}$) are
+consolidations within a known framework, not new phenomena. We claim the demonstration---that the
+ladder \emph{lives} in the neurons---not novelty in the neuronal modelling.
+
+% =====================================================================
+\section{The demarcated open program}\label{sec:open}
+
+What closes the book is the account above: the proved spine, the resurgent structure to the depth the
+present methods reach, the ladder and its separation from the genuine catastrophes, and the physical
+anchor. What remains is an \emph{explicitly bounded} research program, and every substantial direction
+in it crosses into a different field.
+
+\begin{itemize}
+\item \emph{Random matrices / topological recursion.} The all-genus coefficients $R_m$ of the
+Borot--Nadal soft-tail formula~\cite{BorotNadal} require the full topological-recursion machinery;
+this is unreachable from within the present methods.
+\item \emph{Resurgence proper.} A direct exact-WKB / Voros-symbol resurgence for the random operator
+itself would treat the white-noise potential without averaging; no exact-WKB framework exists for a
+nowhere-differentiable potential (the Voros symbols $\int\sqrt Q$ are ill-defined pathwise). The
+scoped attack is parametric-Stokes theory with the noise coupling as deformation parameter.
+\item \emph{Integrable probability / KPZ.} Process-level convergence to the Airy$_2$ (and,
+conjecturally, Pearcey) process needs a Brownian-Gibbs / line-ensemble property for the
+folded-medium edge; only the marginals and the increment-variance exponent are in hand.
+\item \emph{Computational neuroscience.} The realization in actual networks and data.
+\end{itemize}
+
+Two residuals are softer and internal: the rough-path rigidity of the rough-potential isomonodromy
+(the $O(\eps^2)$ location shift is $\delta(0)$-divergent but has a finite Wick-ordered form), and the
+nonlinear first-passage sensitivity bound $R_{\mathrm{nl}}$ that stands between the proved
+sub-Gaussian inner moments and a fully closed connection-phase cumulant bound. Neither is a new
+framework; both are writeable with effort. Everything past them is a deliberate crossing, chosen on
+its own merits, not a deficiency of the account here.
+
+\begin{thebibliography}{99}
+
+\bibitem{KS} M.~Krupa, P.~Szmolyan, \emph{Extending geometric singular perturbation theory to
+nonhyperbolic points---fold and canard points in two dimensions}, SIAM J. Math. Anal. \textbf{33}
+(2001) 286--314.
+
+\bibitem{JKK} S.~Jelbart, C.~Kuehn, N.~Kuntz, \emph{Geometric blow-up of a dynamic
+Hopf/fold-of-cycles}, arXiv:2208.01361 (2024).
+
+\bibitem{RRV} J.~Ram\'irez, B.~Rider, B.~Vir\'ag, \emph{Beta ensembles, stochastic Airy spectrum,
+and a diffusion}, J. Amer. Math. Soc. \textbf{24} (2011) 919--944; arXiv:math/0607331.
+
+\bibitem{DV} L.~Dumaz, B.~Vir\'ag, \emph{The right tail exponent of the Tracy--Widom-$\beta$
+distribution}, Ann. Inst. H. Poincar\'e Probab. Statist. \textbf{49} (2013) 915--933; arXiv:1102.4818.
+
+\bibitem{TW1994} C.~A.~Tracy, H.~Widom, \emph{Level-spacing distributions and the Airy kernel},
+Comm. Math. Phys. \textbf{159} (1994) 151--174.
+
+\bibitem{Bornemann} F.~Bornemann, \emph{On the numerical evaluation of distributions in random
+matrix theory: a review}, Markov Process. Related Fields \textbf{16} (2010) 803--866.
+
+\bibitem{BorotNadal} G.~Borot, C.~Nadal, \emph{Right tail asymptotic expansion of Tracy--Widom beta
+laws}, Random Matrices Theory Appl. \textbf{1} (2012) 1250006; arXiv:1111.2761.
+
+\bibitem{CLDS} A.~Comtet, P.~Le Doussal, N.~R.~Smith, \emph{The Tracy--Widom distribution at large
+Dyson index}, J. Stat. Phys. \textbf{193} (2026) Art.~46; arXiv:2510.14433.
+
+\bibitem{Costin} O.~Costin, \emph{On Borel summation and Stokes phenomena of nonlinear differential
+systems}, Duke Math. J. \textbf{93} (1998) 289--344; arXiv:math/0608408.
+
+\bibitem{CCK} O.~Costin, R.~D.~Costin, M.~Kohut, \emph{Rigorous bounds of Stokes constants for some
+nonlinear ODEs at rank-one irregular singularities}, Proc. R. Soc. A \textbf{460} (2004) 3631--3641;
+arXiv:math/0608316.
+
+\bibitem{Sokal} A.~D.~Sokal, \emph{An improvement of Watson's theorem on Borel summability},
+J. Math. Phys. \textbf{21} (1980) 261--263.
+
+\bibitem{CleriDunne} N.~J.~Cleri, G.~V.~Dunne, \emph{Resurgent trans-series for generalized
+Hastings--McLeod solutions}, J. Phys. A: Math. Theor. \textbf{53} (2020) 305201; arXiv:2002.06270.
+
+\bibitem{Dunne2025} G.~V.~Dunne, \emph{Introductory lectures on resurgence}, arXiv:2511.15528 (2025).
+
+\bibitem{KapaevHM} A.~A.~Kapaev, \emph{Quasi-linear Stokes phenomenon for the Hastings--McLeod
+solution of the second Painlev\'e equation}, arXiv:nlin/0411009 (2004).
+
+\bibitem{SGG} T.~Schorlepp, T.~Grafke, R.~Grauer, \emph{Symmetries and zero modes in sample path
+large deviations}, J. Stat. Phys. \textbf{190} (2023) 50; arXiv:2208.08413.
+
+\bibitem{FN1980} H.~Flaschka, A.~C.~Newell, \emph{Monodromy- and spectrum-preserving deformations. I},
+Comm. Math. Phys. \textbf{76} (1980) 65--116.
+
+\bibitem{JMU1981} M.~Jimbo, T.~Miwa, K.~Ueno, \emph{Monodromy preserving deformation of linear
+ordinary differential equations with rational coefficients. I}, Physica D \textbf{2} (1981) 306--352.
+
+\bibitem{FIKN} A.~S.~Fokas, A.~R.~Its, A.~A.~Kapaev, V.~Yu.~Novokshenov, \emph{Painlev\'e
+Transcendents: The Riemann--Hilbert Approach}, Math. Surveys Monogr. \textbf{128}, AMS, 2006.
+
+\bibitem{Clarkson} P.~A.~Clarkson, \emph{Painlev\'e equations---nonlinear special functions},
+J. Comput. Appl. Math. \textbf{153} (2003) 127--140.
+
+\bibitem{Hao} Q.~Hao, \emph{Exact WKB of solutions by Borel summation and open TBA},
+arXiv:2507.06922 (2025).
+
+\bibitem{BerryUpstill} M.~V.~Berry, C.~Upstill, \emph{Catastrophe optics: morphologies of caustics
+and their diffraction patterns}, Prog. Optics \textbf{18} (1980) 257--346.
+
+\bibitem{BG} N.~Berglund, B.~Gentz, \emph{Noise-Induced Phenomena in Slow--Fast Dynamical Systems:
+A Sample-Paths Approach}, Springer, 2006.
+
+\bibitem{BGK} N.~Berglund, B.~Gentz, C.~Kuehn, \emph{Hunting French ducks in a noisy environment},
+J. Differential Equations \textbf{252} (2012) 4786--4841; \emph{From random Poincar\'e maps to
+stochastic mixed-mode-oscillation patterns}, J. Dynam. Differential Equations \textbf{27} (2015)
+83--136.
+
+\end{thebibliography}
+
+\end{document}

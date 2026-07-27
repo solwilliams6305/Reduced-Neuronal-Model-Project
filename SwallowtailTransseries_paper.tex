@@ -234,6 +234,19 @@ the node at $k=4$ is still positive and the sign change occurs at $k=5$; the two
 therefore be quoted separately. \tagN
 \end{claim}
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.82\textwidth]{swtl_fig_ladder.pdf}
+\caption{The two swallowtail ladders (symlog scale, blue $+$, red $-$). \emph{Top:} the variance
+ladder \eqref{eq:coeffs}, with the near-node at $|v_4|\approx0.036$ and the anti-node at
+$|v_5|\approx1.50$ marked. \emph{Bottom:} the $\kappa_3$ ladder \eqref{eq:tcoeffs} on its own scale.
+Both first turn negative at the \emph{same} rung $k=5$ (dashed line) --- the shared
+$\cos(k\theta-\varphi)$ envelope of Claim~\ref{claim:sharedenvelope}, two rungs later than the
+cusp's. Note the node ($k=4$) and the sign change ($k=5$) are distinct for the swallowtail, unlike
+the cusp where both fall at $k=3$.}
+\label{fig:ladder}
+\end{figure}
+
 \section{A second cumulant: the $\kappa_3$ ladder}\label{sec:kappa3}
 
 The same engine computes the third-cumulant ladder
@@ -253,6 +266,26 @@ $\cos(k\theta-\varphi)$ envelope demands, and it is the first confirmation --- i
 Pad\'e approximant --- that the Borel geometry inferred from the variance ladder is physical.
 The swallowtail's sign change lies two rungs later than the cusp's. \tagN
 \end{claim}
+
+\subsection{The skewness overshoot.}
+The cusp paper uses $\kappa_3$ for a second purpose: the leading weak-noise skewness at $\beta=2$
+overshoots the true value, and the size of that overshoot is what first signalled $\beta=2$ to be
+non-perturbative. The swallowtail reproduces the effect:
+\begin{equation}\label{eq:overshoot}
+\frac{t_0}{v_0^{3/2}}=1.530,\qquad
+\text{naive skew at }\beta{=}2\ =\ \eta\,\frac{t_0}{v_0^{3/2}}=\sqrt2\cdot1.530=2.164,
+\end{equation}
+against the true $+0.945$ (Section~\ref{sec:resum}) --- an overshoot of $\times2.29$, versus the
+cusp's $\times2.82$ ($\sqrt2\cdot1.20=1.70$ against $0.601$). Both are $O(2\text{--}3)$, so the
+diagnostic transfers across the ladder. \tagN
+
+\begin{remark}[The overshoot does not track non-perturbativity]\label{rem:overshootcaveat}
+It is tempting to read the overshoot as a measure of how non-perturbative $\beta=2$ is, in which
+case the swallowtail --- whose Borel radius is smaller and whose $\beta=2$ therefore sits
+\emph{further} outside the disc --- should overshoot \emph{more}. It overshoots \emph{less}
+($2.29$ against $2.82$). So the overshoot is a qualitative signature of divergence, not a
+monotone measure of it; we quote it as corroboration only.
+\end{remark}
 
 \begin{remark}[Why the node position is not itself an estimator]\label{rem:nodecaveat}
 It is tempting to read $\theta$ off the node position via $\theta\propto1/k_{\rm node}$, which would
@@ -362,6 +395,19 @@ noise rotates the phase by a small \emph{positive} amount that shrinks with $q$.
 extends to $q=3$, the cusp paper's ``near-inheritance with a small noise rotation''.
 \eqref{eq:anchorphase} is a testable prediction: it forecasts $30^\circ$ at $q=4$. \tagC\;/\;\tagX
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.58\textwidth]{swtl_fig_borel.pdf}
+\caption{The Borel plane of $\Sw$. The conjugate pair (stars) sits at $|\zeta|\approx1.5$ with the
+shaded wedge showing the method spread $\theta\in[33^\circ,42^\circ]$ of \eqref{eq:theta}; the
+deterministic anchor $\pi/(q{+}2)=36^\circ$ \eqref{eq:anchorphase} is the dashed green ray, and lies
+inside the wedge. The real Freidlin--Wentzell instanton \eqref{eq:instanton} (square) sits on
+$\mathbb R_+$ at comparable modulus, so all three singularities compete --- which is why the
+conjugate-pair conformal map fails (Section~\ref{sec:ledger}). The cusp pair (open circles,
+$50^\circ$, $|\zeta|=1.9$) is shown for contrast: the swallowtail phase is smaller.}
+\label{fig:borel}
+\end{figure}
+
 \begin{remark}[Status of \eqref{eq:anchorphase}]\label{rem:anchorstatus}
 This is a pattern fixed by a single exactly-known case ($q=2$) and consistent with one measurement
 ($q=3$); it is not derived. What is imported is $\varphi=4\pi/(q+2)$ \cite{Voros1999}; the
@@ -395,6 +441,18 @@ $x$ & $\beta$ & $f_{\rm exact}$ & 7-coef & err & 8-coef & err\\
 \noalign{\smallskip}\hline
 \end{tabular}
 \end{center}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{swtl_fig_resum.pdf}
+\caption{\emph{Left:} the resummed trans-series against Monte-Carlo-free ground truth. Seven
+coefficients (grey) turn over and fall away; eight (blue) track the truth and, crucially, rise with
+$x$ as they must. \emph{Right:} relative error. The eight-coefficient error is \emph{monotone}
+in $x$ --- a radius-of-validity statement, not an unreliable approximant (Claim~\ref{claim:resum}).
+The $|{\rm err}|<10\%$ range extends from $x\le0.36$ (seven coefficients) to $x\le1.00$, i.e.\
+$\beta\ge4$, with eight.}
+\label{fig:resum}
+\end{figure}
 
 \begin{claim}[The representation is sound; the approximant is starved]\label{claim:resum}
 The eight-coefficient error is \emph{monotone} in $x$, never erratic in sign or size. This is a

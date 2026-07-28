@@ -16,5 +16,13 @@
     "payoff": "The lambda-free equation you are left with is X' = X^2 - Y, Y' = -eps. That is the inner Riccati - the same equation whose blow-ups you traded for zeros in the previous module.",
     "distortion_not_added": "Nothing is being ADDED to the space. The blow-down map is a diffeomorphism away from the origin; this is the same neighbourhood seen through a distorting lens, not new geometry.",
     "distortion_no_sphere": "The sphere of the usual construction is not drawn. This is one chart. Opening on the sphere is the standard way this topic loses people."
+  },
+  "alpha4c": {
+    "headline": "Shooting: the zeros are the spectrum.",
+    "setup": "The operator is H = -d\u00b2/dx\u00b2 + x on the half-line, with u(0) = 0. Pick a trial energy lambda, start from the decaying end, and integrate back to the wall at x = 0. Almost always you miss.",
+    "the_miss": "u(0) is the miss. Slide lambda and watch it. Where the miss crosses zero you have an eigenvalue - and at that instant a new node appears in u. That is not a coincidence, it is the oscillation theorem: the n-th eigenfunction has exactly n-1 interior zeros.",
+    "the_join": "The eigenvalues you are landing on are the Airy zeros, |a_n| = 2.338, 4.088, 5.521, ... - the same numbers that marked the crossings of u and the blow-ups of R two modules ago. The escape levels and the spectrum are one set of numbers counted twice.",
+    "distortion_scale": "u is normalised for display. An eigenfunction is defined only up to scale, so the height carries no meaning - only the zeros and the sign of the miss do.",
+    "distortion_halfline": "The wall at x = 0 with u(0) = 0 is a boundary condition imposed to make the spectrum discrete. On the whole line the Airy operator has no eigenvalues at all; the escape problem is what puts the wall there."
   }
 }

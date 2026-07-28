@@ -157,3 +157,25 @@ Completed 2026-07-27 against `blowup/blowup.html`. **Wants expert correction.**
 6. **p is continuous, which is a pedagogical fiction worth keeping.** Letting the viewer slide
    through non-integer weights is what makes p=2 *discoverable*; but the weights of a blow-up are
    determined by the equation, not tuned. The widget is a search device, not a model of practice.
+
+---
+
+## Module α4c (shooting → the spectrum) — distortion statement
+Completed 2026-07-28 against `shooting/shooting.html`. Closes the inner chain.
+
+1. **The wall is imposed, not intrinsic.** u(0)=0 on a half-line is what makes the spectrum
+   discrete; the Airy operator on the *whole* line has no eigenvalues at all. The escape problem
+   is what puts the wall there. Captioned on-screen.
+2. **u is normalised for display, so its height means nothing.** An eigenfunction is defined only
+   up to scale. Only the zeros and the sign of the miss carry information. Captioned.
+3. **The shot reaches ~5×10¹⁵ crossing the forbidden region.** Legitimate in double precision at
+   these ranges, but it means any comparison of two implementations must be *relative*. An
+   absolute tolerance of 1e−8 produced a false PORT MISMATCH badge on first run. Fixed; the check
+   is now relative and reads 1.5e−14.
+4. **"Interior nodes" excludes x=0 by construction.** At an eigenvalue u(0)=0 *is* the boundary
+   condition, and its residual sign is numerical noise — counting that interval added a phantom
+   node at some eigenvalues and not others. Count and markers both now start strictly inside.
+   Verified: node count = n−1 for all eight eigenvalues below λ=14.
+5. **The miss curve is precomputed and therefore fixed.** It cannot respond to any change of
+   XMAX or scheme made later in the browser. If the kernel is edited, the curve must be rebuilt —
+   the golden vectors will catch a divergence, but only at the one λ they sample.

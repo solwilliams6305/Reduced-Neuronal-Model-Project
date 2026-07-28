@@ -179,3 +179,31 @@ Completed 2026-07-28 against `shooting/shooting.html`. Closes the inner chain.
 5. **The miss curve is precomputed and therefore fixed.** It cannot respond to any change of
    XMAX or scheme made later in the browser. If the kernel is edited, the curve must be rebuilt —
    the golden vectors will catch a divergence, but only at the one λ they sample.
+
+---
+
+## Module γ8 (Stokes phenomenon) — distortion statement
+Completed 2026-07-28 against `stokes/stokes.html`. The fourth and last of the concepts the user
+named as hardest to convey. **Wants expert correction — entries 2 and 5 especially.**
+
+1. **Convention clash, and it is a real trap.** Some authors call Im ζ = 0 the *Stokes* lines
+   (used here, after Berry); others reserve that name for Re ζ = 0. Reading across sources
+   without checking which is meant gets the geometry exactly backwards. Captioned on-screen.
+2. **The erf profile is least trustworthy exactly where it is most visible.** It is the leading
+   term of Berry's smoothing, asymptotic in |ζ| — so at r ≈ 1, where the ramp is 45° wide and the
+   demonstration is at its most persuasive, the formula is at its weakest. This tension is
+   intrinsic to the module and is captioned, but a viewer will remember the wide ramp and not the
+   caveat. **The strongest candidate for revision in this module.**
+3. **The multiplier is plotted, not measured.** Berry's formula is drawn; nothing here extracts a
+   Stokes multiplier from Ai(z) numerically and compares. The connection identity *is* verified
+   (residual 1.5e−14, fixing the constant to exactly i), but that verifies the constant, not the
+   switching profile.
+4. **Only the Stokes line at arg z = 0 is analysed.** The other two rays are drawn and labelled
+   but nothing is computed across them. Symmetry makes this harmless, and nothing says so.
+5. **S₀ is drawn as a real ramp from 0 to 1, but the Airy Stokes constant is i.** The multiplier
+   is *complex*; plotting |S|/S₀ as a real quantity hides that the switched-on term arrives with a
+   phase. Defensible for a first pass — the magnitude is the story — but it is a real omission and
+   a viewer would not guess it.
+6. **The radius slider is logarithmic and stops at ~300.** Beyond that the ramp is narrower than a
+   pixel, so the widget cannot show the limit it is describing; it can only show the trend toward
+   it.

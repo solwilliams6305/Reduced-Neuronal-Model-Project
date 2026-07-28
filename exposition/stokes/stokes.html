@@ -1,0 +1,286 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Stokes phenomenon: the jump that isn't a jump</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63; --pur:#7a5cc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1020px;margin:0 auto;padding:22px 18px 46px}
+  h1{font-size:19px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:13px 15px;margin-bottom:12px}
+  canvas{display:block;width:100%;cursor:crosshair;touch-action:none}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .ctl{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sec)}
+  input[type=range]{width:230px;accent-color:var(--amb)}
+  button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--line);
+         background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
+  button:hover{background:#f4f2ee}
+  button.go{border-color:#c8d8ea;background:#f2f7fc;color:var(--blue);font-weight:600}
+  .readout{display:flex;gap:22px;flex-wrap:wrap;
+           font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+  .big{font-size:15px;font-weight:600}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  .fail{color:var(--red);border-color:#f2c9c4;background:#fdf3f2}
+  .step{margin:0 0 9px;font-size:12.8px}
+  .muted{color:var(--sec)} .ok{color:var(--grn)} .warn{color:var(--red)}
+  .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+  h2{font-size:12.5px;margin:0 0 7px;color:var(--sec);font-weight:600}
+</style>
+
+<div class="wrap">
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>where you are standing</h2>
+      <canvas id="cvz" height="330"></canvas>
+      <p class="note" id="zn"></p>
+    </div>
+    <div class="card">
+      <h2>the Stokes multiplier across the line</h2>
+      <canvas id="cvs" height="330"></canvas>
+      <p class="note" id="sn"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="readout">
+      <span>arg z = <b id="rth">—</b></span>
+      <span>|z| = <b id="rr">—</b></span>
+      <span>σ = <b id="rs">—</b></span>
+      <span>multiplier <b id="rm" class="big">—</b></span>
+      <span id="rw" class="muted"></span>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="ctl">radius |z|
+        <input id="rad" type="range" min="0.0" max="2.4771" step="0.005" value="0.4">
+      </span>
+      <span class="ctl">angle arg z
+        <input id="ang" type="range" min="-60" max="60" step="0.25" value="-30">
+      </span>
+      <button class="go" id="cross">cross the line</button>
+      <button id="reset">reset</button>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="step" id="s1"></p>
+    <p class="step" id="s2"></p>
+    <p class="step" id="s3"></p>
+    <p class="step" id="s4"></p>
+    <p class="step muted" style="font-size:11.8px" id="s5"></p>
+  </div>
+</div>
+
+<script>
+const REF = {"stokesRays": [0.0, 2.0943951023931953, -2.0943951023931953], "antiRays": [1.0471975511965976, -1.0471975511965976, 3.141592653589793], "golden": [{"r": 1.5, "th": -0.5, "sigma": -0.6235896100641433, "S": 0.18891844946832514}, {"r": 1.5, "th": -0.12, "sigma": -0.141243848026154, "S": 0.4208384582390372}, {"r": 1.5, "th": 0.0, "sigma": 0.0, "S": 0.5}, {"r": 1.5, "th": 0.12, "sigma": 0.141243848026154, "S": 0.5791615417609628}, {"r": 1.5, "th": 0.5, "sigma": 0.6235896100641433, "S": 0.8110815505316749}, {"r": 8.0, "th": -0.5, "sigma": -2.1885068814735917, "S": 0.0009840110265461055}, {"r": 8.0, "th": -0.12, "sigma": -0.49569962100435305, "S": 0.24164366719885638}, {"r": 8.0, "th": 0.0, "sigma": 0.0, "S": 0.5}, {"r": 8.0, "th": 0.12, "sigma": 0.49569962100435305, "S": 0.7583563328011436}, {"r": 8.0, "th": 0.5, "sigma": 2.1885068814735917, "S": 0.9990159889734539}, {"r": 60.0, "th": -0.5, "sigma": -9.91845127294544, "S": 0.0}, {"r": 60.0, "th": -0.12, "sigma": -2.2465419590724394, "S": 0.0007438040438363935}, {"r": 60.0, "th": 0.0, "sigma": 0.0, "S": 0.5}, {"r": 60.0, "th": 0.12, "sigma": 2.2465419590724394, "S": 0.9992561959561637}, {"r": 60.0, "th": 0.5, "sigma": 9.91845127294544, "S": 1.0}], "widths": [{"r": 1.0, "halfWidth": 0.8421382088776815}, {"r": 1.1015015332573443, "halfWidth": 0.8154535256513618}, {"r": 1.2133056277682803, "halfWidth": 0.7866759260935658}, {"r": 1.3364580092965253, "halfWidth": 0.7560670247457284}, {"r": 1.4721105463741806, "halfWidth": 0.7238884361492839}, {"r": 1.6215320239554667, "halfWidth": 0.6906633893871014}, {"r": 1.7861200106128312, "halfWidth": 0.6569151135420498}, {"r": 1.9674139302716576, "halfWidth": 0.6226436086141293}, {"r": 2.1671094607460883, "halfWidth": 0.5886337182276432}, {"r": 2.387074393748313, "halfWidth": 0.5551470569240262}, {"r": 2.6293661047131125, "halfWidth": 0.5224452392447126}, {"r": 2.896250795836384, "halfWidth": 0.49078987973113714}, {"r": 3.1902246923115802, "halfWidth": 0.4604425929247342}, {"r": 3.5140373900166453, "halfWidth": 0.43140337882550384}, {"r": 3.8707175730269707, "halfWidth": 0.40367223743344594}, {"r": 4.263601341495355, "halfWidth": 0.3772491687485606}, {"r": 4.6963634148552025, "halfWidth": 0.3523957873122824}, {"r": 5.173051502196702, "halfWidth": 0.32911209312461115}, {"r": 5.698124161288876, "halfWidth": 0.30713647164411245}, {"r": 6.2764925003504155, "halfWidth": 0.28646892287078635}, {"r": 6.913566112614205, "halfWidth": 0.26684783226319825}, {"r": 7.615303673320564, "halfWidth": 0.2487964289042172}, {"r": 8.388268672382887, "halfWidth": 0.23179148371097416}, {"r": 9.239690804004297, "halfWidth": 0.21583299668346917}, {"r": 10.177533587434516, "halfWidth": 0.2011825823631367}, {"r": 11.210568851337237, "halfWidth": 0.1873170116671078}, {"r": 12.348458778434996, "halfWidth": 0.17423628459538237}, {"r": 13.601846277811259, "halfWidth": 0.16220201568939502}, {"r": 14.982454530139801, "halfWidth": 0.15095259040771117}, {"r": 16.503196636907433, "halfWidth": 0.14048800875033085}, {"r": 18.178296399200992, "halfWidth": 0.13080827071725404}, {"r": 20.02342135572635, "halfWidth": 0.12165176176704626}, {"r": 22.05582932439042, "halfWidth": 0.11328009644114201}, {"r": 24.29452981807834, "halfWidth": 0.10517004565667225}, {"r": 26.76046184437956, "halfWidth": 0.09784483849650602}, {"r": 29.476689752258753, "halfWidth": 0.09104286041920881}, {"r": 32.46861895746406, "halfWidth": 0.08476411142478062}, {"r": 35.764233564395134, "halfWidth": 0.07874697697178694}, {"r": 39.394358106955, "halfWidth": 0.07325307160166226}, {"r": 43.39294585649985, "halfWidth": 0.06828239531440661}, {"r": 47.797396393487496, "halfWidth": 0.06357333356858547}, {"r": 52.64890541313553, "halfWidth": 0.059125886364198826}, {"r": 57.99285003688967, "halfWidth": 0.0549400537012467}, {"r": 63.8792132335972, "halfWidth": 0.05101583557972908}, {"r": 70.36305132008017, "halfWidth": 0.047614846541080474}, {"r": 77.5050089137335, "halfWidth": 0.04421385750243187}, {"r": 85.37188615360158, "halfWidth": 0.04107448300521777}, {"r": 94.03726349526356, "halfWidth": 0.038196723049438185}, {"r": 103.58218992335769, "halfWidth": 0.0355805776350931}, {"r": 114.09594101873192, "halfWidth": 0.03296443222074802}, {"r": 125.67685397057271, "halfWidth": 0.030871515889271957}, {"r": 138.4332473435453, "halfWidth": 0.028516985016361383}, {"r": 152.48443420270831, "halfWidth": 0.026685683226319826}, {"r": 167.9618380721618, "halfWidth": 0.02485438143627827}, {"r": 185.010222165208, "halfWidth": 0.023023079646236712}, {"r": 203.7890433832585, "halfWidth": 0.021453392397629664}, {"r": 224.47394374770664, "halfWidth": 0.019883705149022615}, {"r": 247.2583932144217, "halfWidth": 0.018575632441850076}, {"r": 272.35549923643276, "halfWidth": 0.017267559734677536}, {"r": 300.0, "halfWidth": 0.015959487027504993}], "connectionResidual": 1.4900407296902785e-14, "captions": {"headline": "Stokes phenomenon: the jump that isn't a jump.", "setup": "Rotate around the Airy function in the complex plane. Its asymptotic expansion has two exponentials, e^-zeta and e^+zeta, and which one you are allowed to ignore depends on where you stand. The coefficient of the ignorable one is the Stokes multiplier.", "textbook": "The textbook picture says the multiplier is 0 on one side of a Stokes line and S0 on the other - a step. That picture is wrong at every finite radius.", "berry": "Berry's result: the switching is SMOOTH, and universally so. Across the line the multiplier follows an error function in sigma = Im(zeta)/sqrt(2 Re zeta), with an angular width of order |zeta|^-1/2. Push the radius out and the ramp sharpens toward a step - which is why the step is drawn, and why it is only ever a limit.", "what_switches": "Nothing discontinuous happens to the function. Ai(z) is entire - it has no jumps anywhere. What jumps is our DESCRIPTION of it: a term we were entitled to drop becomes a term we are not. The Stokes line is a fact about the asymptotic representation, not about the function.", "constant": "The Stokes constant for the Airy equation is exactly i. It is fixed by the connection identity Ai(z) + w*Ai(wz) + w_bar*Ai(w_bar z) = 0 with w = exp(2*pi*i/3), which holds identically - verified numerically to machine precision in the build.", "distortion_convention": "Convention warning: some authors call Im(zeta)=0 the Stokes lines (used here, following Berry), others reserve that name for Re(zeta)=0. Reading across sources without checking which is meant is a reliable way to get the geometry backwards.", "distortion_erf": "The error-function profile is the leading term of Berry's smoothing, not an exact evaluation of the multiplier. It is asymptotic in |zeta|, so it is least trustworthy exactly where it is most visible - at small radius, where the ramp is broadest."}}, CAP = REF.captions;
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').textContent = CAP.setup;
+document.getElementById('s1').innerHTML = '<b>1. The textbook.</b> ' + CAP.textbook;
+document.getElementById('s2').innerHTML = '<b>2. What actually happens.</b> ' + CAP.berry;
+document.getElementById('s3').innerHTML = '<b>3. And nothing jumps.</b> ' + CAP.what_switches;
+document.getElementById('s4').innerHTML = '<b>The constant.</b> ' + CAP.constant;
+document.getElementById('s5').textContent = CAP.distortion_convention + '  ' + CAP.distortion_erf;
+
+// ---------------------------------------------------------------- exact, in the browser
+// zeta = (2/3) z^{3/2}.  Across the Stokes line at arg z = 0 the switching variable is
+//        sigma = Im(zeta) / sqrt(2 Re(zeta))
+// and Berry's leading smoothing is  S = (1/2)(1 + erf(sigma)).  The naive picture is the
+// step function that this tends to as |zeta| -> infinity.
+function zeta(r, th){
+  const p = Math.pow(r, 1.5), a = 1.5 * th;
+  return {re: (2/3) * p * Math.cos(a), im: (2/3) * p * Math.sin(a)};
+}
+function sigmaOf(r, th){
+  const z = zeta(r, th);
+  return z.re <= 0 ? NaN : z.im / Math.sqrt(2 * z.re);
+}
+// Abramowitz & Stegun 7.1.26 — plenty for drawing
+function erf(x){
+  const s = x < 0 ? -1 : 1; x = Math.abs(x);
+  const t = 1 / (1 + 0.3275911 * x);
+  const y = 1 - (((((1.061405429*t - 1.453152027)*t) + 1.421413741)*t - 0.284496736)*t
+            + 0.254829592) * t * Math.exp(-x*x);
+  return s * y;
+}
+const mult = (r, th) => 0.5 * (1 + erf(sigmaOf(r, th)));
+
+(function selfTest(){
+  let worst = 0;
+  for (const g of REF.golden){
+    worst = Math.max(worst, Math.abs(sigmaOf(g.r, g.th) - g.sigma) / Math.max(1, Math.abs(g.sigma)),
+                            Math.abs(mult(g.r, g.th) - g.S));
+  }
+  const el = document.getElementById('selftest'), ok = worst < 2e-6;
+  el.textContent = (ok ? 'port OK · Δ=' : 'PORT MISMATCH · Δ=') + worst.toExponential(1);
+  el.className = 'tag ' + (ok ? 'pass' : 'fail');
+})();
+
+let r = Math.pow(10, 0.4), th = -30 * Math.PI / 180, crossing = false, ct = 0;
+
+const cvz = document.getElementById('cvz'), cz = cvz.getContext('2d');
+const cvs = document.getElementById('cvs'), cs = cvs.getContext('2d');
+function resize(){
+  const dpr = devicePixelRatio || 1;
+  for (const [c, ctx] of [[cvz, cz], [cvs, cs]]){
+    const b = c.getBoundingClientRect();
+    c.width = b.width * dpr; c.height = 330 * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  draw();
+}
+addEventListener('resize', resize);
+
+function drawZ(){
+  const W = cvz.width / (devicePixelRatio || 1), H = 330;
+  const cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 20;
+  cz.clearRect(0, 0, W, H);
+  cz.fillStyle = '#fff'; cz.fillRect(0, 0, W, H);
+
+  // sectors between anti-Stokes rays, tinted by which exponential dominates
+  for (let k = 0; k < 6; k++){
+    const a0 = -Math.PI + k * Math.PI / 3, a1 = a0 + Math.PI / 3;
+    const mid = (a0 + a1) / 2, dom = Math.cos(1.5 * mid) > 0;
+    cz.fillStyle = dom ? 'rgba(47,111,176,.055)' : 'rgba(216,75,63,.055)';
+    cz.beginPath(); cz.moveTo(cx, cy); cz.arc(cx, cy, R, a0, a1); cz.closePath(); cz.fill();
+  }
+  cz.strokeStyle = '#e3e0da'; cz.lineWidth = 1;
+  cz.beginPath(); cz.arc(cx, cy, R, 0, 7); cz.stroke();
+
+  const ray = (a, col, dash, lab) => {
+    cz.save(); cz.setLineDash(dash); cz.strokeStyle = col; cz.lineWidth = 1.6;
+    cz.beginPath(); cz.moveTo(cx, cy);
+    cz.lineTo(cx + R * Math.cos(a), cy - R * Math.sin(a)); cz.stroke(); cz.restore();
+    if (lab){
+      cz.fillStyle = col; cz.font = '10px ui-sans-serif,system-ui';
+      cz.textAlign = 'center';
+      cz.fillText(lab, cx + (R + 11) * Math.cos(a), cy - (R + 11) * Math.sin(a) + 3);
+    }
+  };
+  for (const a of REF.antiRays) ray(a, '#7a5cc0', [4, 4], 'anti');
+  for (const a of REF.stokesRays) ray(a, '#d84b3f', [], 'STOKES');
+
+  // where you are
+  const pr = Math.min(R * 0.86, R * (Math.log10(r) + 0.2) / 2.7);
+  const pxp = cx + pr * Math.cos(th), pyp = cy - pr * Math.sin(th);
+  cz.strokeStyle = 'rgba(32,36,43,.45)'; cz.lineWidth = 1;
+  cz.beginPath(); cz.arc(cx, cy, pr, -Math.PI/3, Math.PI/3); cz.stroke();
+  cz.fillStyle = '#20242b';
+  cz.beginPath(); cz.arc(pxp, pyp, 5.4, 0, 7); cz.fill();
+  cz.fillStyle = '#5c6470'; cz.font = '10px ui-sans-serif,system-ui'; cz.textAlign = 'left';
+  cz.fillText('z', pxp + 8, pyp - 6);
+
+  document.getElementById('zn').innerHTML =
+    'Solid red: Stokes rays, Im ζ = 0 — where one exponential is <i>maximally</i> bigger than the ' +
+    'other. Dashed purple: anti-Stokes, Re ζ = 0 — where they are equal. Tint shows which of ' +
+    'e<sup>−ζ</sup>, e<sup>+ζ</sup> dominates. You are sliding along the grey arc.';
+}
+
+function drawS(){
+  const W = cvs.width / (devicePixelRatio || 1), H = 330;
+  const m = {l: 44, r: 14, t: 14, b: 34};
+  cs.clearRect(0, 0, W, H);
+  cs.fillStyle = '#fff'; cs.fillRect(0, 0, W, H);
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  const TH = Math.PI / 3;
+  const px = t => x0 + (t + TH) / (2 * TH) * (x1 - x0);
+  const py = v => y1 - v * (y1 - y0) * 0.86 - (y1 - y0) * 0.07;
+
+  cs.strokeStyle = '#e3e0da'; cs.lineWidth = 1; cs.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  cs.strokeStyle = '#20242b'; cs.lineWidth = .8;
+  cs.beginPath(); cs.moveTo(x0, py(0)); cs.lineTo(x1, py(0)); cs.stroke();
+  cs.strokeStyle = '#e3e0da';
+  cs.beginPath(); cs.moveTo(x0, py(1)); cs.lineTo(x1, py(1)); cs.stroke();
+
+  // the textbook step
+  cs.save(); cs.setLineDash([5, 4]); cs.strokeStyle = '#5c6470'; cs.lineWidth = 1.6;
+  cs.beginPath();
+  cs.moveTo(px(-TH), py(0)); cs.lineTo(px(0), py(0));
+  cs.moveTo(px(0), py(0)); cs.lineTo(px(0), py(1));
+  cs.moveTo(px(0), py(1)); cs.lineTo(px(TH), py(1));
+  cs.stroke(); cs.restore();
+
+  // Berry
+  cs.strokeStyle = '#2f6fb0'; cs.lineWidth = 2.4; cs.beginPath();
+  let started = false;
+  for (let k = 0; k <= 500; k++){
+    const t = -TH + (k / 500) * 2 * TH, v = mult(r, t);
+    if (!isFinite(v)) continue;
+    const X = px(t), Y = py(v);
+    started ? cs.lineTo(X, Y) : cs.moveTo(X, Y); started = true;
+  }
+  cs.stroke();
+
+  // the Stokes line itself
+  cs.save(); cs.setLineDash([3, 3]); cs.strokeStyle = '#d84b3f'; cs.lineWidth = 1.2;
+  cs.beginPath(); cs.moveTo(px(0), y0); cs.lineTo(px(0), y1); cs.stroke(); cs.restore();
+
+  const v = mult(r, th);
+  cs.fillStyle = '#20242b';
+  cs.beginPath(); cs.arc(px(th), py(v), 5, 0, 7); cs.fill();
+
+  cs.fillStyle = '#5c6470'; cs.font = '10.5px ui-sans-serif,system-ui'; cs.textAlign = 'center';
+  for (const t of [-TH, -TH/2, 0, TH/2, TH])
+    cs.fillText((t * 180 / Math.PI).toFixed(0) + '°', px(t), y1 + 15);
+  cs.fillText('arg z, across the Stokes line at 0°', (x0 + x1) / 2, y1 + 29);
+  cs.textAlign = 'right';
+  cs.fillText('0', x0 - 6, py(0) + 4); cs.fillText('S₀', x0 - 6, py(1) + 4);
+  cs.textAlign = 'left';
+  cs.fillStyle = '#5c6470'; cs.fillText('textbook step', px(-TH) + 8, py(1) - 8);
+  cs.fillStyle = '#2f6fb0'; cs.fillText('Berry: erf(σ)', px(-TH) + 8, py(1) + 10);
+
+  document.getElementById('sn').innerHTML =
+    'Dashed grey is what textbooks draw. Blue is what happens. Push the radius up and blue ' +
+    'converges to grey — <b>the step is the limit, never the thing itself</b>.';
+}
+
+function draw(){
+  drawZ(); drawS();
+  const s = sigmaOf(r, th), v = mult(r, th);
+  document.getElementById('rth').textContent = (th * 180 / Math.PI).toFixed(2) + '°';
+  document.getElementById('rr').textContent = r.toFixed(2);
+  document.getElementById('rs').textContent = isFinite(s) ? s.toFixed(3) : '—';
+  document.getElementById('rm').textContent = isFinite(v) ? v.toFixed(4) + '·S₀' : '—';
+  // interpolate the tabulated half-width
+  const ws = REF.widths;
+  let hw = ws[ws.length-1].halfWidth;
+  for (let i = 1; i < ws.length; i++) if (ws[i].r >= r){
+    const f = (r - ws[i-1].r) / (ws[i].r - ws[i-1].r);
+    hw = ws[i-1].halfWidth + f * (ws[i].halfWidth - ws[i-1].halfWidth); break;
+  }
+  document.getElementById('rw').innerHTML =
+    'transition half-width ≈ ' + (hw * 180 / Math.PI).toFixed(2) + '°  (|σ| = 1)';
+}
+
+const radEl = document.getElementById('rad'), angEl = document.getElementById('ang');
+radEl.addEventListener('input', e => { r = Math.pow(10, +e.target.value); draw(); });
+angEl.addEventListener('input', e => { crossing = false; th = +e.target.value * Math.PI / 180; draw(); });
+document.getElementById('reset').addEventListener('click', () => {
+  crossing = false; r = Math.pow(10, 0.4); th = -30 * Math.PI / 180;
+  radEl.value = 0.4; angEl.value = -30; draw();
+});
+document.getElementById('cross').addEventListener('click', () => {
+  crossing = !crossing; ct = -1;
+  document.getElementById('cross').textContent = crossing ? 'stop' : 'cross the line';
+  if (crossing) requestAnimationFrame(tick);
+});
+function tick(){
+  if (!crossing) return;
+  ct += 0.012;
+  if (ct > 1){ ct = -1; }
+  th = ct * Math.PI / 3; angEl.value = th * 180 / Math.PI;
+  draw(); requestAnimationFrame(tick);
+}
+resize();
+</script>

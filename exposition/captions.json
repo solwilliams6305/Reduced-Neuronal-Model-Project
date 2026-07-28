@@ -24,5 +24,15 @@
     "the_join": "The eigenvalues you are landing on are the Airy zeros, |a_n| = 2.338, 4.088, 5.521, ... - the same numbers that marked the crossings of u and the blow-ups of R two modules ago. The escape levels and the spectrum are one set of numbers counted twice.",
     "distortion_scale": "u is normalised for display. An eigenfunction is defined only up to scale, so the height carries no meaning - only the zeros and the sign of the miss do.",
     "distortion_halfline": "The wall at x = 0 with u(0) = 0 is a boundary condition imposed to make the spectrum discrete. On the whole line the Airy operator has no eigenvalues at all; the escape problem is what puts the wall there."
+  },
+  "gamma8": {
+    "headline": "Stokes phenomenon: the jump that isn't a jump.",
+    "setup": "Rotate around the Airy function in the complex plane. Its asymptotic expansion has two exponentials, e^-zeta and e^+zeta, and which one you are allowed to ignore depends on where you stand. The coefficient of the ignorable one is the Stokes multiplier.",
+    "textbook": "The textbook picture says the multiplier is 0 on one side of a Stokes line and S0 on the other - a step. That picture is wrong at every finite radius.",
+    "berry": "Berry's result: the switching is SMOOTH, and universally so. Across the line the multiplier follows an error function in sigma = Im(zeta)/sqrt(2 Re zeta), with an angular width of order |zeta|^-1/2. Push the radius out and the ramp sharpens toward a step - which is why the step is drawn, and why it is only ever a limit.",
+    "what_switches": "Nothing discontinuous happens to the function. Ai(z) is entire - it has no jumps anywhere. What jumps is our DESCRIPTION of it: a term we were entitled to drop becomes a term we are not. The Stokes line is a fact about the asymptotic representation, not about the function.",
+    "constant": "The Stokes constant for the Airy equation is exactly i. It is fixed by the connection identity Ai(z) + w*Ai(wz) + w_bar*Ai(w_bar z) = 0 with w = exp(2*pi*i/3), which holds identically - verified numerically to machine precision in the build.",
+    "distortion_convention": "Convention warning: some authors call Im(zeta)=0 the Stokes lines (used here, following Berry), others reserve that name for Re(zeta)=0. Reading across sources without checking which is meant is a reliable way to get the geometry backwards.",
+    "distortion_erf": "The error-function profile is the leading term of Berry's smoothing, not an exact evaluation of the multiplier. It is asymptotic in |zeta|, so it is least trustworthy exactly where it is most visible - at small radius, where the ramp is broadest."
   }
 }

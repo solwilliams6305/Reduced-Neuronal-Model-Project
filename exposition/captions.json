@@ -59,5 +59,32 @@
     "distortion_slice": "Any swallowtail SURFACE that can be drawn is a slice of a higher-dimensional unfolding, and it belongs to family 2, not to this course's family 1. It is shown here only to name the object being distinguished \u2014 never as the thing the ladder is made of.",
     "distortion_thirdcol": "The third column has no coefficient ladder drawn beside the others because it is not built the same way: it is a limit law of an ensemble, not the first-passage law of a swept operator. Placing three columns side by side implies a common construction that does not exist; only the WORD is common.",
     "distortion_skew": "The skew values are measured, not derived \u2014 Monte-Carlo for the swept rungs (2.8e6 escapes each) and numerical integration for the Berry\u2013Upstill ones. They carry sampling error of order the last digit shown, which is far below the separation being claimed but is not zero."
+  },
+  "ep0": {
+    "headline": "A neuron fires. The timing is random. The randomness has a shape.",
+    "setup": "This is FitzHugh-Nagumo with a little noise on the voltage - about the simplest thing that spikes. Let it run. The spikes are not evenly spaced, and the gaps between them are not spread out evenly either: the histogram builds a definite, lopsided shape.",
+    "q1": "QUESTION ONE, for the geometry. What is it about the shape of this system that makes a spike happen at all - and what decides WHERE, in the slow drift, the escape occurs?",
+    "q2": "QUESTION TWO, for the analysis. Why THAT shape? A lopsided distribution with a sharp edge on one side and a long tail on the other is not what you would guess. Where does its form come from?",
+    "promise": "Those two questions run as separate threads and stay separate for a long time. They meet once, at a single sequence of numbers, and the answer to the second turns out to be a law that does not care which neuron model you started from.",
+    "distortion_notreal": "This is a reduced model, not a neuron. FitzHugh-Nagumo throws away ion channels, spatial structure and most biophysics; it keeps two timescales and a cubic nonlinearity. The claim of this course is about that geometry, not about cells.",
+    "distortion_isi": "The histogram is of inter-spike intervals from one long run at fixed parameters. It is not the escape law the course derives - that one is a distribution over the ESCAPE POINT in the slow variable, which is related but not identical."
+  },
+  "alpha12": {
+    "headline": "Fast, slow, and the place it breaks.",
+    "setup": "Two timescales. The voltage moves fast, the recovery variable slowly. Turn the separation up and the trajectory stops looking like a curve and starts looking like a circuit: crawl, jump, crawl, jump.",
+    "manifold": "The crawling happens on the critical manifold - the cubic curve where the fast direction is at rest. The jumps happen where that curve folds back on itself. Everything interesting in this course happens at those two fold points.",
+    "attraction": "Why the jump? Because the manifold is only ATTRACTING where the fast direction pulls you back onto it, and the strength of that pull is 1 - v\u00b2. It is strong in the middle of a branch and it goes to ZERO at the fold.",
+    "breakdown": "That is the failure. Fenichel's theorem - the result that guarantees the slow manifold survives the perturbation at all - needs the attraction to be bounded away from zero. At the fold it is not, so the theorem does not apply, the slow-fast splitting stops being a description, and every tool built on it stops working. The whole next module exists because of this one number going to zero.",
+    "distortion_planar": "Planar FHN only. In higher dimensions folded singularities have more structure (folded nodes, folded saddles) and the story branches; nothing here shows that.",
+    "distortion_rate": "1 - v\u00b2 is the linear attraction rate at the manifold, i.e. the eigenvalue of the fast subsystem. Calling it 'the strength of the pull' is a fair gloss for a rate, but it is a rate."
+  },
+  "gamma1": {
+    "headline": "A series that gets worse the more of it you use.",
+    "setup": "Here is a perfectly ordinary-looking function with a perfectly ordinary-looking power series: E(x) = integral of e^-t/(1+xt), whose expansion is the alternating sum of k! x^k. The function is exactly computable, so for once we can watch the series against the truth.",
+    "the_shock": "Add terms and the error falls, which is what you expect. Keep adding and it RISES. There is a best number of terms, and past it every extra term makes the answer worse. The series does not converge for any x at all - its radius of convergence is zero.",
+    "the_floor": "The best you can do is the size of the smallest term, and that floor is not a power of x: it goes like e^(-1/x). An exponential has appeared out of a pure power series, and no finite part of that series can see it.",
+    "the_hook": "So a divergent series is not useless and it is not merely bad - it has a definite accuracy limit, and the limit is exponentially small. Everything in the analysis thread of this course is about what lives underneath that floor and how to get at it.",
+    "distortion_alternating": "This series alternates, which makes it the EASY case - it is Borel summable with no ambiguity. The series this course actually cares about does not alternate, and that difference is exactly where the trouble starts.",
+    "distortion_optimal": "Truncating at the least term is a rule of thumb, not a theorem. It is very good here and it is the standard practice, but the optimal truncation point and the error at it are asymptotic statements."
   }
 }

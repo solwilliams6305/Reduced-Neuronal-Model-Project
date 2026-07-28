@@ -1,0 +1,257 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>A series that gets worse the more of it you use</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63; --pur:#7a5cc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1000px;margin:0 auto;padding:22px 18px 46px}
+  h1{font-size:19px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:13px 15px;margin-bottom:12px}
+  canvas{display:block;width:100%}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  h2{font-size:12.5px;margin:0 0 7px;color:var(--sec);font-weight:600}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .ctl{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sec)}
+  input[type=range]{width:250px;accent-color:var(--amb)}
+  button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--line);
+         background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
+  button:hover{background:#f4f2ee}
+  button.go{border-color:#c8d8ea;background:#f2f7fc;color:var(--blue);font-weight:600}
+  .readout{display:flex;gap:22px;flex-wrap:wrap;
+           font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+  .big{font-size:15px;font-weight:600}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  .fail{color:var(--red);border-color:#f2c9c4;background:#fdf3f2}
+  .step{margin:0 0 9px;font-size:12.8px}
+  .muted{color:var(--sec)} .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+</style>
+
+<div class="wrap">
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>the partial sums, against the true value</h2>
+      <canvas id="cp" height="300"></canvas>
+    </div>
+    <div class="card">
+      <h2>the error — and it turns around</h2>
+      <canvas id="ce" height="300"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="readout">
+      <span>x = <b id="rx">—</b></span>
+      <span>terms used N = <b id="rn">—</b></span>
+      <span>error = <span id="re" class="big">—</span></span>
+      <span id="rb"></span>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span class="ctl">x <input id="x" type="range" min="0.02" max="0.6" step="0.002" value="0.14"></span>
+      <span class="ctl">terms N <input id="n" type="range" min="0" max="40" step="1" value="6"
+             style="width:200px"></span>
+      <button class="go" id="best">truncate at the best point</button>
+      <button id="reset">reset</button>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+    <p class="note" id="note"></p>
+  </div>
+
+  <div class="card">
+    <p class="step" id="s1"></p>
+    <p class="step" id="s2"></p>
+    <p class="step" id="s3"></p>
+    <p class="step muted" style="font-size:11.8px" id="s4"></p>
+  </div>
+</div>
+
+<script>
+const REF = {"glT": [0.022415874146706646, 0.11812251209676998, 0.2903657440180373, 0.5392862212279776, 0.8650370046481125, 1.2678140407752432, 1.7478596260594357, 2.3054637393075073, 2.9409651567252513, 3.654752650207291, 4.447266343313096, 5.318999254496392, 6.270499046923655, 7.302370002587394, 8.415275239483027, 9.609939192796109, 10.887150383886373, 12.2477645042443, 13.692707845547504, 15.222981111524728, 16.839663652648735, 18.54391817085919, 20.336995948730234, 22.220242665950874, 24.195104875933254, 26.263137227118484, 28.426010527501028, 30.685520767525972, 33.04359923643783, 35.50232389114121, 38.06393216564647, 40.73083544445863, 43.50563546642153, 46.391142978616195, 49.39039902562469, 52.506699341346305, 55.74362241327838, 59.10506191901711, 62.59526440015139, 66.21887325124756, 69.98098037714684, 73.88718723248296, 77.94367743446313, 82.1573037783193, 86.53569334945652, 91.08737561313309, 95.82194001552074, 100.75023196951398, 105.88459946879995, 111.23920752443958, 116.8304450513065, 122.67746026853858, 128.80287876923768, 135.23378794952583, 142.00312148993152, 149.15166590004938, 156.73107513267115, 164.8086026551505, 173.47494683642427, 182.85820469143147, 193.15113603707292, 204.67202848505946, 218.03185193532852, 234.80957917132616], "glW": [0.056252842339248155, 0.11902398731245409, 0.15749640386206856, 0.1675470504157258, 0.15335285577918614, 0.12422105360931551, 0.0903423009864627, 0.05947775576833932, 0.03562751890402631, 0.019480410431161187, 0.00974359489937938, 0.00446431036416511, 0.0018753595813226526, 0.0007226469815748107, 0.00025548753283343134, 8.287143534394733e-05, 2.4656863967879446e-05, 6.726713878827902e-06, 1.681785369963643e-06, 3.850812981545725e-07, 8.068728040988378e-08, 1.5457237067572897e-08, 2.7044801476167667e-09, 4.3167754754259984e-10, 6.277752541759839e-11, 8.3063173762867e-12, 9.984031787217486e-13, 1.0883538871163783e-13, 1.0740174034413078e-14, 9.575737231571912e-16, 7.69702802364661e-17, 5.564881137452472e-18, 3.609756409009412e-19, 2.0950953695484468e-20, 1.0847933010972538e-21, 4.994699486362548e-23, 2.037836974598286e-24, 7.339537564276772e-26, 2.3237830821981357e-27, 6.438234706906655e-29, 1.5531210957879239e-30, 3.2442500920186983e-32, 5.832386267834391e-34, 8.963254833100631e-36, 1.1687039895504068e-37, 1.2820559843596414e-39, 1.1720949374046017e-41, 8.835339672325698e-44, 5.424955590304308e-46, 2.6755426666782054e-48, 1.0429170314111074e-50, 3.152902351956925e-53, 7.229541910645761e-56, 1.2242353012297833e-58, 1.4821685049012373e-61, 1.232519348814245e-64, 6.6914990045686734e-68, 2.2204659418499165e-71, 4.120946094738085e-75, 3.7743990618958994e-79, 1.4141150529168788e-83, 1.59183306404108e-88, 2.9894843488597464e-94, 2.0890635084364083e-101], "NMAX": 40, "golden": [{"x": 0.08, "n": 0, "S": 1.0}, {"x": 0.08, "n": 4, "S": 0.9307110400000002}, {"x": 0.08, "n": 8, "S": 0.9304685169541121}, {"x": 0.08, "n": 12, "S": 0.9304574044374803}, {"x": 0.3, "n": 0, "S": 1.0}, {"x": 0.3, "n": 4, "S": 0.9124}, {"x": 0.3, "n": 8, "S": 2.6888271999999995}, {"x": 0.3, "n": 12, "S": 200.82363688959992}], "goldenE": [{"x": 0.02, "E": 0.9807554965057433}, {"x": 0.05, "E": 0.9543709099192168}, {"x": 0.12, "E": 0.9016244539381569}, {"x": 0.25, "E": 0.825382599604139}, {"x": 0.45, "E": 0.7400664023480631}, {"x": 0.6, "E": 0.6912259393981407}], "captions": {"headline": "A series that gets worse the more of it you use.", "setup": "Here is a perfectly ordinary-looking function with a perfectly ordinary-looking power series: E(x) = integral of e^-t/(1+xt), whose expansion is the alternating sum of k! x^k. The function is exactly computable, so for once we can watch the series against the truth.", "the_shock": "Add terms and the error falls, which is what you expect. Keep adding and it RISES. There is a best number of terms, and past it every extra term makes the answer worse. The series does not converge for any x at all - its radius of convergence is zero.", "the_floor": "The best you can do is the size of the smallest term, and that floor is not a power of x: it goes like e^(-1/x). An exponential has appeared out of a pure power series, and no finite part of that series can see it.", "the_hook": "So a divergent series is not useless and it is not merely bad - it has a definite accuracy limit, and the limit is exponentially small. Everything in the analysis thread of this course is about what lives underneath that floor and how to get at it.", "distortion_alternating": "This series alternates, which makes it the EASY case - it is Borel summable with no ambiguity. The series this course actually cares about does not alternate, and that difference is exactly where the trouble starts.", "distortion_optimal": "Truncating at the least term is a rule of thumb, not a theorem. It is very good here and it is the standard practice, but the optimal truncation point and the error at it are asymptotic statements."}}, CAP = REF.captions;
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').textContent = CAP.setup;
+document.getElementById('s1').innerHTML = '<b>1.</b> ' + CAP.the_shock;
+document.getElementById('s2').innerHTML = '<b>2. The floor.</b> ' + CAP.the_floor;
+document.getElementById('s3').innerHTML = '<b>3. Why it matters.</b> ' + CAP.the_hook;
+document.getElementById('s4').textContent = CAP.distortion_alternating + '  ' + CAP.distortion_optimal;
+
+// ---------------------------------------------------------------- Class A: the partial sums
+// term_k = (-1)^k k! x^k.  Built iteratively so k! never overflows before x^k shrinks it.
+function partials(x, N){
+  const S = new Float64Array(N + 1); let term = 1.0, acc = 0.0;
+  for (let k = 0; k <= N; k++){
+    acc += term; S[k] = acc;
+    term *= -(k + 1) * x;
+  }
+  return S;
+}
+// E(x) by applying the Gauss-Laguerre rule shipped from Python.  NOT interpolation: an earlier
+// version tabulated E and interpolated, and its ~5e-8 error exceeded the very floor this module
+// is about, so the browser reported the wrong optimal N at small x.
+function Etrue(x){
+  const T = REF.glT, W = REF.glW;
+  let acc = 0;
+  for (let i = 0; i < T.length; i++) acc += W[i] / (1 + x * T[i]);
+  return acc;
+}
+
+(function selfTest(){
+  let worst = 0;
+  for (const g of REF.golden){
+    const S = partials(g.x, g.n);
+    worst = Math.max(worst, Math.abs(S[g.n] - g.S) / Math.max(1, Math.abs(g.S)));
+  }
+  // E(x) is checked too -- the original golden set covered only the partial sums, which is
+  // precisely how the interpolation defect got through.
+  for (const g of REF.goldenE)
+    worst = Math.max(worst, Math.abs(Etrue(g.x) - g.E) / Math.abs(g.E));
+  const el = document.getElementById('selftest'), ok = worst < 1e-12;
+  el.textContent = (ok ? 'port OK · rel Δ=' : 'PORT MISMATCH · rel Δ=') + worst.toExponential(1);
+  el.className = 'tag ' + (ok ? 'pass' : 'fail');
+  document.getElementById('note').innerHTML =
+    'Python ships a ' + REF.glT.length + '-node Gauss–Laguerre rule; the browser applies it. ' +
+    'The badge checks both the partial sums <i>and</i> E(x) against Python — an earlier version ' +
+    'interpolated a table of E and its error exceeded the floor this module is about.';
+})();
+
+let x = 0.14, N = 6;
+const cp = document.getElementById('cp'), pc = cp.getContext('2d');
+const ce = document.getElementById('ce'), ec = ce.getContext('2d');
+function resize(){
+  const dpr = devicePixelRatio || 1;
+  for (const c of [cp, ce]){
+    const b = c.getBoundingClientRect(), cx = c.getContext('2d');
+    c.style.height = '300px';
+    c.width = b.width * dpr; c.height = 300 * dpr;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  draw();
+}
+addEventListener('resize', resize);
+
+function bestN(x){
+  const S = partials(x, REF.NMAX), T = Etrue(x);
+  let b = 0, e = Infinity;
+  for (let k = 0; k <= REF.NMAX; k++){
+    const d = Math.abs(S[k] - T);
+    if (d < e){ e = d; b = k; }
+  }
+  return {n: b, err: e};
+}
+
+function draw(){
+  const S = partials(x, REF.NMAX), T = Etrue(x), bn = bestN(x);
+  const m = {l: 52, r: 14, t: 14, b: 32};
+
+  // ---- left: partial sums vs truth
+  {
+    const W = cp.width / (devicePixelRatio || 1), H = 300;
+    const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+    pc.clearRect(0, 0, W, H); pc.fillStyle = '#fff'; pc.fillRect(0, 0, W, H);
+    // clip the vertical range: late partial sums blow up and would flatten everything
+    const lo = T - 0.55, hi = T + 0.55;
+    const PX = k => x0 + k / REF.NMAX * (x1 - x0);
+    const PY = v => y1 - (v - lo) / (hi - lo) * (y1 - y0);
+    pc.strokeStyle = '#e3e0da'; pc.lineWidth = 1; pc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    pc.strokeStyle = '#1f9d63'; pc.lineWidth = 2;
+    pc.beginPath(); pc.moveTo(x0, PY(T)); pc.lineTo(x1, PY(T)); pc.stroke();
+    pc.fillStyle = '#1f9d63'; pc.font = '11px ui-sans-serif,system-ui'; pc.textAlign = 'right';
+    pc.fillText('the true E(x) = ' + T.toFixed(6), x1 - 7, PY(T) - 7);
+
+    pc.strokeStyle = '#2f6fb0'; pc.lineWidth = 1.9; pc.beginPath();
+    let started = false;
+    for (let k = 0; k <= REF.NMAX; k++){
+      const v = S[k];
+      if (v < lo || v > hi){ started = false; continue; }
+      const X = PX(k), Y = PY(v);
+      started ? pc.lineTo(X, Y) : pc.moveTo(X, Y); started = true;
+      pc.fillStyle = '#2f6fb0';
+    }
+    pc.stroke();
+    for (let k = 0; k <= REF.NMAX; k++){
+      const v = S[k]; if (v < lo || v > hi) continue;
+      pc.fillStyle = (k === N) ? '#d84b3f' : '#2f6fb0';
+      pc.beginPath(); pc.arc(PX(k), PY(v), k === N ? 5.4 : 2.6, 0, 7); pc.fill();
+    }
+    pc.strokeStyle = '#d9851f'; pc.setLineDash([4,3]); pc.lineWidth = 1.3;
+    pc.beginPath(); pc.moveTo(PX(bn.n), y0); pc.lineTo(PX(bn.n), y1); pc.stroke();
+    pc.setLineDash([]);
+    pc.fillStyle = '#d9851f'; pc.textAlign = 'center';
+    pc.fillText('best N = ' + bn.n, PX(bn.n), y0 + 13);
+    pc.fillStyle = '#5c6470'; pc.textAlign = 'center';
+    pc.fillText('number of terms N', (x0 + x1) / 2, y1 + 20);
+  }
+
+  // ---- right: |error| on a log axis
+  {
+    const W = ce.width / (devicePixelRatio || 1), H = 300;
+    const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+    ec.clearRect(0, 0, W, H); ec.fillStyle = '#fff'; ec.fillRect(0, 0, W, H);
+    const LO = -12, HI = 1;
+    const PX = k => x0 + k / REF.NMAX * (x1 - x0);
+    const PY = L => y1 - (L - LO) / (HI - LO) * (y1 - y0);
+    ec.strokeStyle = '#e3e0da'; ec.lineWidth = 1; ec.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    for (let L = LO; L <= HI; L += 2){
+      ec.strokeStyle = '#f0eee9'; ec.beginPath();
+      ec.moveTo(x0, PY(L)); ec.lineTo(x1, PY(L)); ec.stroke();
+      ec.fillStyle = '#5c6470'; ec.font = '10px ui-sans-serif,system-ui'; ec.textAlign = 'right';
+      ec.fillText('1e' + L, x0 - 6, PY(L) + 3);
+    }
+    ec.strokeStyle = '#7a5cc0'; ec.lineWidth = 2; ec.beginPath();
+    let started = false;
+    for (let k = 0; k <= REF.NMAX; k++){
+      const d = Math.abs(S[k] - T);
+      const L = Math.log10(Math.max(d, 1e-300));
+      if (L < LO || L > HI){ started = false; continue; }
+      const X = PX(k), Y = PY(L);
+      started ? ec.lineTo(X, Y) : ec.moveTo(X, Y); started = true;
+    }
+    ec.stroke();
+    // the exp(-1/x) floor
+    const Lf = Math.log10(Math.exp(-1 / x));
+    if (Lf > LO && Lf < HI){
+      ec.strokeStyle = '#d84b3f'; ec.setLineDash([5,4]); ec.lineWidth = 1.6;
+      ec.beginPath(); ec.moveTo(x0, PY(Lf)); ec.lineTo(x1, PY(Lf)); ec.stroke();
+      ec.setLineDash([]);
+      ec.fillStyle = '#d84b3f'; ec.textAlign = 'left'; ec.font = '11px ui-sans-serif,system-ui';
+      ec.fillText('e^(−1/x)', x0 + 7, PY(Lf) - 6);
+    }
+    const dN = Math.abs(S[N] - T), LN = Math.log10(Math.max(dN, 1e-300));
+    if (LN > LO && LN < HI){
+      ec.fillStyle = '#d84b3f';
+      ec.beginPath(); ec.arc(PX(N), PY(LN), 5.4, 0, 7); ec.fill();
+    }
+    ec.fillStyle = '#5c6470'; ec.textAlign = 'center';
+    ec.fillText('number of terms N', (x0 + x1) / 2, y1 + 20);
+  }
+
+  document.getElementById('rx').textContent = x.toFixed(3);
+  document.getElementById('rn').textContent = N;
+  document.getElementById('re').textContent = Math.abs(S[N] - T).toExponential(3);
+  document.getElementById('rb').innerHTML = (N === bn.n)
+    ? '<span style="color:var(--grn)"><b>this is the best it gets</b> — floor ' +
+      bn.err.toExponential(2) + ', and e^(−1/x) = ' + Math.exp(-1/x).toExponential(2) + '</span>'
+    : '<span class="muted">best is N = ' + bn.n + ' at ' + bn.err.toExponential(2) + '</span>';
+}
+
+document.getElementById('x').addEventListener('input', e => { x = +e.target.value; draw(); });
+document.getElementById('n').addEventListener('input', e => { N = +e.target.value; draw(); });
+document.getElementById('best').addEventListener('click', () => {
+  N = bestN(x).n; document.getElementById('n').value = N; draw();
+});
+document.getElementById('reset').addEventListener('click', () => {
+  x = 0.14; N = 6;
+  document.getElementById('x').value = x; document.getElementById('n').value = N; draw();
+});
+resize();
+</script>

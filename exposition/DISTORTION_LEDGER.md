@@ -243,3 +243,21 @@ Completed 2026-07-28 against `junction/junction.html`. The node where the two tr
    viewer could read the close overlay as independent confirmation of ρ=1.9, θ=50°. It is not.
 5. **The ladder shown is the cusp only.** The swallowtail coefficients are actively being revised
    (v₇ changed on 2026-07-28) and are deliberately excluded rather than shown as settled.
+
+---
+
+## Module γ1 (the divergent series) — distortion statement
+Completed 2026-07-28 against `divergence/divergence.html`. Opens the analysis thread.
+
+1. **The series alternates, which makes it the EASY case.** Euler's series is Borel summable with
+   no ambiguity. The series this course actually cares about does not alternate, and that
+   difference is exactly where γ2–γ3 begin. Captioned, but a viewer meeting divergence for the
+   first time may generalise "divergent but summable" too readily.
+2. **Truncating at the least term is a rule of thumb, not a theorem.** Excellent here, standard
+   practice, and asymptotic in nature. Captioned.
+3. **The floor is e^(−1/x) only up to an algebraic prefactor.** Measured ratios of the minimum
+   error to e^(−1/x) run 1.75 → 5.56 as x falls from 0.45 to 0.05; the prefactor is ~√(2π/x). The
+   dashed line on the error panel is therefore *parallel to* the floor, not the floor itself.
+4. **The left panel clips.** Partial sums past the optimal point leave the frame within a few
+   terms; the vertical range is fixed at ±0.55 around the true value. Without clipping every
+   other feature would be a flat line, but the divergence is visually understated as a result.

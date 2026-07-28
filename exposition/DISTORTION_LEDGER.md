@@ -261,3 +261,25 @@ Completed 2026-07-28 against `divergence/divergence.html`. Opens the analysis th
 4. **The left panel clips.** Partial sums past the optimal point leave the frame within a few
    terms; the vertical range is fixed at ±0.55 around the true value. Without clipping every
    other feature would be a flat line, but the divergence is visually understated as a result.
+
+---
+
+## Module α1+α2 (fast–slow, and where it breaks) — distortion statement
+Completed 2026-07-28 against `fastslow/fastslow.html`. Merged deliberately: α3 opens on the
+failure, so something must close on it, and "here is where the tools stop working" only lands once
+the tools have been seen working.
+
+1. **Planar FHN only.** In higher dimensions folded singularities acquire structure (folded nodes,
+   folded saddles) and the story branches. Nothing here shows that, and a viewer could take the
+   planar picture as the general case.
+2. **λ = 1 − v² is a rate, glossed as "the strength of the pull".** It is the eigenvalue of the
+   fast subsystem linearised at the manifold. The gloss is fair but it is a linearisation, and
+   near the fold — precisely where the module points — linearisation is what stops being valid.
+3. **The jump happens visibly PAST the fold.** At ε=0.08 the trajectory overshoots by an O(ε^(2/3))
+   margin before departing. This is real and is exactly what α3 exists to resolve, but nothing
+   on-screen says so, and a viewer may read it as sloppiness in the drawing.
+4. **The critical manifold runs off the top and bottom of the frame.** The cubic exceeds the
+   plotted w-range at |v| ≳ 2.2. Harmless, but the branches appear to terminate.
+5. **"Fenichel does not apply" is stated, not demonstrated.** The module shows λ → 0, which is the
+   hypothesis failing; it does not show a slow manifold failing to persist. That is the right
+   scope — but the leap from "hypothesis fails" to "conclusion fails" is asserted.

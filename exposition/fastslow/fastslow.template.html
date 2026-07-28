@@ -1,0 +1,278 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fast, slow, and the place it breaks</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63; --pur:#7a5cc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1020px;margin:0 auto;padding:22px 18px 46px}
+  h1{font-size:19px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:13px 15px;margin-bottom:12px}
+  canvas{display:block;width:100%}
+  .grid{display:grid;grid-template-columns:1.15fr 1fr;gap:12px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  h2{font-size:12.5px;margin:0 0 7px;color:var(--sec);font-weight:600}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .ctl{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sec)}
+  input[type=range]{width:210px;accent-color:var(--amb)}
+  button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--line);
+         background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
+  button:hover{background:#f4f2ee}
+  button.go{border-color:#c8d8ea;background:#f2f7fc;color:var(--blue);font-weight:600}
+  .mono{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  .fail{color:var(--red);border-color:#f2c9c4;background:#fdf3f2}
+  .step{margin:0 0 9px;font-size:12.8px}
+  .muted{color:var(--sec)} .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+  .kill{background:#fdf3f2;border:1px solid #f2c9c4;border-radius:9px;padding:11px 13px;
+        font-size:13px;margin-top:4px}
+</style>
+
+<div class="wrap">
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>the phase plane</h2>
+      <canvas id="cp" height="330"></canvas>
+      <p class="note" id="pn"></p>
+    </div>
+    <div class="card">
+      <h2>how hard the manifold pulls</h2>
+      <canvas id="cl" height="330"></canvas>
+      <p class="note" id="ln"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <span class="ctl">timescale ε
+        <input id="eps" type="range" min="-2.3" max="-0.3" step="0.01" value="-1.1">
+        <span class="mono" id="epsv" style="width:52px">0.08</span>
+      </span>
+      <button class="go" id="run">run</button>
+      <button id="reset">reset</button>
+      <span class="mono" id="rate" style="color:var(--sec)"></span>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="step" id="s1"></p>
+    <p class="step" id="s2"></p>
+    <p class="step" id="s3"></p>
+    <div class="kill" id="s4"></div>
+    <p class="step muted" style="font-size:11.8px;margin-top:10px" id="s5"></p>
+  </div>
+</div>
+
+<script>
+const REF = /*__REFERENCE__*/, CAP = REF.captions;
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').textContent = CAP.setup;
+document.getElementById('s1').innerHTML = '<b>1.</b> ' + CAP.manifold;
+document.getElementById('s2').innerHTML = '<b>2.</b> ' + CAP.attraction;
+document.getElementById('s3').innerHTML =
+  '<b>3.</b> Slide ε down. The trajectory stops being a curve and becomes a circuit: it crawls ' +
+  'along an outer branch, reaches a fold, and jumps. The crawl is the slow equation; the jump ' +
+  'is the fast one; and the switch between them happens exactly at the folds.';
+document.getElementById('s4').innerHTML = '<b>Where the tools die.</b> ' + CAP.breakdown;
+document.getElementById('s5').textContent = CAP.distortion_planar + '  ' + CAP.distortion_rate;
+
+const {A, B, I} = REF;
+// ---------------------------------------------------------------- Class A kernel
+// Must stay in lockstep with integrate() in build_fastslow.py.
+const f = (v, w, eps) => [v - v*v*v/3 - w + I, eps * (v + A - B*w)];
+function integrate(eps, v0, w0, T, dt){
+  const n = Math.round(T/dt), V = new Float64Array(n+1), W = new Float64Array(n+1);
+  let v = v0, w = w0; V[0] = v; W[0] = w;
+  for (let i = 0; i < n; i++){
+    const k1 = f(v, w, eps);
+    const k2 = f(v + dt/2*k1[0], w + dt/2*k1[1], eps);
+    const k3 = f(v + dt/2*k2[0], w + dt/2*k2[1], eps);
+    const k4 = f(v + dt*k3[0],   w + dt*k3[1],   eps);
+    v += dt/6*(k1[0] + 2*k2[0] + 2*k3[0] + k4[0]);
+    w += dt/6*(k1[1] + 2*k2[1] + 2*k3[1] + k4[1]);
+    V[i+1] = v; W[i+1] = w;
+  }
+  return {V, W};
+}
+const manifold = v => v - v*v*v/3 + I;      // critical manifold
+const lam      = v => 1 - v*v;              // attraction rate; ZERO at v = +-1
+
+(function selfTest(){
+  const g = REF.golden, {V, W} = integrate(g.eps, g.v0, g.w0, 20.0, g.dt);
+  let worst = 0;
+  for (const p of g.pts)
+    worst = Math.max(worst, Math.abs(V[p.i] - p.v), Math.abs(W[p.i] - p.w));
+  const el = document.getElementById('selftest'), ok = worst < 1e-9;
+  el.textContent = (ok ? 'port OK · Δ=' : 'PORT MISMATCH · Δ=') + worst.toExponential(1);
+  el.className = 'tag ' + (ok ? 'pass' : 'fail');
+})();
+
+let eps = 0.08, traj = null, running = false, head = 0;
+const cp = document.getElementById('cp'), pc = cp.getContext('2d');
+const cl = document.getElementById('cl'), lc = cl.getContext('2d');
+function resize(){
+  const dpr = devicePixelRatio || 1;
+  for (const c of [cp, cl]){
+    const b = c.getBoundingClientRect(), cx = c.getContext('2d');
+    c.style.height = '330px';
+    c.width = b.width * dpr; c.height = 330 * dpr;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  draw();
+}
+addEventListener('resize', resize);
+
+const VLO = -2.4, VHI = 2.4, WLO = -1.1, WHI = 2.1;
+
+function drawPhase(){
+  const W_ = cp.width / (devicePixelRatio || 1), H = 330, m = {l: 44, r: 14, t: 12, b: 30};
+  const x0 = m.l, x1 = W_ - m.r, y0 = m.t, y1 = H - m.b;
+  pc.clearRect(0, 0, W_, H); pc.fillStyle = '#fff'; pc.fillRect(0, 0, W_, H);
+  const PX = v => x0 + (v - VLO)/(VHI - VLO)*(x1 - x0);
+  const PY = w => y1 - (w - WLO)/(WHI - WLO)*(y1 - y0);
+  pc.strokeStyle = '#e3e0da'; pc.lineWidth = 1; pc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+
+  // the critical manifold, coloured by whether it attracts.  Same colour convention as the
+  // blow-up module: blue attracting, dashed red repelling.
+  const seg = (lo, hi, rep) => {
+    pc.save();
+    if (rep){ pc.setLineDash([6,4]); pc.strokeStyle = '#d84b3f'; } else pc.strokeStyle = '#2f6fb0';
+    pc.lineWidth = 2.6; pc.beginPath();
+    for (let k = 0; k <= 160; k++){
+      const v = lo + (k/160)*(hi - lo), w = manifold(v);
+      const X = PX(v), Y = PY(w); k ? pc.lineTo(X, Y) : pc.moveTo(X, Y);
+    }
+    pc.stroke(); pc.restore();
+  };
+  seg(VLO, -1, false); seg(-1, 1, true); seg(1, VHI, false);
+
+  // the slow nullcline
+  pc.save(); pc.setLineDash([2,3]); pc.strokeStyle = '#7a5cc0'; pc.lineWidth = 1.4;
+  pc.beginPath();
+  for (let k = 0; k <= 60; k++){
+    const v = VLO + (k/60)*(VHI - VLO), w = (v + A)/B;
+    const X = PX(v), Y = PY(w); k ? pc.lineTo(X, Y) : pc.moveTo(X, Y);
+  }
+  pc.stroke(); pc.restore();
+
+  // the trajectory
+  if (traj){
+    const n = Math.min(head, traj.V.length - 1);
+    pc.strokeStyle = 'rgba(32,36,43,.72)'; pc.lineWidth = 1.5; pc.beginPath();
+    for (let i = 0; i <= n; i += 2){
+      const X = PX(traj.V[i]), Y = PY(traj.W[i]); i ? pc.lineTo(X, Y) : pc.moveTo(X, Y);
+    }
+    pc.stroke();
+    pc.fillStyle = '#20242b';
+    pc.beginPath(); pc.arc(PX(traj.V[n]), PY(traj.W[n]), 4.6, 0, 7); pc.fill();
+  }
+
+  // the folds
+  for (const vf of REF.folds){
+    pc.fillStyle = '#d9851f';
+    pc.beginPath(); pc.arc(PX(vf), PY(manifold(vf)), 5.6, 0, 7); pc.fill();
+  }
+  pc.fillStyle = '#d9851f'; pc.font = '11px ui-sans-serif,system-ui'; pc.textAlign = 'center';
+  pc.fillText('fold', PX(-1), PY(manifold(-1)) + 17);
+  pc.fillText('fold', PX(1), PY(manifold(1)) - 9);
+  pc.fillStyle = '#5c6470';
+  pc.fillText('v  (fast)', (x0 + x1)/2, y1 + 20);
+  pc.save(); pc.translate(13, (y0 + y1)/2); pc.rotate(-Math.PI/2);
+  pc.fillText('w  (slow)', 0, 0); pc.restore();
+  pc.textAlign = 'left';
+  pc.fillStyle = '#2f6fb0'; pc.fillText('attracting', x0 + 8, y0 + 15);
+  pc.fillStyle = '#d84b3f'; pc.fillText('repelling', x0 + 8, y0 + 30);
+
+  document.getElementById('pn').innerHTML =
+    'Solid blue: the outer branches, which attract. Dashed red: the middle branch, which repels. ' +
+    'Dotted purple: the slow nullcline. Orange: the folds, where the two meet.';
+}
+
+function drawLambda(){
+  const W_ = cl.width / (devicePixelRatio || 1), H = 330, m = {l: 46, r: 14, t: 12, b: 30};
+  const x0 = m.l, x1 = W_ - m.r, y0 = m.t, y1 = H - m.b;
+  lc.clearRect(0, 0, W_, H); lc.fillStyle = '#fff'; lc.fillRect(0, 0, W_, H);
+  const LLO = -4.8, LHI = 1.6;
+  const PX = v => x0 + (v - VLO)/(VHI - VLO)*(x1 - x0);
+  const PY = L => y1 - (L - LLO)/(LHI - LLO)*(y1 - y0);
+
+  // shade by sign
+  lc.fillStyle = 'rgba(47,111,176,.07)';
+  lc.fillRect(x0, y0, PX(-1) - x0, y1 - y0);
+  lc.fillRect(PX(1), y0, x1 - PX(1), y1 - y0);
+  lc.fillStyle = 'rgba(216,75,63,.07)';
+  lc.fillRect(PX(-1), y0, PX(1) - PX(-1), y1 - y0);
+  lc.strokeStyle = '#e3e0da'; lc.lineWidth = 1; lc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  lc.strokeStyle = '#20242b'; lc.lineWidth = .9;
+  lc.beginPath(); lc.moveTo(x0, PY(0)); lc.lineTo(x1, PY(0)); lc.stroke();
+
+  lc.strokeStyle = '#20242b'; lc.lineWidth = 2.4; lc.beginPath();
+  for (let k = 0; k <= 300; k++){
+    const v = VLO + (k/300)*(VHI - VLO), L = lam(v);
+    if (L < LLO) { continue; }
+    const X = PX(v), Y = PY(L); k ? lc.lineTo(X, Y) : lc.moveTo(X, Y);
+  }
+  lc.stroke();
+
+  for (const vf of REF.folds){
+    lc.strokeStyle = '#d9851f'; lc.setLineDash([4,3]); lc.lineWidth = 1.4;
+    lc.beginPath(); lc.moveTo(PX(vf), y0); lc.lineTo(PX(vf), y1); lc.stroke(); lc.setLineDash([]);
+    lc.fillStyle = '#d9851f';
+    lc.beginPath(); lc.arc(PX(vf), PY(0), 6, 0, 7); lc.fill();
+  }
+  lc.fillStyle = '#d9851f'; lc.font = '600 11.5px ui-sans-serif,system-ui'; lc.textAlign = 'center';
+  lc.fillText('λ = 0', PX(1), PY(0) - 12);
+  lc.fillStyle = '#2f6fb0'; lc.font = '11px ui-sans-serif,system-ui';
+  lc.fillText('attracting', PX(-1.8), PY(-3.4));
+  lc.fillText('attracting', PX(1.8), PY(-3.4));
+  lc.fillStyle = '#d84b3f'; lc.fillText('repelling', PX(0), PY(1.1));
+  lc.fillStyle = '#5c6470';
+  lc.fillText('v', (x0 + x1)/2, y1 + 20);
+  lc.save(); lc.translate(14, (y0 + y1)/2); lc.rotate(-Math.PI/2);
+  lc.fillText('λ(v) = 1 − v²', 0, 0); lc.restore();
+
+  document.getElementById('ln').innerHTML =
+    'The pull is strongest deep inside a branch and <b>vanishes exactly at the folds</b>. ' +
+    'It does not get small there — it is zero.';
+}
+
+function draw(){
+  drawPhase(); drawLambda();
+  document.getElementById('rate').textContent =
+    'λ(±1) = ' + lam(1).toFixed(0) + '   (exactly)';
+}
+
+function go(){
+  traj = integrate(eps, -1.6, -0.4, 260 / Math.sqrt(eps / 0.08), 0.01);
+  head = 0; running = true; requestAnimationFrame(tick);
+}
+function tick(){
+  if (!running) return;
+  head += 220;
+  if (head >= traj.V.length - 1){ head = traj.V.length - 1; running = false; }
+  draw(); if (running) requestAnimationFrame(tick);
+}
+document.getElementById('eps').addEventListener('input', e => {
+  eps = Math.pow(10, +e.target.value);
+  document.getElementById('epsv').textContent = eps.toFixed(eps < 0.01 ? 4 : 3);
+  running = false; traj = null; draw();
+});
+document.getElementById('run').addEventListener('click', go);
+document.getElementById('reset').addEventListener('click', () => {
+  running = false; traj = null; eps = 0.08;
+  document.getElementById('eps').value = -1.1;
+  document.getElementById('epsv').textContent = '0.080'; draw();
+});
+resize(); go();
+</script>

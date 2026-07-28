@@ -26,6 +26,9 @@
   .eqbox{background:#faf8f5;border:1px solid var(--line);border-radius:9px;
          padding:11px 14px;font:15px ui-monospace,SFMono-Regular,Menlo,monospace;line-height:2}
   .exp{font-size:11.5px;vertical-align:super}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  .fail{color:var(--red);border-color:#f2c9c4;background:#fdf3f2}
   .live{color:var(--red);font-weight:700}
   .dead{color:var(--grn);font-weight:700}
   .verdict{font-size:15px;font-weight:600;letter-spacing:-.2px}
@@ -74,6 +77,7 @@
       <button class="go" id="sweep">sweep the zoom</button>
       <button id="snap">set the blow-up weights (1, 2, 3)</button>
       <button id="reset">reset</button>
+      <span id="selftest" class="tag">self-test…</span>
     </div>
     <p class="hint" id="hint"></p>
   </div>
@@ -90,6 +94,7 @@
 
 <script>
 const CAP = {"headline": "Blow-up is anisotropic zoom.", "naive_fails": "Zoom in on the fold with both axes magnified equally and the critical manifold flattens toward a straight line. Every zoom level looks the same and shows less. The tool fails.", "the_find": "Magnify y as the SQUARE of x and the parabola stops moving. It is now invariant under zoom. That exponent - weight 2 on y against weight 1 on x - is the blow-up weight, and you found it by feel rather than by being told.", "third_weight": "The manifold is not the whole picture. Turn the trajectory on and it still drifts, because the slow parameter eps carries a weight of its own. Give it weight 3 and the trajectory settles too.", "the_real_point": "Watch the equation, not the picture. Every lambda in it carries an exponent built from the weights you chose. At p=2 and q=3 both exponents hit zero and lambda DISAPPEARS FROM THE EQUATION. That is what a blow-up is for: not a nicer picture, but a system that no longer knows how far in you zoomed.", "what_it_is": "The charts K1/K2/K3 are which face of that zoom you look through, and the exceptional divisor is the set of approach directions the naive zoom collapses to a single point.", "payoff": "The lambda-free equation you are left with is X' = X^2 - Y, Y' = -eps. That is the inner Riccati - the same equation whose blow-ups you traded for zeros in the previous module.", "distortion_not_added": "Nothing is being ADDED to the space. The blow-down map is a diffeomorphism away from the origin; this is the same neighbourhood seen through a distorting lens, not new geometry.", "distortion_no_sphere": "The sphere of the usual construction is not drawn. This is one chart. Opening on the sphere is the standard way this topic loses people."};
+const VER = {"EBAR": 0.13, "expA": "2 - p", "expB": "1 + p - q", "golden": [{"lam": 0.5, "p": 1.0, "q": 1.0, "A": 0.5, "B": 0.065}, {"lam": 0.5, "p": 2.0, "q": 3.0, "A": 1.0, "B": 0.13}, {"lam": 0.5, "p": 1.5, "q": 2.2, "A": 0.7071067811865476, "B": 0.10559281152631063}, {"lam": 0.5, "p": 2.6, "q": 3.4, "A": 1.5157165665103982, "B": 0.11317157322849612}, {"lam": 1.0, "p": 1.0, "q": 1.0, "A": 1.0, "B": 0.13}, {"lam": 1.0, "p": 2.0, "q": 3.0, "A": 1.0, "B": 0.13}, {"lam": 1.0, "p": 1.5, "q": 2.2, "A": 1.0, "B": 0.13}, {"lam": 1.0, "p": 2.6, "q": 3.4, "A": 1.0, "B": 0.13}, {"lam": 4.0, "p": 1.0, "q": 1.0, "A": 4.0, "B": 0.52}, {"lam": 4.0, "p": 2.0, "q": 3.0, "A": 1.0, "B": 0.13}, {"lam": 4.0, "p": 1.5, "q": 2.2, "A": 2.0, "B": 0.19704315364635172}, {"lam": 4.0, "p": 2.6, "q": 3.4, "A": 0.435275281648062, "B": 0.1715360284004763}, {"lam": 30.0, "p": 1.0, "q": 1.0, "A": 30.0, "B": 3.9000000000000004}, {"lam": 30.0, "p": 2.0, "q": 3.0, "A": 1.0, "B": 0.13}, {"lam": 30.0, "p": 1.5, "q": 2.2, "A": 5.477225575051661, "B": 0.36064484490738336}, {"lam": 30.0, "p": 2.6, "q": 3.4, "A": 0.1299353280305396, "B": 0.25666556315852673}], "captions": {"headline": "Blow-up is anisotropic zoom.", "naive_fails": "Zoom in on the fold with both axes magnified equally and the critical manifold flattens toward a straight line. Every zoom level looks the same and shows less. The tool fails.", "the_find": "Magnify y as the SQUARE of x and the parabola stops moving. It is now invariant under zoom. That exponent - weight 2 on y against weight 1 on x - is the blow-up weight, and you found it by feel rather than by being told.", "third_weight": "The manifold is not the whole picture. Turn the trajectory on and it still drifts, because the slow parameter eps carries a weight of its own. Give it weight 3 and the trajectory settles too.", "the_real_point": "Watch the equation, not the picture. Every lambda in it carries an exponent built from the weights you chose. At p=2 and q=3 both exponents hit zero and lambda DISAPPEARS FROM THE EQUATION. That is what a blow-up is for: not a nicer picture, but a system that no longer knows how far in you zoomed.", "what_it_is": "The charts K1/K2/K3 are which face of that zoom you look through, and the exceptional divisor is the set of approach directions the naive zoom collapses to a single point.", "payoff": "The lambda-free equation you are left with is X' = X^2 - Y, Y' = -eps. That is the inner Riccati - the same equation whose blow-ups you traded for zeros in the previous module.", "distortion_not_added": "Nothing is being ADDED to the space. The blow-down map is a diffeomorphism away from the origin; this is the same neighbourhood seen through a distorting lens, not new geometry.", "distortion_no_sphere": "The sphere of the usual construction is not drawn. This is one chart. Opening on the sphere is the standard way this topic loses people."}};
 document.getElementById('h1').textContent = CAP.headline;
 document.getElementById('sub').innerHTML =
   'A fold has critical manifold <b>y = x²</b> and dynamics <b>ẋ = x² − y</b>, <b>ẏ = −ε</b>. ' +
@@ -110,11 +115,35 @@ document.getElementById('s6').textContent = CAP.distortion_not_added + ' ' + CAP
 // Two exponents, both built from the weights. They vanish together exactly at p = 2, q = 3,
 // and then λ is absent from the equation: the system no longer knows how far you zoomed.
 // The manifold X² − λ^(2−p)Y = 0 is Y = λ^(p−2)X², recovering the act-one picture.
-const EBAR = 0.13;
+const EBAR = VER.EBAR;
+// These two literals are DERIVED SYMBOLICALLY in build_blowup.py and asserted against the
+// template's own algebra there; the self-test below re-checks the resulting coefficients here.
+// Do not edit one side without the other -- that is exactly the drift the golden vectors exist
+// to catch, and this module shipped for a day with no check of any kind.
 const expA = (p) => 2 - p;              // exponent on the Y term
 const expB = (p, q) => 1 + p - q;       // exponent on the slow rate
 const coefA = (lam, p) => Math.pow(lam, expA(p));
 const coefB = (lam, p, q) => Math.pow(lam, expB(p, q)) * EBAR;
+
+(function selfTest(){
+  let worst = 0;
+  for (const g of VER.golden){
+    worst = Math.max(worst,
+      Math.abs(coefA(g.lam, g.p) - g.A),
+      Math.abs(coefB(g.lam, g.p, g.q) - g.B));
+  }
+  // the punchline, re-checked live: at the blow-up weights lambda must leave the system
+  let drift = 0;
+  const A0 = coefA(1, 2), B0 = coefB(1, 2, 3);
+  for (const lv of [0.5, 4, 30, 1000])
+    drift = Math.max(drift, Math.abs(coefA(lv, 2) - A0), Math.abs(coefB(lv, 2, 3) - B0));
+  const el = document.getElementById('selftest');
+  const ok = worst < 1e-12 && drift < 1e-12;
+  el.textContent = ok
+    ? 'port OK · Δ=' + worst.toExponential(1) + ' · λ-free at (2,3) to ' + drift.toExponential(1)
+    : 'PORT MISMATCH · Δ=' + worst.toExponential(1);
+  el.className = 'tag ' + (ok ? 'pass' : 'fail');
+})();
 
 const VX = 1.55, VY_LO = -0.5, VY_HI = 2.45;
 const MARK_X = [0.55, 1.0, 1.38];

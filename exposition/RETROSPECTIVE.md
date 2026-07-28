@@ -81,10 +81,17 @@ probes are not ceremony, and their absence is a real hole rather than a bookkeep
 
 Auditing rather than remembering turned up two things I would not have reported otherwise:
 
-- **`blowup` has no self-test and no assertion.** It is the only module with *zero* verification
-  of any kind. It is also the module the prior-art sweep called *"arguably the single most
-  animation-hungry idea on this list and completely unserved"* — so the highest-opportunity module
-  is the least-checked one.
+- ~~**`blowup` has no self-test and no assertion.**~~ **CLOSED 2026-07-28**, immediately after
+  this retrospective flagged it. It had been shipping three algebraic identities in a `print`
+  statement with nothing checking them. Now: the substitution is derived **symbolically** with
+  sympy; the two exponents the template hardcodes (`2-p`, `1+p-q`) are asserted against that
+  derivation; the vanishing point is solved for and asserted **unique** at (p,q)=(2,3); and 16
+  golden vectors plus a live λ-independence check run in the browser (both exact, Δ=0).
+  Worth recording: re-deriving it by hand *disagreed* with the template, because the module uses
+  `X = λx` and I assumed `x = λX`. Both conventions put the vanishing point at (2,3) — negating an
+  exponent does not move its zero — so the punchline was right either way and the discrepancy
+  would never have surfaced from the widget's behaviour. Checking the convention before "fixing"
+  anything is what stopped a correct module being broken.
 - **`coda` has no self-test**; `shooting` and `build_scrubber` have self-tests but no physics
   assertion in the builder.
 - **59 of 68 ledger entries remain open.** Nine are resolved. The open ones are not all defects —

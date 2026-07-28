@@ -1,48 +1,60 @@
 {
-  "_README": "Shared narrative contract. Golden vectors keep the NUMBERS in lockstep between a still figure and its interactive; this file keeps the WORDS in lockstep. Every caption, caveat and on-screen distortion statement that must appear in more than one artifact lives here and is read by both the Python figure scripts and the HTML builders. Added after the boundary-condition caveat was fixed in twin_panel.py and shipped missing from twin_scrubber.html. See DISTORTION_LEDGER.md, standing entry on propagation.",
-  "alpha4a": {
-    "boundary_condition": "u is the solution that DECAYS as Y -> +infinity. The escape problem picks that one. A different boundary condition (Bi, or a mixture) has different zeros - so these are not \"the\" zeros, they are this condition's zeros.",
-    "boundary_condition_html": "<i>u</i> is the solution that <b>decays</b> as <i>Y</i>&nbsp;&rarr;&nbsp;+&infin; &mdash; the escape problem picks that one. A different boundary condition has different zeros, so these are not &ldquo;the&rdquo; zeros, they are this condition&rsquo;s zeros.",
-    "the_trade": "blow-ups are hard to see. zeros are easy. Cole-Hopf buys you zeros.",
-    "not_tw": "not the scaling limit - this is not TW"
-  },
-  "alpha3": {
-    "headline": "Blow-up is anisotropic zoom.",
-    "naive_fails": "Zoom in on the fold with both axes magnified equally and the critical manifold flattens toward a straight line. Every zoom level looks the same and shows less. The tool fails.",
-    "the_find": "Magnify y as the SQUARE of x and the parabola stops moving. It is now invariant under zoom. That exponent - weight 2 on y against weight 1 on x - is the blow-up weight, and you found it by feel rather than by being told.",
-    "third_weight": "The manifold is not the whole picture. Turn the trajectory on and it still drifts, because the slow parameter eps carries a weight of its own. Give it weight 3 and the trajectory settles too.",
-    "the_real_point": "Watch the equation, not the picture. Every lambda in it carries an exponent built from the weights you chose. At p=2 and q=3 both exponents hit zero and lambda DISAPPEARS FROM THE EQUATION. That is what a blow-up is for: not a nicer picture, but a system that no longer knows how far in you zoomed.",
-    "what_it_is": "The charts K1/K2/K3 are which face of that zoom you look through, and the exceptional divisor is the set of approach directions the naive zoom collapses to a single point.",
-    "payoff": "The lambda-free equation you are left with is X' = X^2 - Y, Y' = -eps. That is the inner Riccati - the same equation whose blow-ups you traded for zeros in the previous module.",
-    "distortion_not_added": "Nothing is being ADDED to the space. The blow-down map is a diffeomorphism away from the origin; this is the same neighbourhood seen through a distorting lens, not new geometry.",
-    "distortion_no_sphere": "The sphere of the usual construction is not drawn. This is one chart. Opening on the sphere is the standard way this topic loses people."
-  },
-  "alpha4c": {
-    "headline": "Shooting: the zeros are the spectrum.",
-    "setup": "The operator is H = -d\u00b2/dx\u00b2 + x on the half-line, with u(0) = 0. Pick a trial energy lambda, start from the decaying end, and integrate back to the wall at x = 0. Almost always you miss.",
-    "the_miss": "u(0) is the miss. Slide lambda and watch it. Where the miss crosses zero you have an eigenvalue - and at that instant a new node appears in u. That is not a coincidence, it is the oscillation theorem: the n-th eigenfunction has exactly n-1 interior zeros.",
-    "the_join": "The eigenvalues you are landing on are the Airy zeros, |a_n| = 2.338, 4.088, 5.521, ... - the same numbers that marked the crossings of u and the blow-ups of R two modules ago. The escape levels and the spectrum are one set of numbers counted twice.",
-    "distortion_scale": "u is normalised for display. An eigenfunction is defined only up to scale, so the height carries no meaning - only the zeros and the sign of the miss do.",
-    "distortion_halfline": "The wall at x = 0 with u(0) = 0 is a boundary condition imposed to make the spectrum discrete. On the whole line the Airy operator has no eigenvalues at all; the escape problem is what puts the wall there."
-  },
-  "gamma8": {
-    "headline": "Stokes phenomenon: the jump that isn't a jump.",
-    "setup": "Rotate around the Airy function in the complex plane. Its asymptotic expansion has two exponentials, e^-zeta and e^+zeta, and which one you are allowed to ignore depends on where you stand. The coefficient of the ignorable one is the Stokes multiplier.",
-    "textbook": "The textbook picture says the multiplier is 0 on one side of a Stokes line and S0 on the other - a step. That picture is wrong at every finite radius.",
-    "berry": "Berry's result: the switching is SMOOTH, and universally so. Across the line the multiplier follows an error function in sigma = Im(zeta)/sqrt(2 Re zeta), with an angular width of order |zeta|^-1/2. Push the radius out and the ramp sharpens toward a step - which is why the step is drawn, and why it is only ever a limit.",
-    "what_switches": "Nothing discontinuous happens to the function. Ai(z) is entire - it has no jumps anywhere. What jumps is our DESCRIPTION of it: a term we were entitled to drop becomes a term we are not. The Stokes line is a fact about the asymptotic representation, not about the function.",
-    "constant": "The Stokes constant for the Airy equation is exactly i. It is fixed by the connection identity Ai(z) + w*Ai(wz) + w_bar*Ai(w_bar z) = 0 with w = exp(2*pi*i/3), which holds identically - verified numerically to machine precision in the build.",
-    "distortion_convention": "Convention warning: some authors call Im(zeta)=0 the Stokes lines (used here, following Berry), others reserve that name for Re(zeta)=0. Reading across sources without checking which is meant is a reliable way to get the geometry backwards.",
-    "distortion_erf": "The error-function profile is the leading term of Berry's smoothing, not an exact evaluation of the multiplier. It is asymptotic in |zeta|, so it is least trustworthy exactly where it is most visible - at small radius, where the ramp is broadest."
-  },
-  "delta1": {
-    "headline": "The junction: one ladder, built by geometry, read by analysis.",
-    "setup": "Everything geometric in this course produces one sequence of numbers. Everything analytic consumes it. This is where the two halves touch, and they touch at a single quantity: the instanton action.",
-    "geometry_side": "Hold the escape off to depth s and the cheapest way to do it costs I(s) = (1/2) integral of p^2, with p = t^q along the way. That integral is elementary: I(s) = s^(2q+1) / [2(2q+1)]. Nothing asymptotic, nothing fitted - just an area.",
-    "analysis_side": "That same number does two jobs on the other side. It sets the tail, P(depth > s) ~ exp(-I/eta^2). And it sets where the Borel singularity sits, so it fixes how fast the coefficients v_k diverge. Geometry hands analysis a number; the divergence rate hands it back.",
-    "the_family": "Change the rung and only the exponent moves: 2q+1 runs 3, 5, 7, 9, 11 for fold, cusp, swallowtail and beyond. One formula, five rungs. That is the ladder.",
-    "distortion_factor2": "This constant was wrong in this project's own notes for a while. An earlier draft carried I(s) = s^(2q+1)/[4(2q+1)] - too small by a factor of 2 - until the q=2 case was checked against a boundary-value solve and disagreed. The formula shown here is the corrected one.",
-    "distortion_leading": "p = t^q is the leading behaviour of the optimal path, not the path itself. The closed form is the leading-order action; a boundary-value solve of the full Euler-Lagrange system approaches it from below, and at fixed s the low rungs are still visibly short of it.",
-    "distortion_onerung": "The coefficient ladder shown is the cusp, q=2, which is settled and published. The swallowtail ladder is still being refined at the top rungs and is deliberately not drawn here."
-  }
+ "_README": "Shared narrative contract. Golden vectors keep the NUMBERS in lockstep between a still figure and its interactive; this file keeps the WORDS in lockstep. Every caption, caveat and on-screen distortion statement that must appear in more than one artifact lives here and is read by both the Python figure scripts and the HTML builders. Added after the boundary-condition caveat was fixed in twin_panel.py and shipped missing from twin_scrubber.html. See DISTORTION_LEDGER.md, standing entry on propagation.",
+ "alpha4a": {
+  "boundary_condition": "u is the solution that DECAYS as Y -> +infinity. The escape problem picks that one. A different boundary condition (Bi, or a mixture) has different zeros - so these are not \"the\" zeros, they are this condition's zeros.",
+  "boundary_condition_html": "<i>u</i> is the solution that <b>decays</b> as <i>Y</i>&nbsp;&rarr;&nbsp;+&infin; &mdash; the escape problem picks that one. A different boundary condition has different zeros, so these are not &ldquo;the&rdquo; zeros, they are this condition&rsquo;s zeros.",
+  "the_trade": "blow-ups are hard to see. zeros are easy. Cole-Hopf buys you zeros.",
+  "not_tw": "not the scaling limit - this is not TW"
+ },
+ "alpha3": {
+  "headline": "Blow-up is anisotropic zoom.",
+  "naive_fails": "Zoom in on the fold with both axes magnified equally and the critical manifold flattens toward a straight line. Every zoom level looks the same and shows less. The tool fails.",
+  "the_find": "Magnify y as the SQUARE of x and the parabola stops moving. It is now invariant under zoom. That exponent - weight 2 on y against weight 1 on x - is the blow-up weight, and you found it by feel rather than by being told.",
+  "third_weight": "The manifold is not the whole picture. Turn the trajectory on and it still drifts, because the slow parameter eps carries a weight of its own. Give it weight 3 and the trajectory settles too.",
+  "the_real_point": "Watch the equation, not the picture. Every lambda in it carries an exponent built from the weights you chose. At p=2 and q=3 both exponents hit zero and lambda DISAPPEARS FROM THE EQUATION. That is what a blow-up is for: not a nicer picture, but a system that no longer knows how far in you zoomed.",
+  "what_it_is": "The charts K1/K2/K3 are which face of that zoom you look through, and the exceptional divisor is the set of approach directions the naive zoom collapses to a single point.",
+  "payoff": "The lambda-free equation you are left with is X' = X^2 - Y, Y' = -eps. That is the inner Riccati - the same equation whose blow-ups you traded for zeros in the previous module.",
+  "distortion_not_added": "Nothing is being ADDED to the space. The blow-down map is a diffeomorphism away from the origin; this is the same neighbourhood seen through a distorting lens, not new geometry.",
+  "distortion_no_sphere": "The sphere of the usual construction is not drawn. This is one chart. Opening on the sphere is the standard way this topic loses people."
+ },
+ "alpha4c": {
+  "headline": "Shooting: the zeros are the spectrum.",
+  "setup": "The operator is H = -d²/dx² + x on the half-line, with u(0) = 0. Pick a trial energy lambda, start from the decaying end, and integrate back to the wall at x = 0. Almost always you miss.",
+  "the_miss": "u(0) is the miss. Slide lambda and watch it. Where the miss crosses zero you have an eigenvalue - and at that instant a new node appears in u. That is not a coincidence, it is the oscillation theorem: the n-th eigenfunction has exactly n-1 interior zeros.",
+  "the_join": "The eigenvalues you are landing on are the Airy zeros, |a_n| = 2.338, 4.088, 5.521, ... - the same numbers that marked the crossings of u and the blow-ups of R two modules ago. The escape levels and the spectrum are one set of numbers counted twice.",
+  "distortion_scale": "u is normalised for display. An eigenfunction is defined only up to scale, so the height carries no meaning - only the zeros and the sign of the miss do.",
+  "distortion_halfline": "The wall at x = 0 with u(0) = 0 is a boundary condition imposed to make the spectrum discrete. On the whole line the Airy operator has no eigenvalues at all; the escape problem is what puts the wall there."
+ },
+ "gamma8": {
+  "headline": "Stokes phenomenon: the jump that isn't a jump.",
+  "setup": "Rotate around the Airy function in the complex plane. Its asymptotic expansion has two exponentials, e^-zeta and e^+zeta, and which one you are allowed to ignore depends on where you stand. The coefficient of the ignorable one is the Stokes multiplier.",
+  "textbook": "The textbook picture says the multiplier is 0 on one side of a Stokes line and S0 on the other - a step. That picture is wrong at every finite radius.",
+  "berry": "Berry's result: the switching is SMOOTH, and universally so. Across the line the multiplier follows an error function in sigma = Im(zeta)/sqrt(2 Re zeta), with an angular width of order |zeta|^-1/2. Push the radius out and the ramp sharpens toward a step - which is why the step is drawn, and why it is only ever a limit.",
+  "what_switches": "Nothing discontinuous happens to the function. Ai(z) is entire - it has no jumps anywhere. What jumps is our DESCRIPTION of it: a term we were entitled to drop becomes a term we are not. The Stokes line is a fact about the asymptotic representation, not about the function.",
+  "constant": "The Stokes constant for the Airy equation is exactly i. It is fixed by the connection identity Ai(z) + w*Ai(wz) + w_bar*Ai(w_bar z) = 0 with w = exp(2*pi*i/3), which holds identically - verified numerically to machine precision in the build.",
+  "distortion_convention": "Convention warning: some authors call Im(zeta)=0 the Stokes lines (used here, following Berry), others reserve that name for Re(zeta)=0. Reading across sources without checking which is meant is a reliable way to get the geometry backwards.",
+  "distortion_erf": "The error-function profile is the leading term of Berry's smoothing, not an exact evaluation of the multiplier. It is asymptotic in |zeta|, so it is least trustworthy exactly where it is most visible - at small radius, where the ramp is broadest."
+ },
+ "delta1": {
+  "headline": "The junction: one ladder, built by geometry, read by analysis.",
+  "setup": "Everything geometric in this course produces one sequence of numbers. Everything analytic consumes it. This is where the two halves touch, and they touch at a single quantity: the instanton action.",
+  "geometry_side": "Hold the escape off to depth s and the cheapest way to do it costs I(s) = (1/2) integral of p^2, with p = t^q along the way. That integral is elementary: I(s) = s^(2q+1) / [2(2q+1)]. Nothing asymptotic, nothing fitted - just an area.",
+  "analysis_side": "That same number does two jobs on the other side. It sets the tail, P(depth > s) ~ exp(-I/eta^2). And it sets where the Borel singularity sits, so it fixes how fast the coefficients v_k diverge. Geometry hands analysis a number; the divergence rate hands it back.",
+  "the_family": "Change the rung and only the exponent moves: 2q+1 runs 3, 5, 7, 9, 11 for fold, cusp, swallowtail and beyond. One formula, five rungs. That is the ladder.",
+  "distortion_factor2": "This constant was wrong in this project's own notes for a while. An earlier draft carried I(s) = s^(2q+1)/[4(2q+1)] - too small by a factor of 2 - until the q=2 case was checked against a boundary-value solve and disagreed. The formula shown here is the corrected one.",
+  "distortion_leading": "p = t^q is the leading behaviour of the optimal path, not the path itself. The closed form is the leading-order action; a boundary-value solve of the full Euler-Lagrange system approaches it from below, and at fixed s the low rungs are still visibly short of it.",
+  "distortion_onerung": "The coefficient ladder shown is the cusp, q=2, which is settled and published. The swallowtail ladder is still being refined at the top rungs and is deliberately not drawn here."
+ },
+ "delta3": {
+  "headline": "Three families, one word",
+  "setup": "\"Multicritical\" names at least three different objects in this literature, and the differences are not cosmetic — two of the three are integrable by construction and one is provably not. This module is the coda: it exists so the ladder you have just climbed is not filed under the wrong heading.",
+  "swept": "SWEPT MULTICRITICAL — the family of this course. A second-order operator whose swept turning potential is multicritical. The index q is the turning order. Skeleton: Bessel of order 1/(q+2); the escape levels are its zeros. Provably NOT integrable: no Fredholm/soft-edge determinant (the operator is unbounded below) and no Painlevé σ-reduction (the skeleton is an isomonodromy fixed point).",
+  "genuine": "GENUINE DIFFRACTION CATASTROPHE (Berry–Upstill) — an n-th ORDER equation. Airy, then Pearcey, then the swallowtail function. The multicriticality lives in the order of the equation, not in a swept potential. Shares its first rung with us and nothing after.",
+  "rmt": "RANDOM-MATRIX MULTICRITICAL EDGE — \"higher-order analogues of Tracy–Widom\". When the equilibrium density vanishes to higher order at the edge, the limit laws are Fredholm determinants of higher Airy-type kernels from the Painlevé I/II hierarchies. Integrable by construction. This is the family whose name collides with ours most dangerously.",
+  "divergence": "The two ODE families agree at the fold and then move in OPPOSITE directions. As the swept turning order q rises the laws grow MORE skewed; as the Berry–Upstill order n rises they trend TOWARD Gaussian. One shared rung is not a shared family.",
+  "falsify": "If these were one family, the two curves would track each other instead of separating after their shared first rung — and the swept rungs would inherit an integrable structure. Neither happens.",
+  "distortion_slice": "Any swallowtail SURFACE that can be drawn is a slice of a higher-dimensional unfolding, and it belongs to family 2, not to this course's family 1. It is shown here only to name the object being distinguished — never as the thing the ladder is made of.",
+  "distortion_thirdcol": "The third column has no coefficient ladder drawn beside the others because it is not built the same way: it is a limit law of an ensemble, not the first-passage law of a swept operator. Placing three columns side by side implies a common construction that does not exist; only the WORD is common.",
+  "distortion_skew": "The skew values are measured, not derived — Monte-Carlo for the swept rungs (2.8e6 escapes each) and numerical integration for the Berry–Upstill ones. They carry sampling error of order the last digit shown, which is far below the separation being claimed but is not zero."
+ }
 }

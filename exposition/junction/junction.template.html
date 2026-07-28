@@ -76,6 +76,14 @@
   </div>
 
   <div class="card">
+    <h2 class="ana">the other half: what the coefficients say back</h2>
+    <p class="note" style="margin-top:0" id="rs"></p>
+    <canvas id="cr" height="280"></canvas>
+    <p class="note" id="rf"></p>
+    <p class="note" id="rl"></p>
+  </div>
+
+  <div class="card">
     <h2>one formula, five rungs</h2>
     <table>
       <thead><tr><th>rung</th><th>q</th><th>I(s)</th><th>tail exponent</th>
@@ -102,6 +110,12 @@ document.getElementById('s2').innerHTML = '<b>Analysis.</b> ' + CAP.analysis_sid
 document.getElementById('s3').innerHTML = '<b>The family.</b> ' + CAP.the_family;
 document.getElementById('s4').textContent =
   CAP.distortion_factor2 + '  ' + CAP.distortion_leading + '  ' + CAP.distortion_onerung;
+
+document.getElementById('rs').innerHTML = CAP.ratio_setup;
+document.getElementById('rf').innerHTML = '<b style="color:var(--ink)">What happens instead.</b> '
+  + CAP.ratio_finding;
+document.getElementById('rl').innerHTML = '<b style="color:var(--red)">And the honest limit.</b> '
+  + CAP.ratio_limit;
 
 let q = 2, s = 1.6;
 const fam = () => REF.family.find(f => f.q === q);
@@ -132,10 +146,16 @@ const cg = document.getElementById('cg'), gx = cg.getContext('2d');
 const ca = document.getElementById('ca'), ax = ca.getContext('2d');
 function resize(){
   const dpr = devicePixelRatio || 1;
-  for (const [c, ctx] of [[cg, gx], [ca, ax]]){
-    const b = c.getBoundingClientRect();
-    c.width = b.width * dpr; c.height = 250 * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  for (const [c, ctx] of [[cg, gx], [ca, ax], [document.getElementById('cr'), null]]){
+    const bb = c.getBoundingClientRect();
+    const cx = ctx || c.getContext('2d');
+    const cssH = (c.id === 'cr' ? 280 : 250);
+    // Set the CSS height explicitly.  Without it the element's layout height follows the
+    // backing-store height (cssH * dpr), which on a HiDPI display doubles every panel and
+    // leaves a large blank gap in the page.
+    c.style.height = cssH + 'px';
+    c.width = bb.width * dpr; c.height = cssH * dpr;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   draw();
 }
@@ -212,6 +232,52 @@ function drawAna(){
   ax.fillText('log₁₀ P(depth > s)', 0, 0); ax.restore();
 }
 
+function drawRatios(){
+  const cr = document.getElementById('cr'), rx = cr.getContext('2d');
+  const W = cr.width / (devicePixelRatio || 1), H = 280, m = {l: 52, r: 16, t: 14, b: 34};
+  rx.clearRect(0, 0, W, H); rx.fillStyle = '#fff'; rx.fillRect(0, 0, W, H);
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  const R = REF.ratios, M = REF.modelRatios;
+  const LO = -0.9, HI = 4.4;
+  const px = k => x0 + (k + 0.5) / R.length * (x1 - x0);
+  const py = v => y1 - (v - LO) / (HI - LO) * (y1 - y0);
+  rx.strokeStyle = '#e3e0da'; rx.lineWidth = 1; rx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  rx.strokeStyle = '#20242b'; rx.lineWidth = .8;
+  rx.beginPath(); rx.moveTo(x0, py(0)); rx.lineTo(x1, py(0)); rx.stroke();
+
+  // what a single REAL singularity at A would give: a flat line at 1/A
+  rx.save(); rx.setLineDash([6, 4]); rx.strokeStyle = '#1f9d63'; rx.lineWidth = 1.8;
+  rx.beginPath(); rx.moveTo(x0, py(REF.invA)); rx.lineTo(x1, py(REF.invA)); rx.stroke();
+  rx.restore();
+  rx.fillStyle = '#1f9d63'; rx.font = '11px ui-sans-serif,system-ui'; rx.textAlign = 'right';
+  rx.fillText('1/A = ' + REF.invA.toFixed(3) + '  — where a single real singularity would settle',
+              x1 - 8, py(REF.invA) - 7);
+
+  // the conjugate-pair model
+  rx.strokeStyle = '#7a5cc0'; rx.lineWidth = 2; rx.beginPath();
+  M.forEach((d, i) => i ? rx.lineTo(px(d.k), py(d.r)) : rx.moveTo(px(d.k), py(d.r)));
+  rx.stroke();
+  rx.fillStyle = '#7a5cc0';
+  for (const d of M){ rx.beginPath(); rx.arc(px(d.k), py(d.r), 3.4, 0, 7); rx.fill(); }
+
+  // the data
+  rx.strokeStyle = '#2f6fb0'; rx.lineWidth = 2.4; rx.beginPath();
+  R.forEach((d, i) => i ? rx.lineTo(px(d.k), py(d.r)) : rx.moveTo(px(d.k), py(d.r)));
+  rx.stroke();
+  rx.fillStyle = '#2f6fb0';
+  for (const d of R){ rx.beginPath(); rx.arc(px(d.k), py(d.r), 5, 0, 7); rx.fill(); }
+
+  rx.fillStyle = '#5c6470'; rx.textAlign = 'center'; rx.font = '11px ui-sans-serif,system-ui';
+  for (const d of R) rx.fillText('k=' + d.k, px(d.k), y1 + 16);
+  rx.fillText('ratio of successive Borel coefficients,  b' +
+              '\u2096\u208A\u2081 / b\u2096', (x0 + x1) / 2, y1 + 29);
+  rx.textAlign = 'left';
+  rx.fillStyle = '#2f6fb0'; rx.fillText('the actual cusp ladder', x0 + 10, y0 + 16);
+  rx.fillStyle = '#7a5cc0';
+  rx.fillText('a conjugate pair at 1.9 e^{\u00B1i50\u00B0}  (residual ' +
+              (100 * REF.model.residual).toFixed(1) + '%)', x0 + 10, y0 + 32);
+}
+
 function draw(){
   const f = fam(), A = action(q, s), An = actionNumeric(q, s);
   document.getElementById('hero').innerHTML =
@@ -222,7 +288,7 @@ function draw(){
     'the shaded area on the left, and the slope on the right, are this same number — ' +
     'computed here two ways and agreeing to ' +
     (Math.abs(An - A) / Math.max(1, A)).toExponential(1);
-  drawGeom(); drawAna();
+  drawGeom(); drawAna(); drawRatios();
   document.getElementById('gn').innerHTML =
     'The cheapest way to hold the escape off to depth <i>s</i> keeps p ≈ t<sup>' + q +
     '</sup>. Its cost is ½∫p²dt — an elementary area, no asymptotics anywhere.';

@@ -225,8 +225,21 @@ Completed 2026-07-28 against `junction/junction.html`. The node where the two tr
 3. **The shaded region is drawn under p, not under p²/2.** It marks the *support* of the action
    integral, not its value; the height is p and the area is not the number quoted. Legible as a
    "cost accumulates here" cue, misleading if read quantitatively. **Weakest point of the module.**
-4. **The right-hand panel plots the tail exponent, not the coefficients.** The claim that the same
-   I fixes the divergence rate of the v_k is *asserted* in caption, not shown — the ratio data
-   exists in the build output but is not drawn. The junction is therefore only half-demonstrated.
+4. ~~**The right-hand panel plots the tail exponent, not the coefficients.**~~ **RESOLVED
+   2026-07-28.** A third panel now draws the Domb–Sykes ratios, and a static twin (`ratio_still.py`)
+   renders the same numbers. But the resolution changed the claim, and the honest version is
+   weaker and more interesting than the one it replaces:
+   * The ratios **do not settle** to 1/A. They swing — sign flip at k=2, spike above 3.7 at k=3.
+   * That swing is **diagnostic, not noise**: a conjugate pair at ρ=1.9, θ=50° with one fitted
+     phase reproduces the whole sequence to **0.46%**.
+   * But the **modulus is not recoverable from seven coefficients**. The root test |b_k|^(−1/k)
+     plateaus at 2.5–2.7 against a true |ζ|≈1.9 and is not converging.
+   So the junction's claim is now shown *and* bounded: the coefficients do encode the geometry, and
+   seven of them cannot say so plainly. That is precisely why the programme needed matched-K
+   calibration rather than a textbook Domb–Sykes — which the module now demonstrates instead of
+   assuming.
+4b. **The pair's ρ and θ are FIXED, not fitted.** Only the phase and an overall scale are free, so
+   the 0.46% is a two-parameter check of a previously reported result, not evidence for it. A
+   viewer could read the close overlay as independent confirmation of ρ=1.9, θ=50°. It is not.
 5. **The ladder shown is the cusp only.** The swallowtail coefficients are actively being revised
    (v₇ changed on 2026-07-28) and are deliberately excluded rather than shown as settled.

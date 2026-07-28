@@ -76,6 +76,14 @@
   </div>
 
   <div class="card">
+    <h2 class="ana">the other half: what the coefficients say back</h2>
+    <p class="note" style="margin-top:0" id="rs"></p>
+    <canvas id="cr" height="280"></canvas>
+    <p class="note" id="rf"></p>
+    <p class="note" id="rl"></p>
+  </div>
+
+  <div class="card">
     <h2>one formula, five rungs</h2>
     <table>
       <thead><tr><th>rung</th><th>q</th><th>I(s)</th><th>tail exponent</th>
@@ -94,7 +102,7 @@
 </div>
 
 <script>
-const REF = {"family": [{"q": 1, "name": "fold", "exp": 3, "den": 6, "coef": 0.16666666666666666, "bvpRatio": 0.839}, {"q": 2, "name": "cusp", "exp": 5, "den": 10, "coef": 0.1, "bvpRatio": 0.93}, {"q": 3, "name": "swallowtail", "exp": 7, "den": 14, "coef": 0.07142857142857142, "bvpRatio": 0.981}, {"q": 4, "name": "butterfly", "exp": 9, "den": 18, "coef": 0.05555555555555555, "bvpRatio": 0.997}, {"q": 5, "name": "rung 5", "exp": 11, "den": 22, "coef": 0.045454545454545456, "bvpRatio": 0.9995}], "v": [0.134, 0.111, 0.104, -0.03, -0.451, -1.19, -1.9], "ratios": [{"k": 0, "r": 1.2072072072072073}, {"k": 1, "r": 1.0673076923076923}, {"k": 2, "r": 3.466666666666667}, {"k": 3, "r": 0.06651884700665188}, {"k": 4, "r": 0.3789915966386555}, {"k": 5, "r": 0.6263157894736842}], "captions": {"headline": "The junction: one ladder, built by geometry, read by analysis.", "setup": "Everything geometric in this course produces one sequence of numbers. Everything analytic consumes it. This is where the two halves touch, and they touch at a single quantity: the instanton action.", "geometry_side": "Hold the escape off to depth s and the cheapest way to do it costs I(s) = (1/2) integral of p^2, with p = t^q along the way. That integral is elementary: I(s) = s^(2q+1) / [2(2q+1)]. Nothing asymptotic, nothing fitted - just an area.", "analysis_side": "That same number does two jobs on the other side. It sets the tail, P(depth > s) ~ exp(-I/eta^2). And it sets where the Borel singularity sits, so it fixes how fast the coefficients v_k diverge. Geometry hands analysis a number; the divergence rate hands it back.", "the_family": "Change the rung and only the exponent moves: 2q+1 runs 3, 5, 7, 9, 11 for fold, cusp, swallowtail and beyond. One formula, five rungs. That is the ladder.", "distortion_factor2": "This constant was wrong in this project's own notes for a while. An earlier draft carried I(s) = s^(2q+1)/[4(2q+1)] - too small by a factor of 2 - until the q=2 case was checked against a boundary-value solve and disagreed. The formula shown here is the corrected one.", "distortion_leading": "p = t^q is the leading behaviour of the optimal path, not the path itself. The closed form is the leading-order action; a boundary-value solve of the full Euler-Lagrange system approaches it from below, and at fixed s the low rungs are still visibly short of it.", "distortion_onerung": "The coefficient ladder shown is the cusp, q=2, which is settled and published. The swallowtail ladder is still being refined at the top rungs and is deliberately not drawn here."}}, CAP = REF.captions;
+const REF = {"family": [{"q": 1, "name": "fold", "exp": 3, "den": 6, "coef": 0.16666666666666666, "bvpRatio": 0.839}, {"q": 2, "name": "cusp", "exp": 5, "den": 10, "coef": 0.1, "bvpRatio": 0.93}, {"q": 3, "name": "swallowtail", "exp": 7, "den": 14, "coef": 0.07142857142857142, "bvpRatio": 0.981}, {"q": 4, "name": "butterfly", "exp": 9, "den": 18, "coef": 0.05555555555555555, "bvpRatio": 0.997}, {"q": 5, "name": "rung 5", "exp": 11, "den": 22, "coef": 0.045454545454545456, "bvpRatio": 0.9995}], "v": [0.134, 0.111, 0.104, -0.03, -0.451, -1.19, -1.9], "b": [0.134, 0.111, 0.052, -0.005, -0.01879166666666667, -0.009916666666666666, -0.002638888888888889], "ratios": [{"k": 0, "r": 0.8283582089552238}, {"k": 1, "r": 0.46846846846846846}, {"k": 2, "r": -0.09615384615384616}, {"k": 3, "r": 3.7583333333333337}, {"k": 4, "r": 0.5277161862527715}, {"k": 5, "r": 0.26610644257703087}], "modelRatios": [{"k": 0, "r": 0.8895903009432642}, {"k": 1, "r": 0.3652299006922804}, {"k": 2, "r": -0.0818306203730047}, {"k": 3, "r": 4.061761029464457}, {"k": 4, "r": 0.6084194700875445}, {"k": 5, "r": 0.22132687694469522}], "rootTest": [{"k": 1, "val": 9.00900900900901}, {"k": 2, "val": 4.3852900965351465}, {"k": 3, "val": 5.848035476425731}, {"k": 4, "val": 2.7009010578251056}, {"k": 5, "val": 2.516093970061315}, {"k": 6, "val": 2.6900673244387296}], "model": {"rho": 1.9, "theta": 50.0, "phi": 233.82000000000002, "residual": 0.00457772224688304}, "invA": 0.5263157894736842, "captions": {"headline": "The junction: one ladder, built by geometry, read by analysis.", "setup": "Everything geometric in this course produces one sequence of numbers. Everything analytic consumes it. This is where the two halves touch, and they touch at a single quantity: the instanton action.", "geometry_side": "Hold the escape off to depth s and the cheapest way to do it costs I(s) = (1/2) integral of p^2, with p = t^q along the way. That integral is elementary: I(s) = s^(2q+1) / [2(2q+1)]. Nothing asymptotic, nothing fitted - just an area.", "analysis_side": "That same number does two jobs on the other side. It sets the tail, P(depth > s) ~ exp(-I/eta^2). And it sets where the Borel singularity sits, so it fixes how fast the coefficients v_k diverge. Geometry hands analysis a number; the divergence rate hands it back.", "the_family": "Change the rung and only the exponent moves: 2q+1 runs 3, 5, 7, 9, 11 for fold, cusp, swallowtail and beyond. One formula, five rungs. That is the ladder.", "distortion_factor2": "This constant was wrong in this project's own notes for a while. An earlier draft carried I(s) = s^(2q+1)/[4(2q+1)] - too small by a factor of 2 - until the q=2 case was checked against a boundary-value solve and disagreed. The formula shown here is the corrected one.", "distortion_leading": "p = t^q is the leading behaviour of the optimal path, not the path itself. The closed form is the leading-order action; a boundary-value solve of the full Euler-Lagrange system approaches it from below, and at fixed s the low rungs are still visibly short of it.", "distortion_onerung": "The coefficient ladder shown is the cusp, q=2, which is settled and published. The swallowtail ladder is still being refined at the top rungs and is deliberately not drawn here.", "ratio_setup": "Now the other half. If a single singularity sat on the positive real axis at distance A, the ratios of successive Borel coefficients would settle down to 1/A. That is the standard way to read a singularity off a series.", "ratio_finding": "They do not settle. They swing - sign flip at k=2, a spike above 3.7 at k=3, then back down. That is not noise and it is not a failure of the engine: it is what a COMPLEX CONJUGATE PAIR does. A pair at modulus 1.9 and angle 50 degrees reproduces the whole sequence to half a percent, with one fitted phase.", "ratio_limit": "But the modulus is not readable from seven coefficients. The root test gives 2.5-2.7 against a true value near 1.9 and is not converging. So the coefficients DO know the geometry - the swing encodes the angle, the envelope the modulus - and seven of them are not enough to read it off naively. That is precisely why this programme needed a matched-truncation calibration rather than a textbook Domb-Sykes."}}, CAP = REF.captions;
 document.getElementById('h1').textContent = CAP.headline;
 document.getElementById('sub').textContent = CAP.setup;
 document.getElementById('s1').innerHTML = '<b>Geometry.</b> ' + CAP.geometry_side;
@@ -102,6 +110,12 @@ document.getElementById('s2').innerHTML = '<b>Analysis.</b> ' + CAP.analysis_sid
 document.getElementById('s3').innerHTML = '<b>The family.</b> ' + CAP.the_family;
 document.getElementById('s4').textContent =
   CAP.distortion_factor2 + '  ' + CAP.distortion_leading + '  ' + CAP.distortion_onerung;
+
+document.getElementById('rs').innerHTML = CAP.ratio_setup;
+document.getElementById('rf').innerHTML = '<b style="color:var(--ink)">What happens instead.</b> '
+  + CAP.ratio_finding;
+document.getElementById('rl').innerHTML = '<b style="color:var(--red)">And the honest limit.</b> '
+  + CAP.ratio_limit;
 
 let q = 2, s = 1.6;
 const fam = () => REF.family.find(f => f.q === q);
@@ -132,10 +146,16 @@ const cg = document.getElementById('cg'), gx = cg.getContext('2d');
 const ca = document.getElementById('ca'), ax = ca.getContext('2d');
 function resize(){
   const dpr = devicePixelRatio || 1;
-  for (const [c, ctx] of [[cg, gx], [ca, ax]]){
-    const b = c.getBoundingClientRect();
-    c.width = b.width * dpr; c.height = 250 * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  for (const [c, ctx] of [[cg, gx], [ca, ax], [document.getElementById('cr'), null]]){
+    const bb = c.getBoundingClientRect();
+    const cx = ctx || c.getContext('2d');
+    const cssH = (c.id === 'cr' ? 280 : 250);
+    // Set the CSS height explicitly.  Without it the element's layout height follows the
+    // backing-store height (cssH * dpr), which on a HiDPI display doubles every panel and
+    // leaves a large blank gap in the page.
+    c.style.height = cssH + 'px';
+    c.width = bb.width * dpr; c.height = cssH * dpr;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   draw();
 }
@@ -212,6 +232,52 @@ function drawAna(){
   ax.fillText('log₁₀ P(depth > s)', 0, 0); ax.restore();
 }
 
+function drawRatios(){
+  const cr = document.getElementById('cr'), rx = cr.getContext('2d');
+  const W = cr.width / (devicePixelRatio || 1), H = 280, m = {l: 52, r: 16, t: 14, b: 34};
+  rx.clearRect(0, 0, W, H); rx.fillStyle = '#fff'; rx.fillRect(0, 0, W, H);
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  const R = REF.ratios, M = REF.modelRatios;
+  const LO = -0.9, HI = 4.4;
+  const px = k => x0 + (k + 0.5) / R.length * (x1 - x0);
+  const py = v => y1 - (v - LO) / (HI - LO) * (y1 - y0);
+  rx.strokeStyle = '#e3e0da'; rx.lineWidth = 1; rx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  rx.strokeStyle = '#20242b'; rx.lineWidth = .8;
+  rx.beginPath(); rx.moveTo(x0, py(0)); rx.lineTo(x1, py(0)); rx.stroke();
+
+  // what a single REAL singularity at A would give: a flat line at 1/A
+  rx.save(); rx.setLineDash([6, 4]); rx.strokeStyle = '#1f9d63'; rx.lineWidth = 1.8;
+  rx.beginPath(); rx.moveTo(x0, py(REF.invA)); rx.lineTo(x1, py(REF.invA)); rx.stroke();
+  rx.restore();
+  rx.fillStyle = '#1f9d63'; rx.font = '11px ui-sans-serif,system-ui'; rx.textAlign = 'right';
+  rx.fillText('1/A = ' + REF.invA.toFixed(3) + '  — where a single real singularity would settle',
+              x1 - 8, py(REF.invA) - 7);
+
+  // the conjugate-pair model
+  rx.strokeStyle = '#7a5cc0'; rx.lineWidth = 2; rx.beginPath();
+  M.forEach((d, i) => i ? rx.lineTo(px(d.k), py(d.r)) : rx.moveTo(px(d.k), py(d.r)));
+  rx.stroke();
+  rx.fillStyle = '#7a5cc0';
+  for (const d of M){ rx.beginPath(); rx.arc(px(d.k), py(d.r), 3.4, 0, 7); rx.fill(); }
+
+  // the data
+  rx.strokeStyle = '#2f6fb0'; rx.lineWidth = 2.4; rx.beginPath();
+  R.forEach((d, i) => i ? rx.lineTo(px(d.k), py(d.r)) : rx.moveTo(px(d.k), py(d.r)));
+  rx.stroke();
+  rx.fillStyle = '#2f6fb0';
+  for (const d of R){ rx.beginPath(); rx.arc(px(d.k), py(d.r), 5, 0, 7); rx.fill(); }
+
+  rx.fillStyle = '#5c6470'; rx.textAlign = 'center'; rx.font = '11px ui-sans-serif,system-ui';
+  for (const d of R) rx.fillText('k=' + d.k, px(d.k), y1 + 16);
+  rx.fillText('ratio of successive Borel coefficients,  b' +
+              '\u2096\u208A\u2081 / b\u2096', (x0 + x1) / 2, y1 + 29);
+  rx.textAlign = 'left';
+  rx.fillStyle = '#2f6fb0'; rx.fillText('the actual cusp ladder', x0 + 10, y0 + 16);
+  rx.fillStyle = '#7a5cc0';
+  rx.fillText('a conjugate pair at 1.9 e^{\u00B1i50\u00B0}  (residual ' +
+              (100 * REF.model.residual).toFixed(1) + '%)', x0 + 10, y0 + 32);
+}
+
 function draw(){
   const f = fam(), A = action(q, s), An = actionNumeric(q, s);
   document.getElementById('hero').innerHTML =
@@ -222,7 +288,7 @@ function draw(){
     'the shaded area on the left, and the slope on the right, are this same number — ' +
     'computed here two ways and agreeing to ' +
     (Math.abs(An - A) / Math.max(1, A)).toExponential(1);
-  drawGeom(); drawAna();
+  drawGeom(); drawAna(); drawRatios();
   document.getElementById('gn').innerHTML =
     'The cheapest way to hold the escape off to depth <i>s</i> keeps p ≈ t<sup>' + q +
     '</sup>. Its cost is ½∫p²dt — an elementary area, no asymptotics anywhere.';

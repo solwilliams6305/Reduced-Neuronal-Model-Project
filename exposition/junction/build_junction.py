@@ -18,6 +18,7 @@ Everything here is computed:
 Run:  python3 build_junction.py   ->  junction.html
 """
 import json
+import math
 import pathlib
 import numpy as np
 from scipy.integrate import quad
@@ -25,7 +26,8 @@ from scipy.integrate import quad
 HERE = pathlib.Path(__file__).parent
 CAPS = json.loads((HERE.parent / 'captions.json').read_text())
 REQUIRED = ('headline', 'setup', 'geometry_side', 'analysis_side', 'the_family',
-            'distortion_factor2', 'distortion_leading', 'distortion_onerung')
+            'distortion_factor2', 'distortion_leading', 'distortion_onerung',
+            'ratio_setup', 'ratio_finding', 'ratio_limit')
 missing = [k for k in REQUIRED if k not in CAPS.get('delta1', {})]
 if missing:
     raise SystemExit(f'captions.json is missing delta1 keys: {missing}')
@@ -51,18 +53,48 @@ for f in family:
     f['bvpRatio'] = bvp[f['q']]
 
 # ---- the cusp ladder, and what it says about the singularity -------------------------------
-v = [0.134, 0.111, 0.104, -0.030, -0.451, -1.19, -1.90]
-ratios = []
-for k in range(len(v) - 1):
-    if v[k] != 0:
-        ratios.append({'k': k, 'r': float(abs(v[k]) / abs(v[k + 1]))})
+# The published cusp coefficients (same values as W_make_figures.py).
+v = np.array([0.134, 0.111, 0.104, -0.030, -0.451, -1.19, -1.90])
+kk = np.arange(len(v))
+fact = np.array([float(math.factorial(int(i))) for i in kk])
+b = v / fact                                   # Borel coefficients v_k / k!
+
+# Signed ratios.  A single singularity on the positive real axis at distance A would drive these
+# to 1/A.  They do not settle -- and that is the finding, not a defect.
+ratios = [{'k': int(k), 'r': float(b[k + 1] / b[k])} for k in range(len(b) - 1)]
+
+# Does a complex-conjugate pair account for the swing?  Model b_k ~ rho^-k cos(k theta - phi)
+# with rho and theta FIXED to the reported Borel data; only the phase and an overall scale are
+# fitted, so this is a two-parameter check of a stated result, not a free fit.
+RHO, THETA = 1.9, np.deg2rad(50.0)
+best = None
+for phi in np.linspace(0, 2 * np.pi, 2001):
+    m = RHO ** (-kk.astype(float)) * np.cos(kk * THETA - phi)
+    sc = float(np.dot(m, b) / np.dot(m, m))
+    res = float(np.sum((sc * m - b) ** 2) / np.sum(b ** 2))
+    if best is None or res < best[0]:
+        best = (res, float(phi), sc, m)
+mres, mphi, msc, mvec = best
+modelRatios = [{'k': int(k), 'r': float((msc * mvec)[k + 1] / (msc * mvec)[k])}
+               for k in range(len(b) - 1)]
+
+# Root test: what the modulus would look like if you tried to read it off directly.
+rootTest = [{'k': int(i), 'val': float(abs(b[i]) ** (-1.0 / i))} for i in range(1, len(b))]
 
 ref = {
     'family': family,
-    'v': v,
+    'v': [float(x) for x in v],
+    'b': [float(x) for x in b],
     'ratios': ratios,
+    'modelRatios': modelRatios,
+    'rootTest': rootTest,
+    'model': {'rho': RHO, 'theta': 50.0, 'phi': float(np.degrees(mphi)), 'residual': mres},
+    'invA': 1.0 / RHO,
     'captions': CAPS['delta1'],
 }
+
+# fail loudly if the headline claim stops holding
+assert mres < 0.02, f'conjugate-pair model no longer fits the ladder: residual {mres:.4f}'
 
 tpl = (HERE / 'junction.template.html').read_text()
 (HERE / 'junction.html').write_text(tpl.replace('/*__REFERENCE__*/', json.dumps(ref)))
@@ -73,5 +105,11 @@ print(f'  action law verified by quadrature at {len(QS)} rungs x 3 depths;'
 for f in family:
     print(f'    q={f["q"]:d} {f["name"]:11s} I(s) = s^{f["exp"]:d}/{f["den"]:d}'
           f'   BVP/closed at s=10: {f["bvpRatio"]}')
-print(f'  cusp ladder: {len(v)} coefficients, {len(ratios)} consecutive ratios')
+print(f'  cusp ladder: {len(v)} coefficients, {len(ratios)} consecutive Borel ratios')
+print(f'  conjugate-pair model rho={RHO}, theta=50deg, phi={np.degrees(mphi):.1f}deg'
+      f'  -> relative residual {mres:.4f}')
+print(f'  data ratios  : {[round(r["r"], 3) for r in ratios]}')
+print(f'  model ratios : {[round(r["r"], 3) for r in modelRatios]}')
+print(f'  root test |b_k|^(-1/k) at k=4,5,6 : '
+      f'{[round(r["val"], 2) for r in rootTest[-3:]]}  (true |zeta| ~ {RHO}) -> NOT converged')
 print('  NB the swallowtail ladder is in flux (v7 revised 2026-07-28) and is NOT used here')

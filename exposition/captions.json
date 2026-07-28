@@ -107,5 +107,16 @@
     "distortion_dlmf": "The special functions themselves are not replotted here. DLMF chapter 36.3, by Berry and Howls, already does that better than this project would - rotatable, in modulus and phase, across parameter slices. What is added here is the narrative, not the surfaces.",
     "distortion_absence": "'No Painleve reduction above the cusp' is an absence of a known reduction, plus explicit exclusion results at q=3. It is not a proof that none can exist for every higher rung.",
     "distortion_notthom": "These rungs are indexed by turning ORDER in a second-order equation. They are not Thom's A_k catastrophe surfaces, and the resemblance of the names is a trap - see the coda."
+  },
+  "gamma23": {
+    "headline": "The ambiguity IS the exponentially small term.",
+    "setup": "Divide a factorially divergent series by k! and it converges - that is the Borel transform. For the model series here it is exactly 1/(A - zeta), so the Borel plane contains one obstruction: a pole sitting at A. To recover a number you integrate from 0 out to infinity against exp(-zeta/x). That path runs straight into it.",
+    "cut": "You cannot go through. So you go round - and there are two ways round, above and below, with nothing whatsoever to choose between them. Drag the contour. Notice first what does NOT change: push the detour higher and the answer is identical, because Cauchy says only the homotopy class matters, not the shape.",
+    "twochoices": "Now flip to the other side. The real part is unchanged; the imaginary part flips sign. Two perfectly defensible answers, differing by something.",
+    "identity": "And that something is not arbitrary. Above minus below is exactly 2 pi i exp(-A/x) - the residue at the pole, times the exponential the pole sits at. The location of the obstruction has become the SIZE of the ambiguity. That single line is what the rest of the analysis thread is built on.",
+    "sowhat": "So the divergent series does not determine a number. It determines a number up to an exponentially small ambiguity, and fixing that ambiguity requires putting a term of exactly that size back in by hand. That extra term is the trans-series, and how it switches on as you rotate is the Stokes phenomenon.",
+    "distortion_model": "This is the model series, m_k = k!/A^(k+1), whose Borel transform is a single POLE and is exactly summable in closed form. The programme's real coefficients have a branch point, not a pole, and a conjugate pair off-axis besides. The mechanism is the same; the tidiness is not.",
+    "distortion_pole": "A pole is the easy case. Generic Borel singularities are branch points, and then the 'two sides' are two sides of a CUT rather than two ways round an isolated point - the residue formula becomes a discontinuity across the cut. Same conclusion, more work.",
+    "distortion_quadrature": "The contour integral is trapezoid quadrature on a finite range. Bring the detour very close to the pole and the integrand sharpens faster than the grid resolves; the widget refuses below a minimum height rather than quietly returning a wrong number."
   }
 }

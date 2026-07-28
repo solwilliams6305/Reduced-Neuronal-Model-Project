@@ -343,3 +343,28 @@ Completed 2026-07-28 against `ladder/ladder.html`. Closes the analysis thread.
 5. **The verification compares shapes after one overall scale factor.** Both curves solve the same
    equation, so a constant is unfixable from the ODE alone; matching at the midpoint is legitimate
    but it is one fitted number, not zero.
+
+---
+
+## Module γ2+γ3 (Borel plane) — INTERACTIVE distortion statement
+Completed 2026-07-28 against `borel/borel.html`. Supersedes the storyboard's entries where they
+conflict; the stills remain as `pilot_borel/storyboard_contact.png`.
+
+1. **A POLE is the easy case, and the programme's real singularity is not one.** The model series
+   m_k = k!/A^(k+1) has B(ζ) = 1/(A−ζ) exactly — one simple pole, closed-form residue. The real
+   coefficients have a **branch point** with a cut, plus an off-axis conjugate pair. The mechanism
+   transfers; the tidiness does not. Stated on-page, but the widget is so clean that a viewer may
+   generalise its simplicity rather than its logic.
+2. **"Two ways round a point" becomes "two sides of a cut" in the real case.** The residue formula
+   becomes a discontinuity across the cut. Same conclusion, more machinery — and the storyboard's
+   panel 6 draws the cut correctly, so the two artifacts are deliberately not identical.
+3. **The widget refuses below a detour height of 0.30** rather than returning a wrong number: the
+   integrand sharpens faster than a 40,000-point trapezoid resolves. Honest, but it means the
+   most interesting limit — squeezing onto the pole — is exactly what cannot be shown.
+4. **The contour is a Gaussian bump, not a canonical path.** Its shape is arbitrary; only its
+   homotopy class matters, which the widget demonstrates by height-independence (5e−11). A viewer
+   could mistake the specific shape for something required.
+5. **The bridge panel shows the real cusp coefficients but does nothing with them.** It motivates
+   the visit to the Borel plane and then hands off — the promised connection between *these seven
+   numbers* and *this pole* is asserted, and is properly the junction module's job (δ1), which
+   itself only half-demonstrates it.

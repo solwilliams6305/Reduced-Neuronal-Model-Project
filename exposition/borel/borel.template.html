@@ -1,0 +1,268 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>The ambiguity is the exponentially small term</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63; --pur:#7a5cc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1020px;margin:0 auto;padding:22px 18px 46px}
+  h1{font-size:19px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:13px 15px;margin-bottom:12px}
+  canvas{display:block;width:100%;cursor:ns-resize;touch-action:none}
+  h2{font-size:12.5px;margin:0 0 7px;color:var(--sec);font-weight:600}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .ctl{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sec)}
+  input[type=range]{width:200px;accent-color:var(--amb)}
+  button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--line);
+         background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
+  button:hover{background:#f4f2ee}
+  button.go{border-color:#c8d8ea;background:#f2f7fc;color:var(--blue);font-weight:600}
+  .mono{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  .fail{color:var(--red);border-color:#f2c9c4;background:#fdf3f2}
+  .val{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+  .box{border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+  .box b{display:block;font-size:10.5px;color:var(--sec);text-transform:uppercase;
+         letter-spacing:.05em;margin-bottom:3px}
+  .box span{font:14px ui-monospace,Menlo,monospace}
+  .up{border-color:#c8dcef;background:#f5f9fd} .dn{border-color:#f0d9b0;background:#fdf8f0}
+  .df{border-color:#d9cff0;background:#f7f4fc}
+  .step{margin:0 0 9px;font-size:12.8px}
+  .muted{color:var(--sec)} .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+  .key{background:#f4f0fb;border:1px solid #d9cff0;border-radius:10px;padding:13px 15px;
+       font-size:13.4px;margin-bottom:12px}
+</style>
+
+<div class="wrap">
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="card">
+    <h2>the Borel plane — <b>drag up or down</b> to move the contour</h2>
+    <canvas id="cp" height="300"></canvas>
+    <div class="val">
+      <div class="box up"><b>passing above</b><span id="vup">—</span></div>
+      <div class="box dn"><b>passing below</b><span id="vdn">—</span></div>
+      <div class="box df"><b>difference</b><span id="vdf">—</span></div>
+    </div>
+    <p class="note" id="pn"></p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <span class="ctl">x <input id="x" type="range" min="0.18" max="0.75" step="0.005" value="0.4">
+        <span class="mono" id="xv" style="width:38px">0.40</span></span>
+      <span class="ctl">detour height
+        <input id="h" type="range" min="-2.2" max="2.2" step="0.02" value="0.9">
+        <span class="mono" id="hv" style="width:44px">+0.90</span></span>
+      <button class="go" id="flip">flip sides</button>
+      <button id="reset">reset</button>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+    <p class="note" id="note"></p>
+  </div>
+
+  <div class="key" id="key"></div>
+
+  <div class="card">
+    <h2>why we came here — the real coefficients could not tell us</h2>
+    <canvas id="cb" height="180"></canvas>
+    <p class="note" id="bn"></p>
+  </div>
+
+  <div class="card">
+    <p class="step" id="s1"></p>
+    <p class="step" id="s2"></p>
+    <p class="step" id="s3"></p>
+    <p class="step muted" style="font-size:11.8px" id="s4"></p>
+  </div>
+</div>
+
+<script>
+const REF = /*__REFERENCE__*/, CAP = REF.captions, A = REF.A;
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').textContent = CAP.setup;
+document.getElementById('s1').innerHTML = '<b>1. Two ways round.</b> ' + CAP.cut;
+document.getElementById('s2').innerHTML = '<b>2. The side matters.</b> ' + CAP.twochoices;
+document.getElementById('s3').innerHTML = '<b>3. So what.</b> ' + CAP.sowhat;
+document.getElementById('key').innerHTML = '<b>' + CAP.identity + '</b>';
+document.getElementById('s4').textContent =
+  CAP.distortion_model + '  ' + CAP.distortion_pole + '  ' + CAP.distortion_quadrature;
+
+// ---------------------------------------------------------------- Class A kernel
+// B(zeta) = 1/(A - zeta) exactly.  Contour detours over/under the pole by height h.
+// Must stay in lockstep with contour_value() in build_borel.py at the same NQ/T/WID.
+const HMIN = 0.30;   // below this the integrand sharpens faster than the grid resolves
+function contour(x, h){
+  const n = REF.NQ, T = REF.T, w = REF.WID, dt = T / (n - 1);
+  let re = 0, im = 0;
+  for (let i = 0; i < n; i++){
+    const t = 1e-9 + i * dt;
+    const g = Math.exp(-Math.pow((t - A) / w, 2));
+    const zr = t, zi = h * g;
+    const dzr = 1, dzi = h * g * (-2 * (t - A) / (w * w));
+    // exp(-z/x) / (A - z) * dz
+    const er = Math.exp(-zr / x) * Math.cos(zi / x), ei = -Math.exp(-zr / x) * Math.sin(zi / x);
+    const dr = A - zr, di = -zi, den = dr * dr + di * di;
+    const qr = (er * dr + ei * di) / den, qi = (ei * dr - er * di) / den;
+    const fr = qr * dzr - qi * dzi, fi = qr * dzi + qi * dzr;
+    const wgt = (i === 0 || i === n - 1) ? 0.5 : 1;
+    re += wgt * fr; im += wgt * fi;
+  }
+  return [re * dt, im * dt];
+}
+
+(function selfTest(){
+  let worst = 0;
+  for (const g of REF.golden){
+    const [re, im] = contour(g.x, g.h);
+    worst = Math.max(worst, Math.abs(re - g.re), Math.abs(im - g.im));
+  }
+  const el = document.getElementById('selftest'), ok = worst < 1e-9;
+  el.textContent = (ok ? 'port OK · Δ=' : 'PORT MISMATCH · Δ=') + worst.toExponential(1);
+  el.className = 'tag ' + (ok ? 'pass' : 'fail');
+  document.getElementById('note').innerHTML =
+    'Both sides are integrated live in the browser with the same rule Python uses (' +
+    REF.NQ.toLocaleString() + '-point trapezoid to ζ=' + REF.T + '); the badge checks they agree. ' +
+    'Python separately verifies the residue identity at ten times the resolution.';
+})();
+
+let x = 0.40, h = 0.9;
+const cp = document.getElementById('cp'), pc = cp.getContext('2d');
+const cb = document.getElementById('cb'), bc = cb.getContext('2d');
+function resize(){
+  const dpr = devicePixelRatio || 1;
+  for (const [c, hh] of [[cp, 300], [cb, 180]]){
+    const b = c.getBoundingClientRect(), cx = c.getContext('2d');
+    c.style.height = hh + 'px'; c.width = b.width * dpr; c.height = hh * dpr;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  draw();
+}
+addEventListener('resize', resize);
+
+const ZLO = -0.5, ZHI = 6.0, ILO = -2.6, IHI = 2.6;
+
+function drawPlane(){
+  const W = cp.width / (devicePixelRatio || 1), H = 300, m = {l: 46, r: 14, t: 12, b: 30};
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  pc.clearRect(0, 0, W, H); pc.fillStyle = '#fff'; pc.fillRect(0, 0, W, H);
+  pc.strokeStyle = '#e3e0da'; pc.lineWidth = 1; pc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const PX = r => x0 + (r - ZLO) / (ZHI - ZLO) * (x1 - x0);
+  const PY = i => y1 - (i - ILO) / (IHI - ILO) * (y1 - y0);
+  pc.strokeStyle = '#20242b'; pc.lineWidth = .8;
+  pc.beginPath(); pc.moveTo(x0, PY(0)); pc.lineTo(x1, PY(0)); pc.stroke();
+  pc.beginPath(); pc.moveTo(PX(0), y0); pc.lineTo(PX(0), y1); pc.stroke();
+
+  // the obstruction
+  pc.fillStyle = '#d84b3f';
+  pc.beginPath(); pc.arc(PX(A), PY(0), 7, 0, 7); pc.fill();
+  pc.font = '600 11.5px ui-sans-serif,system-ui'; pc.textAlign = 'center';
+  pc.fillText('pole at ζ = ' + A, PX(A), PY(0) + 22);
+
+  // the contour
+  const col = h > 0 ? '#2f6fb0' : '#d9851f';
+  pc.strokeStyle = col; pc.lineWidth = 2.6; pc.beginPath();
+  for (let k = 0; k <= 400; k++){
+    const t = (k / 400) * ZHI;
+    const g = Math.exp(-Math.pow((t - A) / REF.WID, 2));
+    const X = PX(t), Y = PY(h * g);
+    k ? pc.lineTo(X, Y) : pc.moveTo(X, Y);
+  }
+  pc.stroke();
+  // arrowhead
+  pc.fillStyle = col;
+  pc.beginPath(); pc.moveTo(PX(ZHI) - 2, PY(0));
+  pc.lineTo(PX(ZHI) - 12, PY(0) - 5); pc.lineTo(PX(ZHI) - 12, PY(0) + 5);
+  pc.closePath(); pc.fill();
+
+  pc.font = '11.5px ui-sans-serif,system-ui'; pc.textAlign = 'left';
+  pc.fillStyle = col;
+  pc.fillText(Math.abs(h) < HMIN ? 'too close to the pole'
+                                 : (h > 0 ? 'passing ABOVE' : 'passing BELOW'), x0 + 10, y0 + 17);
+  pc.fillStyle = '#5c6470';
+  pc.fillText('∫ B(ζ) e^(−ζ/x) dζ,   B(ζ) = 1/(A − ζ)', x0 + 10, y1 - 10);
+  pc.textAlign = 'center';
+  pc.fillText('Re ζ', (x0 + x1) / 2, y1 + 20);
+  pc.save(); pc.translate(15, (y0 + y1) / 2); pc.rotate(-Math.PI / 2);
+  pc.fillText('Im ζ', 0, 0); pc.restore();
+}
+
+function drawBridge(){
+  const W = cb.width / (devicePixelRatio || 1), H = 180, m = {l: 46, r: 14, t: 12, b: 28};
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  bc.clearRect(0, 0, W, H); bc.fillStyle = '#fff'; bc.fillRect(0, 0, W, H);
+  bc.strokeStyle = '#e3e0da'; bc.lineWidth = 1; bc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const v = REF.v, n = v.length;
+  const PX = k => x0 + (k + .5) / n * (x1 - x0);
+  const lo = Math.min(...v) * 1.15, hi = Math.max(...v) * 1.5;
+  const PY = u => y1 - (u - lo) / (hi - lo) * (y1 - y0);
+  bc.strokeStyle = '#20242b'; bc.lineWidth = .8;
+  bc.beginPath(); bc.moveTo(x0, PY(0)); bc.lineTo(x1, PY(0)); bc.stroke();
+  for (let k = 0; k < n; k++){
+    const c = v[k] >= 0 ? '#2f6fb0' : '#d84b3f';
+    bc.strokeStyle = c; bc.lineWidth = 3;
+    bc.beginPath(); bc.moveTo(PX(k), PY(0)); bc.lineTo(PX(k), PY(v[k])); bc.stroke();
+    bc.fillStyle = c; bc.beginPath(); bc.arc(PX(k), PY(v[k]), 4, 0, 7); bc.fill();
+    bc.fillStyle = '#5c6470'; bc.font = '10.5px ui-sans-serif,system-ui'; bc.textAlign = 'center';
+    bc.fillText(String(k), PX(k), y1 + 15);
+  }
+  bc.fillStyle = '#5c6470'; bc.textAlign = 'center';
+  bc.fillText('k', (x0 + x1) / 2, y1 + 25);
+  bc.save(); bc.translate(15, (y0 + y1) / 2); bc.rotate(-Math.PI / 2);
+  bc.fillText('vₖ (cusp)', 0, 0); bc.restore();
+  document.getElementById('bn').innerHTML =
+    'The programme’s actual cusp coefficients. Only seven of them, and the sign turns over at ' +
+    'k=3 — so the least-term floor cannot be read off them directly, and the location of the ' +
+    'obstruction has to come from the Borel plane instead. <b>That is why this module exists.</b>';
+}
+
+function draw(){
+  drawPlane(); drawBridge();
+  const near = Math.abs(h) < HMIN;
+  const hUp = Math.max(Math.abs(h), HMIN), hDn = -hUp;
+  const [ur, ui] = contour(x, hUp), [dr, di] = contour(x, hDn);
+  const fmt = (r, i) => r.toFixed(6) + (i >= 0 ? ' + ' : ' − ') + Math.abs(i).toFixed(6) + 'i';
+  document.getElementById('vup').textContent = fmt(ur, ui);
+  document.getElementById('vdn').textContent = fmt(dr, di);
+  const dfr = ur - dr, dfi = ui - di, pred = 2 * Math.PI * Math.exp(-A / x);
+  document.getElementById('vdf').innerHTML =
+    fmt(dfr, dfi) + '<br><span style="font-size:11px;color:var(--sec)">2π·e^(−A/x) = ' +
+    pred.toFixed(6) + '</span>';
+  document.getElementById('pn').innerHTML = near
+    ? '<span style="color:var(--red)"><b>Detour too close to the pole</b> — the quadrature ' +
+      'cannot resolve it, so the widget clamps rather than returning a wrong number.</span>'
+    : 'Real parts identical, imaginary parts opposite. Change the <i>height</i> and nothing ' +
+      'moves; change the <i>side</i> and the answer does. The difference matches 2π·e^(−A/x) to ' +
+      Math.abs(Math.abs(dfi) - pred).toExponential(1) + '.';
+  document.getElementById('xv').textContent = x.toFixed(2);
+  document.getElementById('hv').textContent = (h >= 0 ? '+' : '−') + Math.abs(h).toFixed(2);
+}
+
+cp.addEventListener('pointerdown', e => { cp.setPointerCapture(e.pointerId); drag(e); });
+cp.addEventListener('pointermove', e => { if (e.buttons) drag(e); });
+function drag(e){
+  const r = cp.getBoundingClientRect(), H = 300, m = {t: 12, b: 30};
+  const y = e.clientY - r.top;
+  const i = ILO + (H - m.b - y) / (H - m.t - m.b) * (IHI - ILO);
+  h = Math.max(-2.2, Math.min(2.2, i));
+  document.getElementById('h').value = h; draw();
+}
+document.getElementById('x').addEventListener('input', e => { x = +e.target.value; draw(); });
+document.getElementById('h').addEventListener('input', e => { h = +e.target.value; draw(); });
+document.getElementById('flip').addEventListener('click', () => {
+  h = -h; document.getElementById('h').value = h; draw();
+});
+document.getElementById('reset').addEventListener('click', () => {
+  x = 0.40; h = 0.9;
+  document.getElementById('x').value = x; document.getElementById('h').value = h; draw();
+});
+resize();
+</script>

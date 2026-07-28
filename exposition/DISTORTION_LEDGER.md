@@ -19,8 +19,12 @@ expert as each module is designed.
 
 ---
 
-## Module γ2+γ3 (pilot) — distortion statement
-Completed 2026-07-27 against `pilot_borel/storyboard.py`. **Needs expert correction.**
+## Module γ2+γ3 — distortion statement
+Completed 2026-07-27 against `pilot_borel/storyboard.py`; **superseded 2026-07-28 by
+`borel/borel.html`**, the interactive rebuild in the standard module convention. All three
+findings below carried across to the rebuild, and the rebuild states its own caveats
+(`distortion_model`, `distortion_pole`, `distortion_quadrature`) on-screen. `pilot_borel/` is
+retained only as the storyboard and stills that preceded it; it is no longer the module.
 
 1. ~~**The conjugate pair is a red herring in this arc, and it is the most visually salient thing
    on panel 6.**~~ **RESOLVED 2026-07-27 — expert confirmed this was the main defect.** The pair

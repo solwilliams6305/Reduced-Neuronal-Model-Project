@@ -1,0 +1,239 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>The same law, from somewhere else entirely</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63; --pur:#7a5cc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1020px;margin:0 auto;padding:22px 18px 46px}
+  h1{font-size:19px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:13px 15px;margin-bottom:12px}
+  canvas{display:block;width:100%}
+  h2{font-size:12.5px;margin:0 0 7px;color:var(--sec);font-weight:600}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--line);
+         background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
+  button:hover{background:#f4f2ee}
+  button.on{border-color:#c8d8ea;background:#f2f7fc;color:var(--blue);font-weight:600}
+  .mono{font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  table{border-collapse:collapse;width:100%;font-size:12px}
+  th,td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--sec);font-weight:600;font-size:11px}
+  tr.tw td{background:#f2fbf6;font-weight:600;color:#166b46}
+  .step{margin:0 0 9px;font-size:12.8px}
+  .muted{color:var(--sec)} .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+  .reveal{background:#f2fbf6;border:1px solid #bfe6d2;border-radius:10px;padding:13px 15px;
+          font-size:13.2px;margin-bottom:12px}
+</style>
+
+<div class="wrap">
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="card">
+    <h2>the spectrum — a semicircle, and an edge</h2>
+    <canvas id="cs" height="150"></canvas>
+    <p class="note" id="sn"></p>
+  </div>
+
+  <div class="card">
+    <h2 id="ht">the largest eigenvalue, over many matrices</h2>
+    <canvas id="ch" height="290"></canvas>
+    <div class="row" style="margin-top:9px">
+      <button id="braw" class="on">as they come</button>
+      <button id="bsc">rescaled by N<sup>−2/3</sup></button>
+      <span class="mono" id="msg" style="color:var(--sec)"></span>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+    <p class="note" id="hn"></p>
+  </div>
+
+  <div class="reveal" id="reveal"></div>
+
+  <div class="card">
+    <h2>every size against Tracy–Widom</h2>
+    <table>
+      <thead><tr><th>matrix size</th><th>samples</th><th>raw width</th>
+        <th>rescaled mean</th><th>rescaled width</th><th>skew</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+    <p class="note" id="tn"></p>
+  </div>
+
+  <div class="card">
+    <p class="step" id="s1"></p>
+    <p class="step" id="s2"></p>
+    <p class="step muted" style="font-size:11.8px" id="s3"></p>
+  </div>
+</div>
+
+<script>
+const REF = /*__REFERENCE__*/, CAP = REF.captions;
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').textContent = CAP.setup;
+document.getElementById('reveal').innerHTML = '<b>' + CAP.reveal + '</b>';
+document.getElementById('s1').innerHTML = '<b>Why they share it.</b> ' + CAP.why;
+document.getElementById('s2').innerHTML =
+  '<b>Read the table.</b> The raw widths differ by a factor of several across these sizes. ' +
+  'The rescaled widths all sit on Tracy–Widom’s. Nothing was fitted — the only input is the ' +
+  'exponent 2/3.';
+document.getElementById('s3').textContent =
+  CAP.distortion_beta2 + '  ' + CAP.distortion_cited + '  ' + CAP.distortion_finite;
+
+const COL = {20:'#2f6fb0', 40:'#d9851f', 80:'#7a5cc0', 160:'#d84b3f'};
+let mode = 'raw';
+
+(function selfTest(){
+  // the collapse, checked in the browser rather than taken on trust from the build
+  let worstMean = 0, worstSd = 0;
+  for (const st of REF.stats){
+    worstMean = Math.max(worstMean, Math.abs(st.mean - REF.tw2.mean));
+    worstSd = Math.max(worstSd, Math.abs(st.sd - REF.tw2.sd));
+  }
+  const el = document.getElementById('selftest'), ok = worstMean < 0.12 && worstSd < 0.09;
+  el.textContent = ok ? ('collapse OK · Δmean≤' + worstMean.toFixed(3) +
+                         ' Δsd≤' + worstSd.toFixed(3))
+                      : 'COLLAPSE FAILED';
+  el.className = 'tag ' + (ok ? 'pass' : 'fail');
+})();
+
+const cs = document.getElementById('cs'), sc = cs.getContext('2d');
+const ch = document.getElementById('ch'), hc = ch.getContext('2d');
+function resize(){
+  const dpr = devicePixelRatio || 1;
+  for (const [c, h] of [[cs, 150], [ch, 290]]){
+    const b = c.getBoundingClientRect(), cx = c.getContext('2d');
+    c.style.height = h + 'px'; c.width = b.width * dpr; c.height = h * dpr;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  draw();
+}
+addEventListener('resize', resize);
+
+function drawSpectrum(){
+  const W = cs.width / (devicePixelRatio || 1), H = 150, m = {l: 30, r: 14, t: 10, b: 26};
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  sc.clearRect(0, 0, W, H); sc.fillStyle = '#fff'; sc.fillRect(0, 0, W, H);
+  sc.strokeStyle = '#e3e0da'; sc.lineWidth = 1; sc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const E = REF.specEdges, Hh = REF.specHist, TH = REF.specTheory;
+  const mx = Math.max(...Hh, ...TH);
+  const PX = v => x0 + (v - E[0]) / (E[E.length-1] - E[0]) * (x1 - x0);
+  sc.fillStyle = 'rgba(47,111,176,.32)';
+  for (let i = 0; i < Hh.length; i++){
+    const h = Hh[i] / mx * (y1 - y0) * .9;
+    sc.fillRect(PX(E[i]), y1 - h, PX(E[i+1]) - PX(E[i]) - 1, h);
+  }
+  // the exact semicircle, so the histogram is checkable rather than merely suggestive
+  sc.strokeStyle = '#20242b'; sc.lineWidth = 1.6; sc.beginPath();
+  for (let i = 0; i < TH.length; i++){
+    const X = PX(0.5 * (E[i] + E[i+1])), Y = y1 - TH[i] / mx * (y1 - y0) * .9;
+    i ? sc.lineTo(X, Y) : sc.moveTo(X, Y);
+  }
+  sc.stroke();
+  // the edge
+  sc.strokeStyle = '#d84b3f'; sc.setLineDash([4,3]); sc.lineWidth = 1.5;
+  sc.beginPath(); sc.moveTo(PX(2), y0); sc.lineTo(PX(2), y1); sc.stroke(); sc.setLineDash([]);
+  sc.fillStyle = '#d84b3f'; sc.font = '11px ui-sans-serif,system-ui'; sc.textAlign = 'right';
+  sc.fillText('the edge, at 2', PX(2) - 7, y0 + 13);
+  sc.fillStyle = '#5c6470'; sc.textAlign = 'center';
+  for (const v of [-2,-1,0,1,2]) sc.fillText(String(v), PX(v), y1 + 15);
+  sc.fillText('eigenvalue', (x0 + x1)/2, y1 + 24);
+  document.getElementById('sn').innerHTML =
+    REF.specReps + ' matrices of size ' + REF.specN + ', pooled. Bars are measured; the black ' +
+    'curve is the exact Wigner semicircle √(4−x²)/2π. The largest eigenvalue sits just below the ' +
+    'edge — <b>and only that one eigenvalue matters below.</b>';
+}
+
+function drawHist(){
+  const W = ch.width / (devicePixelRatio || 1), H = 290, m = {l: 40, r: 14, t: 12, b: 34};
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  hc.clearRect(0, 0, W, H); hc.fillStyle = '#fff'; hc.fillRect(0, 0, W, H);
+  hc.strokeStyle = '#e3e0da'; hc.lineWidth = 1; hc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const rng = mode === 'raw' ? REF.rawRange : REF.scRange;
+  const hists = mode === 'raw' ? REF.rawHist : REF.scHist;
+  const PX = v => x0 + (v - rng[0]) / (rng[1] - rng[0]) * (x1 - x0);
+  const bw = (x1 - x0) / REF.NB;
+
+  for (const N of REF.sizes){
+    const h = hists[N], tot = h.reduce((a,b) => a+b, 0), mx = Math.max(...h);
+    hc.strokeStyle = COL[N]; hc.lineWidth = 2; hc.beginPath();
+    for (let i = 0; i < REF.NB; i++){
+      const X = x0 + (i + .5) * bw, Y = y1 - h[i] / mx * (y1 - y0) * .88;
+      i ? hc.lineTo(X, Y) : hc.moveTo(X, Y);
+    }
+    hc.stroke();
+  }
+  if (mode === 'sc'){
+    hc.strokeStyle = '#20242b'; hc.setLineDash([5,4]); hc.lineWidth = 1.4;
+    hc.beginPath(); hc.moveTo(PX(REF.tw2.mean), y0); hc.lineTo(PX(REF.tw2.mean), y1);
+    hc.stroke(); hc.setLineDash([]);
+    hc.fillStyle = '#20242b'; hc.font = '11px ui-sans-serif,system-ui'; hc.textAlign = 'left';
+    hc.fillText('TW₂ mean', PX(REF.tw2.mean) + 6, y0 + 14);
+  }
+  hc.font = '11px ui-sans-serif,system-ui'; hc.textAlign = 'left';
+  let ly = y0 + 14;
+  for (const N of REF.sizes){
+    hc.fillStyle = COL[N]; hc.fillText('N = ' + N, x1 - 62, ly); ly += 15;
+  }
+  hc.fillStyle = '#5c6470'; hc.textAlign = 'center';
+  const ticks = mode === 'raw' ? [1.0,1.2,1.4,1.6,1.8,2.0,2.2] : [-5,-4,-3,-2,-1,0,1,2];
+  for (const v of ticks) hc.fillText(String(v), PX(v), y1 + 15);
+  hc.fillText(mode === 'raw' ? 'largest eigenvalue'
+                             : 'N^(2/3) × (largest eigenvalue − 2)', (x0 + x1)/2, y1 + 27);
+
+  document.getElementById('ht').textContent = mode === 'raw'
+    ? 'the largest eigenvalue, as it comes' : 'the same data, rescaled — one curve';
+  document.getElementById('hn').textContent = mode === 'raw' ? CAP.raw : CAP.collapse;
+  const sds = REF.stats.map(s => s.rawSd);
+  document.getElementById('msg').textContent = mode === 'raw'
+    ? 'widths differ by ' + (Math.max(...sds)/Math.min(...sds)).toFixed(1) + '×'
+    : 'all four widths within ' +
+      Math.max(...REF.stats.map(s => Math.abs(s.sd - REF.tw2.sd))).toFixed(3) + ' of TW₂';
+}
+
+function draw(){
+  drawSpectrum(); drawHist();
+  const tb = document.getElementById('tb'); tb.innerHTML = '';
+  for (const st of REF.stats){
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td style="color:' + COL[st.N] + ';font-weight:600">N = ' + st.N + '</td>' +
+      '<td class="mono">' + st.reps + '</td>' +
+      '<td class="mono">' + st.rawSd.toFixed(5) + '</td>' +
+      '<td class="mono">' + st.mean.toFixed(4) + '</td>' +
+      '<td class="mono">' + st.sd.toFixed(4) + '</td>' +
+      '<td class="mono">' + st.skew.toFixed(3) + '</td>';
+    tb.appendChild(tr);
+  }
+  const tr = document.createElement('tr'); tr.className = 'tw';
+  tr.innerHTML = '<td>Tracy–Widom (β=2)</td><td class="mono">exact</td><td>—</td>' +
+    '<td class="mono">' + REF.tw2.mean.toFixed(4) + '</td>' +
+    '<td class="mono">' + REF.tw2.sd.toFixed(4) + '</td>' +
+    '<td class="mono">' + REF.tw2.skew.toFixed(3) + '</td>';
+  tb.appendChild(tr);
+  document.getElementById('tn').innerHTML =
+    'Raw widths shrink with N; rescaled means and widths do not move. Skew is the noisiest ' +
+    'moment at these sample sizes and wanders either side of the true value — worth noticing ' +
+    'rather than hiding.';
+}
+
+document.getElementById('braw').addEventListener('click', () => {
+  mode = 'raw';
+  document.getElementById('braw').className = 'on';
+  document.getElementById('bsc').className = ''; draw();
+});
+document.getElementById('bsc').addEventListener('click', () => {
+  mode = 'sc';
+  document.getElementById('bsc').className = 'on';
+  document.getElementById('braw').className = ''; draw();
+});
+resize();
+</script>

@@ -1,0 +1,180 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Up the ladder: structure survives, solvability does not</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63; --pur:#7a5cc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1020px;margin:0 auto;padding:22px 18px 46px}
+  h1{font-size:19px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:13px 15px;margin-bottom:12px}
+  canvas{display:block;width:100%}
+  h2{font-size:12.5px;margin:0 0 7px;color:var(--sec);font-weight:600}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .ctl{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sec)}
+  input[type=range]{width:230px;accent-color:var(--amb)}
+  .mono{font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  table{border-collapse:collapse;width:100%;font-size:12px}
+  th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--sec);font-weight:600;font-size:11px}
+  tr.on td{background:#fdf6ec}
+  .pill{display:inline-block;font-size:10.5px;padding:1px 8px;border-radius:999px;font-weight:600}
+  .p-exact{background:#e8f6ee;color:#166b46}
+  .p-closed{background:#eaf2fa;color:#1d4f83}
+  .p-char{background:#f4efe4;color:#8a6516}
+  .p-open{background:#fbecea;color:#a3372c}
+  .step{margin:0 0 9px;font-size:12.8px}
+  .muted{color:var(--sec)} .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+  .refuge{background:#f4f0fb;border:1px solid #d9cff0;border-radius:10px;padding:13px 15px;
+          font-size:13.2px;margin-bottom:12px}
+</style>
+
+<div class="wrap">
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="card">
+    <h2 id="ct">the skeleton at this rung</h2>
+    <canvas id="cv" height="270"></canvas>
+    <div class="row" style="margin-top:9px">
+      <span class="ctl">rung q
+        <input id="q" type="range" min="1" max="6" step="1" value="3">
+        <span class="mono" id="qv" style="width:130px"></span>
+      </span>
+      <span class="mono" id="dev" style="color:var(--sec)"></span>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+    <p class="note" id="cn"></p>
+  </div>
+
+  <div class="card">
+    <h2>and what it costs, rung by rung</h2>
+    <table>
+      <thead><tr><th>rung</th><th>Bessel order</th><th>tail exponent</th>
+        <th>connection problem</th><th></th><th>what that means</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+
+  <div class="refuge" id="refuge"></div>
+
+  <div class="card">
+    <p class="step" id="s1"></p>
+    <p class="step" id="s2"></p>
+    <p class="step muted" style="font-size:11.8px" id="s3"></p>
+  </div>
+</div>
+
+<script>
+const REF = /*__REFERENCE__*/, CAP = REF.captions;
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').textContent = CAP.setup;
+document.getElementById('s1').innerHTML = '<b>The skeleton.</b> ' + CAP.skeleton;
+document.getElementById('s2').innerHTML = '<b>The solvability.</b> ' + CAP.degrade;
+document.getElementById('refuge').innerHTML = '<b>' + CAP.refuge + '</b>';
+document.getElementById('s3').textContent =
+  CAP.distortion_dlmf + '  ' + CAP.distortion_absence + '  ' + CAP.distortion_notthom;
+
+let q = 3;
+const row = () => REF.rows.find(r => r.q === q);
+
+(function selfTest(){
+  const worst = Math.max(...REF.rows.map(r => r.rel));
+  const el = document.getElementById('selftest');
+  el.textContent = 'skeleton exact at ' + REF.rows.length + ' rungs · max Δ=' +
+                   worst.toExponential(1);
+  el.className = 'tag ' + (worst < 1e-6 ? 'pass' : 'fail');
+})();
+
+const cv = document.getElementById('cv'), cx = cv.getContext('2d');
+function resize(){
+  const dpr = devicePixelRatio || 1, b = cv.getBoundingClientRect();
+  cv.style.height = '270px'; cv.width = b.width * dpr; cv.height = 270 * dpr;
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  draw();
+}
+addEventListener('resize', resize);
+
+function draw(){
+  const c = REF.curves[q], r = row();
+  const W = cv.width / (devicePixelRatio || 1), H = 270, m = {l: 52, r: 14, t: 14, b: 32};
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  cx.clearRect(0, 0, W, H); cx.fillStyle = '#fff'; cx.fillRect(0, 0, W, H);
+  cx.strokeStyle = '#e3e0da'; cx.lineWidth = 1; cx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const PX = Y => x0 + (Y - c.Ylo) / (c.Yhi - c.Ylo) * (x1 - x0);
+  // LOG axis: on a linear one both curves hug zero over most of the range and the agreement is
+  // not actually visible.  The solution spans ~8 decades here, and the overlay has to hold
+  // across all of them for the claim to mean anything.
+  const LO = Math.min(...c.u.map(v => Math.log10(Math.max(v, 1e-300)))) - 0.4;
+  const PY = u => y1 - (Math.log10(Math.max(u, 1e-300)) - LO) / (0 - LO) * (y1 - y0) * .84
+                     - (y1 - y0) * .1;
+  // decade gridlines
+  cx.strokeStyle = '#f2f0ec'; cx.lineWidth = 1;
+  for (let d = 0; d >= LO; d -= 2){
+    cx.beginPath(); cx.moveTo(x0, PY(Math.pow(10, d))); cx.lineTo(x1, PY(Math.pow(10, d)));
+    cx.stroke();
+    cx.fillStyle = '#a8a49c'; cx.font = '9.5px ui-sans-serif,system-ui'; cx.textAlign = 'right';
+    cx.fillText('1e' + d, x0 - 5, PY(Math.pow(10, d)) + 3);
+  }
+
+  // the closed form, drawn thick underneath; the numerical solution drawn thin on top.  If they
+  // did not coincide the blue would come out from under the amber.
+  cx.strokeStyle = '#d9851f'; cx.lineWidth = 5.5; cx.beginPath();
+  for (let i = 0; i < c.Y.length; i++){
+    const X = PX(c.Y[i]), Yy = PY(c.b[i]); i ? cx.lineTo(X, Yy) : cx.moveTo(X, Yy);
+  }
+  cx.stroke();
+  cx.strokeStyle = '#2f6fb0'; cx.lineWidth = 1.7; cx.beginPath();
+  for (let i = 0; i < c.Y.length; i++){
+    const X = PX(c.Y[i]), Yy = PY(c.u[i]); i ? cx.lineTo(X, Yy) : cx.moveTo(X, Yy);
+  }
+  cx.stroke();
+
+  cx.font = '11.5px ui-sans-serif,system-ui'; cx.textAlign = 'left';
+  cx.fillStyle = '#d9851f';
+  cx.fillText('√Y · K₍₁/' + (q + 2) + '₎  (closed form)', x0 + 12, y1 - 30);
+  cx.fillStyle = '#2f6fb0';
+  cx.fillText('numerical solution of u″ = Y^' + q + ' u', x0 + 12, y1 - 14);
+  cx.fillStyle = '#5c6470'; cx.textAlign = 'center';
+  cx.fillText('Y', (x0 + x1) / 2, y1 + 20);
+  cx.save(); cx.translate(15, (y0 + y1) / 2); cx.rotate(-Math.PI / 2);
+  cx.fillText('u (normalised, log scale)', 0, 0); cx.restore();
+
+  document.getElementById('qv').textContent = q + ' · ' + r.name;
+  document.getElementById('ct').textContent =
+    'the skeleton at rung q = ' + q + ' — Bessel order ' + r.nu;
+  document.getElementById('dev').textContent =
+    'max deviation ' + r.rel.toExponential(1) + ' — they are the same curve';
+  document.getElementById('cn').innerHTML =
+    'The thick amber curve is the Bessel closed form; the thin blue line is a direct numerical ' +
+    'solve drawn over it. <b>The blue never emerges from under the amber</b> — that is the ' +
+    'skeleton being exact rather than approximate, and it holds across every decade of the ' +
+    'decay, at every rung on the slider.';
+
+  const tb = document.getElementById('tb'); tb.innerHTML = '';
+  for (const rr of REF.rows){
+    const tr = document.createElement('tr');
+    if (rr.q === q) tr.className = 'on';
+    tr.innerHTML =
+      '<td><b>' + rr.name + '</b><br><span class="muted mono">q = ' + rr.q + '</span></td>' +
+      '<td class="mono">' + rr.nu + '</td>' +
+      '<td class="mono">' + rr.tailExp + '</td>' +
+      '<td>' + rr.fn + '</td>' +
+      '<td><span class="pill p-' + (rr.status === 'characterised' ? 'char' : rr.status) + '">' +
+        rr.status + '</span></td>' +
+      '<td class="muted">' + rr.why + '</td>';
+    tb.appendChild(tr);
+  }
+}
+
+document.getElementById('q').addEventListener('input', e => { q = +e.target.value; draw(); });
+resize();
+</script>

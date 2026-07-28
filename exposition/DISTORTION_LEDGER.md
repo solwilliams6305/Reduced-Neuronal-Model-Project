@@ -303,3 +303,43 @@ Completed 2026-07-28 against `hook/hook.html`. Opens the course; explains nothin
 5. **σ is adjustable but I is not.** The excitable regime is fixed at I=0.30; a viewer cannot
    discover that the same system oscillates without noise at I≳0.35, which is arguably the more
    striking fact about it.
+
+---
+
+## Module α5 (Tracy–Widom) — distortion statement
+Completed 2026-07-28 against `tracywidom/tracywidom.html`. The payoff, not a prerequisite.
+
+1. **GUE only, i.e. β=2.** The fold problem's law is TW_β with β set by the noise strength; β=2 is
+   one slice. Nothing here varies β, so "the same law" is true at one value and analogous at others.
+2. **The identification with the escape problem is CITED, not derived here** (Ramírez–Rider–Virág).
+   This module establishes the random-matrix side is Tracy–Widom; it does not re-derive the neuron
+   side. The reveal is therefore a *claim about a connection*, not a demonstration of one — the
+   strongest wording the module is entitled to.
+3. **The collapse is already excellent at N=20.** Genuinely surprising and worth showing, but it
+   means the module demonstrates *scale-invariance of the shape*, not convergence. A viewer
+   expecting "watch it converge as N grows" will misread what the four curves are doing.
+4. **Skew is far noisier than mean or width** at these sample counts and wanders either side of
+   the true value. Shown rather than hidden, but it undercuts the visual tidiness of the collapse.
+5. **An earlier draft had the GUE normalisation wrong**, putting the spectrum on the wrong support
+   so the rescaled mean *diverged* with N. The support is now asserted in the build rather than
+   assumed. Recorded because the wrong version still produced a plausible-looking histogram.
+
+---
+
+## Module δ2 (the ladder) — distortion statement
+Completed 2026-07-28 against `ladder/ladder.html`. Closes the analysis thread.
+
+1. **The special functions are not replotted.** DLMF §36.3 (Berry and Howls) does that better —
+   rotatable, modulus and phase, across parameter slices. What is added here is narrative. Prior
+   art verdict for that topic was GOOD, and rebuilding it would have been the wrong call.
+2. **"No Painlevé reduction above the cusp" is an absence, plus exclusion results at q=3.** It is
+   not a proof that none exists at every higher rung. The table says *open*, which is honest, but
+   an "open" pill sitting in a tidy row invites reading it as a settled classification.
+3. **These rungs are turning ORDER in a second-order equation, not Thom's A_k surfaces.** The name
+   collision is a genuine trap and is what the coda exists to separate.
+4. **Only the decaying branch is shown.** The oscillatory side exists for odd q and is where the
+   zeros — hence the escape statistics — actually live. The panel shows where the Bessel identity
+   is cleanest, not where the physics happens.
+5. **The verification compares shapes after one overall scale factor.** Both curves solve the same
+   equation, so a constant is unfixable from the ODE alone; matching at the midpoint is legitimate
+   but it is one fitted number, not zero.

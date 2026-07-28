@@ -1,0 +1,239 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>The same law, from somewhere else entirely</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63; --pur:#7a5cc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1020px;margin:0 auto;padding:22px 18px 46px}
+  h1{font-size:19px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:13px 15px;margin-bottom:12px}
+  canvas{display:block;width:100%}
+  h2{font-size:12.5px;margin:0 0 7px;color:var(--sec);font-weight:600}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--line);
+         background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
+  button:hover{background:#f4f2ee}
+  button.on{border-color:#c8d8ea;background:#f2f7fc;color:var(--blue);font-weight:600}
+  .mono{font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  table{border-collapse:collapse;width:100%;font-size:12px}
+  th,td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--sec);font-weight:600;font-size:11px}
+  tr.tw td{background:#f2fbf6;font-weight:600;color:#166b46}
+  .step{margin:0 0 9px;font-size:12.8px}
+  .muted{color:var(--sec)} .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+  .reveal{background:#f2fbf6;border:1px solid #bfe6d2;border-radius:10px;padding:13px 15px;
+          font-size:13.2px;margin-bottom:12px}
+</style>
+
+<div class="wrap">
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="card">
+    <h2>the spectrum — a semicircle, and an edge</h2>
+    <canvas id="cs" height="150"></canvas>
+    <p class="note" id="sn"></p>
+  </div>
+
+  <div class="card">
+    <h2 id="ht">the largest eigenvalue, over many matrices</h2>
+    <canvas id="ch" height="290"></canvas>
+    <div class="row" style="margin-top:9px">
+      <button id="braw" class="on">as they come</button>
+      <button id="bsc">rescaled by N<sup>−2/3</sup></button>
+      <span class="mono" id="msg" style="color:var(--sec)"></span>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+    <p class="note" id="hn"></p>
+  </div>
+
+  <div class="reveal" id="reveal"></div>
+
+  <div class="card">
+    <h2>every size against Tracy–Widom</h2>
+    <table>
+      <thead><tr><th>matrix size</th><th>samples</th><th>raw width</th>
+        <th>rescaled mean</th><th>rescaled width</th><th>skew</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+    <p class="note" id="tn"></p>
+  </div>
+
+  <div class="card">
+    <p class="step" id="s1"></p>
+    <p class="step" id="s2"></p>
+    <p class="step muted" style="font-size:11.8px" id="s3"></p>
+  </div>
+</div>
+
+<script>
+const REF = {"sizes": [20, 40, 80, 160], "stats": [{"N": 20, "reps": 4000, "rawMean": 1.7570207983745614, "rawSd": 0.12276075118070749, "mean": -1.790286064605218, "sd": 0.9045089482929628, "skew": 0.15979063837167526}, {"N": 40, "reps": 3000, "rawMean": 1.8453095759074862, "rawSd": 0.07651617819001054, "mean": -1.809270175912723, "sd": 0.8949386491513889, "skew": 0.2066072543659086}, {"N": 80, "reps": 1600, "rawMean": 1.903812244289799, "rawSd": 0.04856473060808989, "mean": -1.7858560513389736, "sd": 0.901670045191691, "skew": 0.23814922841914113}, {"N": 160, "reps": 700, "rawMean": 1.9395293522757096, "rawSd": 0.030536682646356544, "mean": -1.7822061676757763, "sd": 0.899984805865302, "skew": 0.20180431387809358}], "tw2": {"mean": -1.771087, "sd": 0.901773, "skew": 0.224084}, "rawHist": {"20": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 11, 30, 35, 85, 149, 196, 237, 355, 396, 422, 411, 409, 325, 290, 209, 138, 123, 72, 48, 23, 13, 7, 5, 3, 1, 0, 0], "40": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 10, 25, 84, 160, 295, 449, 504, 517, 388, 236, 179, 87, 39, 17, 5, 4, 0, 0, 0, 0, 0], "80": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 27, 145, 318, 412, 343, 232, 87, 22, 10, 0, 0, 0, 0, 0, 0, 0], "160": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 11, 112, 254, 228, 84, 9, 1, 0, 0, 0, 0, 0, 0, 0]}, "scHist": {"20": [0, 1, 3, 3, 9, 13, 31, 33, 68, 113, 134, 165, 195, 284, 310, 308, 346, 310, 319, 274, 238, 229, 164, 120, 99, 83, 52, 35, 25, 15, 5, 7, 5, 2, 1, 1, 0, 0, 0, 0], "40": [1, 0, 1, 2, 7, 10, 21, 36, 47, 67, 98, 124, 177, 214, 228, 250, 245, 261, 250, 226, 164, 118, 111, 92, 91, 54, 35, 22, 19, 12, 7, 1, 5, 2, 2, 0, 0, 0, 0, 0], "80": [0, 0, 0, 3, 2, 3, 7, 15, 30, 33, 60, 67, 108, 97, 124, 141, 126, 121, 113, 115, 88, 92, 70, 58, 44, 27, 19, 8, 8, 10, 4, 2, 4, 1, 0, 0, 0, 0, 0, 0], "160": [0, 0, 1, 0, 0, 4, 5, 5, 5, 16, 27, 40, 38, 50, 50, 59, 47, 53, 61, 52, 34, 37, 30, 25, 25, 16, 7, 3, 2, 2, 3, 2, 0, 0, 1, 0, 0, 0, 0, 0]}, "NB": 40, "rawRange": [1.0, 2.3], "scRange": [-5.0, 2.5], "specHist": [0.0, 0.0, 0.0, 0.0, 0.0026041666666666644, 0.05338541666666662, 0.11067708333333325, 0.13932291666666655, 0.16145833333333365, 0.1822916666666665, 0.2070312500000004, 0.2109374999999998, 0.2226562499999998, 0.2473958333333331, 0.24218750000000047, 0.2604166666666664, 0.2773437499999998, 0.2682291666666672, 0.2851562499999998, 0.2903645833333331, 0.28645833333333387, 0.3046874999999997, 0.3046874999999997, 0.30078125000000056, 0.31380208333333304, 0.3203124999999997, 0.3046874999999997, 0.32161458333333304, 0.31901041666666813, 0.3085937499999997, 0.32161458333333304, 0.3111979166666664, 0.33333333333333304, 0.31380208333333304, 0.30598958333333304, 0.31250000000000144, 0.3046874999999997, 0.3072916666666664, 0.3033854166666664, 0.29427083333333304, 0.2851562499999998, 0.28255208333333465, 0.2669270833333331, 0.2721354166666664, 0.2565104166666664, 0.2526041666666664, 0.23958333333333315, 0.23177083333333443, 0.2109374999999998, 0.2031249999999998, 0.17578124999999983, 0.1614583333333332, 0.1419270833333332, 0.10807291666666657, 0.05468749999999995, 0.0026041666666666644, 0.0, 0.0, 0.0, 0.0], "specEdges": [-2.4, -2.32, -2.2399999999999998, -2.16, -2.08, -2.0, -1.92, -1.8399999999999999, -1.7599999999999998, -1.68, -1.5999999999999999, -1.52, -1.44, -1.3599999999999999, -1.2799999999999998, -1.2, -1.1199999999999999, -1.0399999999999998, -0.96, -0.8799999999999999, -0.7999999999999998, -0.72, -0.6399999999999999, -0.5599999999999998, -0.48, -0.3999999999999999, -0.31999999999999984, -0.23999999999999977, -0.1599999999999997, -0.08000000000000007, 0.0, 0.08000000000000007, 0.16000000000000014, 0.2400000000000002, 0.3200000000000003, 0.40000000000000036, 0.48, 0.56, 0.6400000000000001, 0.7200000000000002, 0.8000000000000003, 0.8800000000000003, 0.96, 1.04, 1.12, 1.2000000000000002, 1.2800000000000002, 1.3600000000000003, 1.44, 1.52, 1.6, 1.6800000000000002, 1.7600000000000002, 1.8400000000000003, 1.9200000000000004, 2.0000000000000004, 2.0800000000000005, 2.1600000000000006, 2.2399999999999998, 2.32, 2.4], "specTheory": [0.0, 0.0, 0.0, 0.0, 0.0, 0.06334286757194202, 0.10859919786061094, 0.1387480626605078, 0.16243163552850404, 0.18218896717757052, 0.1991918058413535, 0.21409741586435277, 0.22731872702791617, 0.239135267260468, 0.24974651278891394, 0.259300477178611, 0.2679102956070037, 0.27566444771089604, 0.28263336884313417, 0.28887389436885674, 0.29443234320363687, 0.2993467133831329, 0.3036482786292842, 0.30736276877350605, 0.3105112531842423, 0.3131108067319396, 0.3151750124025507, 0.3167143378597098, 0.3177364117963589, 0.31824621783908263, 0.31824621783908263, 0.3177364117963589, 0.3167143378597098, 0.31517501240255064, 0.3131108067319396, 0.3105112531842423, 0.30736276877350605, 0.3036482786292842, 0.2993467133831329, 0.2944323432036368, 0.28887389436885674, 0.28263336884313417, 0.27566444771089604, 0.26791029560700363, 0.259300477178611, 0.24974651278891388, 0.2391352672604679, 0.22731872702791617, 0.21409741586435277, 0.1991918058413535, 0.18218896717757047, 0.16243163552850393, 0.13874806266050763, 0.10859919786061079, 0.06334286757194167, 0.0, 0.0, 0.0, 0.0, 0.0], "specN": 400, "specReps": 24, "captions": {"headline": "The same law, arriving from somewhere else entirely.", "setup": "Take a large random Hermitian matrix. Its eigenvalues fill a semicircle. Look only at the LARGEST one: it sits near the edge, and it jitters from one matrix to the next. That jitter is the whole subject here.", "raw": "Drawn as they come, the distributions for different matrix sizes look nothing alike - the bigger the matrix, the tighter the largest eigenvalue clamps to the edge. There is no common shape to see.", "collapse": "Now rescale: measure the gap to the edge in units of N^(-2/3). Every size collapses onto ONE curve. The shape does not depend on N, and it does not depend on the details of the matrix either. That is what universality means, and the collapse is the mechanism - not slow convergence but a fixed shape hiding behind a shrinking scale.", "reveal": "That curve is the Tracy-Widom distribution. And it is the law this course has been circling from the other side: the escape statistics of a noisy neuron at a fold. A random matrix and a spiking cell have no business sharing a distribution, and they share this one.", "why": "The bridge is the stochastic Airy operator. The edge of the spectrum and the escape problem both reduce to the ground state of -d^2/dx^2 + x + noise, so they are not analogous - they are the same computation wearing different clothes.", "distortion_beta2": "GUE only, i.e. beta=2. The fold problem's law is TW_beta with beta set by the noise strength, and beta=2 is one slice of it. Nothing here varies beta.", "distortion_cited": "The identification with the escape problem is CITED, not derived here - it rests on the Ramirez-Rider-Virag theorem. This module shows the random-matrix side is Tracy-Widom; it does not re-derive the neuron side.", "distortion_finite": "These are finite matrices with finite samples. The collapse is excellent by N=25, which is a real and slightly surprising fact, but the limit statement is asymptotic and the histograms carry sampling noise - visible in the skew, which is far noisier than the mean or the width."}}, CAP = REF.captions;
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').textContent = CAP.setup;
+document.getElementById('reveal').innerHTML = '<b>' + CAP.reveal + '</b>';
+document.getElementById('s1').innerHTML = '<b>Why they share it.</b> ' + CAP.why;
+document.getElementById('s2').innerHTML =
+  '<b>Read the table.</b> The raw widths differ by a factor of several across these sizes. ' +
+  'The rescaled widths all sit on Tracy–Widom’s. Nothing was fitted — the only input is the ' +
+  'exponent 2/3.';
+document.getElementById('s3').textContent =
+  CAP.distortion_beta2 + '  ' + CAP.distortion_cited + '  ' + CAP.distortion_finite;
+
+const COL = {20:'#2f6fb0', 40:'#d9851f', 80:'#7a5cc0', 160:'#d84b3f'};
+let mode = 'raw';
+
+(function selfTest(){
+  // the collapse, checked in the browser rather than taken on trust from the build
+  let worstMean = 0, worstSd = 0;
+  for (const st of REF.stats){
+    worstMean = Math.max(worstMean, Math.abs(st.mean - REF.tw2.mean));
+    worstSd = Math.max(worstSd, Math.abs(st.sd - REF.tw2.sd));
+  }
+  const el = document.getElementById('selftest'), ok = worstMean < 0.12 && worstSd < 0.09;
+  el.textContent = ok ? ('collapse OK · Δmean≤' + worstMean.toFixed(3) +
+                         ' Δsd≤' + worstSd.toFixed(3))
+                      : 'COLLAPSE FAILED';
+  el.className = 'tag ' + (ok ? 'pass' : 'fail');
+})();
+
+const cs = document.getElementById('cs'), sc = cs.getContext('2d');
+const ch = document.getElementById('ch'), hc = ch.getContext('2d');
+function resize(){
+  const dpr = devicePixelRatio || 1;
+  for (const [c, h] of [[cs, 150], [ch, 290]]){
+    const b = c.getBoundingClientRect(), cx = c.getContext('2d');
+    c.style.height = h + 'px'; c.width = b.width * dpr; c.height = h * dpr;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  draw();
+}
+addEventListener('resize', resize);
+
+function drawSpectrum(){
+  const W = cs.width / (devicePixelRatio || 1), H = 150, m = {l: 30, r: 14, t: 10, b: 26};
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  sc.clearRect(0, 0, W, H); sc.fillStyle = '#fff'; sc.fillRect(0, 0, W, H);
+  sc.strokeStyle = '#e3e0da'; sc.lineWidth = 1; sc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const E = REF.specEdges, Hh = REF.specHist, TH = REF.specTheory;
+  const mx = Math.max(...Hh, ...TH);
+  const PX = v => x0 + (v - E[0]) / (E[E.length-1] - E[0]) * (x1 - x0);
+  sc.fillStyle = 'rgba(47,111,176,.32)';
+  for (let i = 0; i < Hh.length; i++){
+    const h = Hh[i] / mx * (y1 - y0) * .9;
+    sc.fillRect(PX(E[i]), y1 - h, PX(E[i+1]) - PX(E[i]) - 1, h);
+  }
+  // the exact semicircle, so the histogram is checkable rather than merely suggestive
+  sc.strokeStyle = '#20242b'; sc.lineWidth = 1.6; sc.beginPath();
+  for (let i = 0; i < TH.length; i++){
+    const X = PX(0.5 * (E[i] + E[i+1])), Y = y1 - TH[i] / mx * (y1 - y0) * .9;
+    i ? sc.lineTo(X, Y) : sc.moveTo(X, Y);
+  }
+  sc.stroke();
+  // the edge
+  sc.strokeStyle = '#d84b3f'; sc.setLineDash([4,3]); sc.lineWidth = 1.5;
+  sc.beginPath(); sc.moveTo(PX(2), y0); sc.lineTo(PX(2), y1); sc.stroke(); sc.setLineDash([]);
+  sc.fillStyle = '#d84b3f'; sc.font = '11px ui-sans-serif,system-ui'; sc.textAlign = 'right';
+  sc.fillText('the edge, at 2', PX(2) - 7, y0 + 13);
+  sc.fillStyle = '#5c6470'; sc.textAlign = 'center';
+  for (const v of [-2,-1,0,1,2]) sc.fillText(String(v), PX(v), y1 + 15);
+  sc.fillText('eigenvalue', (x0 + x1)/2, y1 + 24);
+  document.getElementById('sn').innerHTML =
+    REF.specReps + ' matrices of size ' + REF.specN + ', pooled. Bars are measured; the black ' +
+    'curve is the exact Wigner semicircle √(4−x²)/2π. The largest eigenvalue sits just below the ' +
+    'edge — <b>and only that one eigenvalue matters below.</b>';
+}
+
+function drawHist(){
+  const W = ch.width / (devicePixelRatio || 1), H = 290, m = {l: 40, r: 14, t: 12, b: 34};
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  hc.clearRect(0, 0, W, H); hc.fillStyle = '#fff'; hc.fillRect(0, 0, W, H);
+  hc.strokeStyle = '#e3e0da'; hc.lineWidth = 1; hc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const rng = mode === 'raw' ? REF.rawRange : REF.scRange;
+  const hists = mode === 'raw' ? REF.rawHist : REF.scHist;
+  const PX = v => x0 + (v - rng[0]) / (rng[1] - rng[0]) * (x1 - x0);
+  const bw = (x1 - x0) / REF.NB;
+
+  for (const N of REF.sizes){
+    const h = hists[N], tot = h.reduce((a,b) => a+b, 0), mx = Math.max(...h);
+    hc.strokeStyle = COL[N]; hc.lineWidth = 2; hc.beginPath();
+    for (let i = 0; i < REF.NB; i++){
+      const X = x0 + (i + .5) * bw, Y = y1 - h[i] / mx * (y1 - y0) * .88;
+      i ? hc.lineTo(X, Y) : hc.moveTo(X, Y);
+    }
+    hc.stroke();
+  }
+  if (mode === 'sc'){
+    hc.strokeStyle = '#20242b'; hc.setLineDash([5,4]); hc.lineWidth = 1.4;
+    hc.beginPath(); hc.moveTo(PX(REF.tw2.mean), y0); hc.lineTo(PX(REF.tw2.mean), y1);
+    hc.stroke(); hc.setLineDash([]);
+    hc.fillStyle = '#20242b'; hc.font = '11px ui-sans-serif,system-ui'; hc.textAlign = 'left';
+    hc.fillText('TW₂ mean', PX(REF.tw2.mean) + 6, y0 + 14);
+  }
+  hc.font = '11px ui-sans-serif,system-ui'; hc.textAlign = 'left';
+  let ly = y0 + 14;
+  for (const N of REF.sizes){
+    hc.fillStyle = COL[N]; hc.fillText('N = ' + N, x1 - 62, ly); ly += 15;
+  }
+  hc.fillStyle = '#5c6470'; hc.textAlign = 'center';
+  const ticks = mode === 'raw' ? [1.0,1.2,1.4,1.6,1.8,2.0,2.2] : [-5,-4,-3,-2,-1,0,1,2];
+  for (const v of ticks) hc.fillText(String(v), PX(v), y1 + 15);
+  hc.fillText(mode === 'raw' ? 'largest eigenvalue'
+                             : 'N^(2/3) × (largest eigenvalue − 2)', (x0 + x1)/2, y1 + 27);
+
+  document.getElementById('ht').textContent = mode === 'raw'
+    ? 'the largest eigenvalue, as it comes' : 'the same data, rescaled — one curve';
+  document.getElementById('hn').textContent = mode === 'raw' ? CAP.raw : CAP.collapse;
+  const sds = REF.stats.map(s => s.rawSd);
+  document.getElementById('msg').textContent = mode === 'raw'
+    ? 'widths differ by ' + (Math.max(...sds)/Math.min(...sds)).toFixed(1) + '×'
+    : 'all four widths within ' +
+      Math.max(...REF.stats.map(s => Math.abs(s.sd - REF.tw2.sd))).toFixed(3) + ' of TW₂';
+}
+
+function draw(){
+  drawSpectrum(); drawHist();
+  const tb = document.getElementById('tb'); tb.innerHTML = '';
+  for (const st of REF.stats){
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td style="color:' + COL[st.N] + ';font-weight:600">N = ' + st.N + '</td>' +
+      '<td class="mono">' + st.reps + '</td>' +
+      '<td class="mono">' + st.rawSd.toFixed(5) + '</td>' +
+      '<td class="mono">' + st.mean.toFixed(4) + '</td>' +
+      '<td class="mono">' + st.sd.toFixed(4) + '</td>' +
+      '<td class="mono">' + st.skew.toFixed(3) + '</td>';
+    tb.appendChild(tr);
+  }
+  const tr = document.createElement('tr'); tr.className = 'tw';
+  tr.innerHTML = '<td>Tracy–Widom (β=2)</td><td class="mono">exact</td><td>—</td>' +
+    '<td class="mono">' + REF.tw2.mean.toFixed(4) + '</td>' +
+    '<td class="mono">' + REF.tw2.sd.toFixed(4) + '</td>' +
+    '<td class="mono">' + REF.tw2.skew.toFixed(3) + '</td>';
+  tb.appendChild(tr);
+  document.getElementById('tn').innerHTML =
+    'Raw widths shrink with N; rescaled means and widths do not move. Skew is the noisiest ' +
+    'moment at these sample sizes and wanders either side of the true value — worth noticing ' +
+    'rather than hiding.';
+}
+
+document.getElementById('braw').addEventListener('click', () => {
+  mode = 'raw';
+  document.getElementById('braw').className = 'on';
+  document.getElementById('bsc').className = ''; draw();
+});
+document.getElementById('bsc').addEventListener('click', () => {
+  mode = 'sc';
+  document.getElementById('bsc').className = 'on';
+  document.getElementById('braw').className = ''; draw();
+});
+resize();
+</script>

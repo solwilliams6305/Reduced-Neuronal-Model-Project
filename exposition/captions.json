@@ -86,5 +86,26 @@
     "the_hook": "So a divergent series is not useless and it is not merely bad - it has a definite accuracy limit, and the limit is exponentially small. Everything in the analysis thread of this course is about what lives underneath that floor and how to get at it.",
     "distortion_alternating": "This series alternates, which makes it the EASY case - it is Borel summable with no ambiguity. The series this course actually cares about does not alternate, and that difference is exactly where the trouble starts.",
     "distortion_optimal": "Truncating at the least term is a rule of thumb, not a theorem. It is very good here and it is the standard practice, but the optimal truncation point and the error at it are asymptotic statements."
+  },
+  "alpha5": {
+    "headline": "The same law, arriving from somewhere else entirely.",
+    "setup": "Take a large random Hermitian matrix. Its eigenvalues fill a semicircle. Look only at the LARGEST one: it sits near the edge, and it jitters from one matrix to the next. That jitter is the whole subject here.",
+    "raw": "Drawn as they come, the distributions for different matrix sizes look nothing alike - the bigger the matrix, the tighter the largest eigenvalue clamps to the edge. There is no common shape to see.",
+    "collapse": "Now rescale: measure the gap to the edge in units of N^(-2/3). Every size collapses onto ONE curve. The shape does not depend on N, and it does not depend on the details of the matrix either. That is what universality means, and the collapse is the mechanism - not slow convergence but a fixed shape hiding behind a shrinking scale.",
+    "reveal": "That curve is the Tracy-Widom distribution. And it is the law this course has been circling from the other side: the escape statistics of a noisy neuron at a fold. A random matrix and a spiking cell have no business sharing a distribution, and they share this one.",
+    "why": "The bridge is the stochastic Airy operator. The edge of the spectrum and the escape problem both reduce to the ground state of -d^2/dx^2 + x + noise, so they are not analogous - they are the same computation wearing different clothes.",
+    "distortion_beta2": "GUE only, i.e. beta=2. The fold problem's law is TW_beta with beta set by the noise strength, and beta=2 is one slice of it. Nothing here varies beta.",
+    "distortion_cited": "The identification with the escape problem is CITED, not derived here - it rests on the Ramirez-Rider-Virag theorem. This module shows the random-matrix side is Tracy-Widom; it does not re-derive the neuron side.",
+    "distortion_finite": "These are finite matrices with finite samples. The collapse is excellent by N=25, which is a real and slightly surprising fact, but the limit statement is asymptotic and the histograms carry sampling noise - visible in the skew, which is far noisier than the mean or the width."
+  },
+  "delta2": {
+    "headline": "Up the ladder, the structure survives and the solvability does not.",
+    "setup": "Every rung is the same problem with a higher-order turning point: the potential goes like Y^q instead of Y. Fold, cusp, swallowtail, and onward. The question is what carries over.",
+    "skeleton": "The skeleton carries over exactly. Solve u'' = Y^q u and the answer is a Bessel function of order 1/(q+2) - one third at the fold, one quarter at the cusp, one fifth at the swallowtail. Verified here against direct integration at six rungs to ten decimal places. The family is real and it is not a coincidence of the first two.",
+    "degrade": "What does NOT carry over is solvability. At the fold the connection problem is Airy and the answer is exact. At the cusp it is Weber, still closed-form, still Gamma-type. At the swallowtail it is the cubic oscillator: exactly characterised by a T-Q system, and NOT of Gamma-type - so there is no closed phase to compare against. Structure persists; closed forms run out.",
+    "refuge": "That is why resurgence is not a stylistic preference here. Above the cusp there is no Painleve reduction to fall back on and no Fredholm determinant to write down, so the trans-series is not one representation among several - it is the only one available. The divergent series stops being an embarrassment and becomes the definition.",
+    "distortion_dlmf": "The special functions themselves are not replotted here. DLMF chapter 36.3, by Berry and Howls, already does that better than this project would - rotatable, in modulus and phase, across parameter slices. What is added here is the narrative, not the surfaces.",
+    "distortion_absence": "'No Painleve reduction above the cusp' is an absence of a known reduction, plus explicit exclusion results at q=3. It is not a proof that none can exist for every higher rung.",
+    "distortion_notthom": "These rungs are indexed by turning ORDER in a second-order equation. They are not Thom's A_k catastrophe surfaces, and the resemblance of the names is a trap - see the coda."
   }
 }

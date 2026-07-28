@@ -207,3 +207,24 @@ named as hardest to convey. **Wants expert correction — entries 2 and 5 especi
 6. **The radius slider is logarithmic and stops at ~300.** Beyond that the ramp is narrower than a
    pixel, so the widget cannot show the limit it is describing; it can only show the trend toward
    it.
+
+---
+
+## Module δ1 (the junction) — distortion statement
+Completed 2026-07-28 against `junction/junction.html`. The node where the two trunks meet.
+
+1. **The closed form is a LEADING-ORDER action, and the page shows it as exact.** p = t^q is the
+   leading behaviour of the optimal path, not the path. A boundary-value solve of the full
+   Euler–Lagrange system approaches it *from below* — 0.839 of it at q=1 and s=10. The table
+   reports that honestly, but the hero line still reads like an identity.
+2. **This constant was wrong in this project's own notes.** An earlier draft carried
+   s^(2q+1)/[4(2q+1)] — too small by a factor 2 — until the q=2 case was checked against a BVP
+   solve and disagreed. Recorded on-page, because a viewer should know the formula has a history.
+3. **The shaded region is drawn under p, not under p²/2.** It marks the *support* of the action
+   integral, not its value; the height is p and the area is not the number quoted. Legible as a
+   "cost accumulates here" cue, misleading if read quantitatively. **Weakest point of the module.**
+4. **The right-hand panel plots the tail exponent, not the coefficients.** The claim that the same
+   I fixes the divergence rate of the v_k is *asserted* in caption, not shown — the ratio data
+   exists in the build output but is not drawn. The junction is therefore only half-demonstrated.
+5. **The ladder shown is the cusp only.** The swallowtail coefficients are actively being revised
+   (v₇ changed on 2026-07-28) and are deliberately excluded rather than shown as settled.

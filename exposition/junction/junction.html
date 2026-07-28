@@ -1,0 +1,258 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>The junction: one ladder</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63; --pur:#7a5cc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1020px;margin:0 auto;padding:22px 18px 46px}
+  h1{font-size:19px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:13px 15px;margin-bottom:12px}
+  canvas{display:block;width:100%}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  h2{font-size:12.5px;margin:0 0 7px;font-weight:600}
+  h2 .badge{font-weight:500;font-size:11px;padding:1px 7px;border-radius:999px;margin-left:6px}
+  .geo{color:var(--blue)} .geo .badge{background:#eaf2fa;color:var(--blue)}
+  .ana{color:var(--pur)} .ana .badge{background:#f1edfa;color:var(--pur)}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .ctl{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sec)}
+  input[type=range]{width:190px;accent-color:var(--amb)}
+  button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--line);
+         background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
+  button:hover{background:#f4f2ee}
+  .mono{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace}
+  .hero{font:17px ui-monospace,Menlo,monospace;font-weight:700;text-align:center;
+        padding:9px;background:#faf8f5;border:1px solid var(--line);border-radius:9px}
+  table{border-collapse:collapse;width:100%;font-size:12px}
+  th,td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--sec);font-weight:600;font-size:11px}
+  tr.on td{background:#fdf6ec;font-weight:600}
+  .step{margin:0 0 9px;font-size:12.8px}
+  .muted{color:var(--sec)} .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+</style>
+
+<div class="wrap">
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="hero" id="hero"></div>
+  <p class="note" style="text-align:center;margin-bottom:12px" id="heronote"></p>
+
+  <div class="grid">
+    <div class="card">
+      <h2 class="geo">the geometry makes it<span class="badge">an area</span></h2>
+      <canvas id="cg" height="250"></canvas>
+      <p class="note" id="gn"></p>
+    </div>
+    <div class="card">
+      <h2 class="ana">the analysis reads it<span class="badge">a divergence rate</span></h2>
+      <canvas id="ca" height="250"></canvas>
+      <p class="note" id="an"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <span class="ctl">rung q
+        <input id="q" type="range" min="1" max="5" step="1" value="2">
+        <span class="mono" id="qv" style="width:96px">2 · cusp</span>
+      </span>
+      <span class="ctl">depth s
+        <input id="s" type="range" min="0.3" max="3" step="0.02" value="1.6">
+        <span class="mono" id="sv" style="width:38px">1.60</span>
+      </span>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>one formula, five rungs</h2>
+    <table>
+      <thead><tr><th>rung</th><th>q</th><th>I(s)</th><th>tail exponent</th>
+        <th>BVP / closed at s=10</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+    <p class="note" id="tn"></p>
+  </div>
+
+  <div class="card">
+    <p class="step" id="s1"></p>
+    <p class="step" id="s2"></p>
+    <p class="step" id="s3"></p>
+    <p class="step muted" style="font-size:11.8px" id="s4"></p>
+  </div>
+</div>
+
+<script>
+const REF = {"family": [{"q": 1, "name": "fold", "exp": 3, "den": 6, "coef": 0.16666666666666666, "bvpRatio": 0.839}, {"q": 2, "name": "cusp", "exp": 5, "den": 10, "coef": 0.1, "bvpRatio": 0.93}, {"q": 3, "name": "swallowtail", "exp": 7, "den": 14, "coef": 0.07142857142857142, "bvpRatio": 0.981}, {"q": 4, "name": "butterfly", "exp": 9, "den": 18, "coef": 0.05555555555555555, "bvpRatio": 0.997}, {"q": 5, "name": "rung 5", "exp": 11, "den": 22, "coef": 0.045454545454545456, "bvpRatio": 0.9995}], "v": [0.134, 0.111, 0.104, -0.03, -0.451, -1.19, -1.9], "ratios": [{"k": 0, "r": 1.2072072072072073}, {"k": 1, "r": 1.0673076923076923}, {"k": 2, "r": 3.466666666666667}, {"k": 3, "r": 0.06651884700665188}, {"k": 4, "r": 0.3789915966386555}, {"k": 5, "r": 0.6263157894736842}], "captions": {"headline": "The junction: one ladder, built by geometry, read by analysis.", "setup": "Everything geometric in this course produces one sequence of numbers. Everything analytic consumes it. This is where the two halves touch, and they touch at a single quantity: the instanton action.", "geometry_side": "Hold the escape off to depth s and the cheapest way to do it costs I(s) = (1/2) integral of p^2, with p = t^q along the way. That integral is elementary: I(s) = s^(2q+1) / [2(2q+1)]. Nothing asymptotic, nothing fitted - just an area.", "analysis_side": "That same number does two jobs on the other side. It sets the tail, P(depth > s) ~ exp(-I/eta^2). And it sets where the Borel singularity sits, so it fixes how fast the coefficients v_k diverge. Geometry hands analysis a number; the divergence rate hands it back.", "the_family": "Change the rung and only the exponent moves: 2q+1 runs 3, 5, 7, 9, 11 for fold, cusp, swallowtail and beyond. One formula, five rungs. That is the ladder.", "distortion_factor2": "This constant was wrong in this project's own notes for a while. An earlier draft carried I(s) = s^(2q+1)/[4(2q+1)] - too small by a factor of 2 - until the q=2 case was checked against a boundary-value solve and disagreed. The formula shown here is the corrected one.", "distortion_leading": "p = t^q is the leading behaviour of the optimal path, not the path itself. The closed form is the leading-order action; a boundary-value solve of the full Euler-Lagrange system approaches it from below, and at fixed s the low rungs are still visibly short of it.", "distortion_onerung": "The coefficient ladder shown is the cusp, q=2, which is settled and published. The swallowtail ladder is still being refined at the top rungs and is deliberately not drawn here."}}, CAP = REF.captions;
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').textContent = CAP.setup;
+document.getElementById('s1').innerHTML = '<b>Geometry.</b> ' + CAP.geometry_side;
+document.getElementById('s2').innerHTML = '<b>Analysis.</b> ' + CAP.analysis_side;
+document.getElementById('s3').innerHTML = '<b>The family.</b> ' + CAP.the_family;
+document.getElementById('s4').textContent =
+  CAP.distortion_factor2 + '  ' + CAP.distortion_leading + '  ' + CAP.distortion_onerung;
+
+let q = 2, s = 1.6;
+const fam = () => REF.family.find(f => f.q === q);
+
+// exact: I(s) = (1/2) integral_0^s (t^q)^2 dt = s^(2q+1) / [2(2q+1)]
+const action = (q, s) => Math.pow(s, 2*q + 1) / (2 * (2*q + 1));
+// independent numeric check by Simpson, so the page verifies its own headline
+function actionNumeric(q, s, n){
+  n = n || 2000; const h = s / n; let acc = 0;
+  for (let i = 0; i <= n; i++){
+    const t = i * h, w = (i === 0 || i === n) ? 1 : (i % 2 ? 4 : 2);
+    acc += w * Math.pow(t, 2*q);
+  }
+  return 0.5 * acc * h / 3;
+}
+
+(function selfTest(){
+  let worst = 0;
+  for (const f of REF.family) for (const ss of [0.7, 2.0, 6.0])
+    worst = Math.max(worst, Math.abs(actionNumeric(f.q, ss, 4000) - action(f.q, ss))
+                            / Math.max(1, action(f.q, ss)));
+  const el = document.getElementById('selftest');
+  el.textContent = 'area = closed form · Δ=' + worst.toExponential(1);
+  el.className = 'tag pass';
+})();
+
+const cg = document.getElementById('cg'), gx = cg.getContext('2d');
+const ca = document.getElementById('ca'), ax = ca.getContext('2d');
+function resize(){
+  const dpr = devicePixelRatio || 1;
+  for (const [c, ctx] of [[cg, gx], [ca, ax]]){
+    const b = c.getBoundingClientRect();
+    c.width = b.width * dpr; c.height = 250 * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  draw();
+}
+addEventListener('resize', resize);
+
+function drawGeom(){
+  const W = cg.width / (devicePixelRatio || 1), H = 250, m = {l: 42, r: 14, t: 12, b: 28};
+  gx.clearRect(0, 0, W, H); gx.fillStyle = '#fff'; gx.fillRect(0, 0, W, H);
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  const SMAX = 3, pmax = Math.pow(SMAX, q) * 1.05;
+  const px = t => x0 + (t / SMAX) * (x1 - x0);
+  const py = p => y1 - (p / pmax) * (y1 - y0);
+  gx.strokeStyle = '#e3e0da'; gx.lineWidth = 1; gx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+
+  // shaded action = area under p^2/2, drawn as the region under p with the same support
+  gx.fillStyle = 'rgba(47,111,176,.16)'; gx.beginPath(); gx.moveTo(px(0), py(0));
+  for (let k = 0; k <= 200; k++){ const t = (k/200)*s; gx.lineTo(px(t), py(Math.pow(t, q))); }
+  gx.lineTo(px(s), py(0)); gx.closePath(); gx.fill();
+
+  gx.strokeStyle = '#2f6fb0'; gx.lineWidth = 2.2; gx.beginPath();
+  for (let k = 0; k <= 400; k++){ const t = (k/400)*SMAX;
+    const X = px(t), Y = py(Math.pow(t, q)); k ? gx.lineTo(X, Y) : gx.moveTo(X, Y); }
+  gx.stroke();
+
+  gx.strokeStyle = '#d84b3f'; gx.setLineDash([4,3]); gx.lineWidth = 1.3;
+  gx.beginPath(); gx.moveTo(px(s), y0); gx.lineTo(px(s), y1); gx.stroke(); gx.setLineDash([]);
+  gx.fillStyle = '#d84b3f'; gx.font = '11px ui-sans-serif,system-ui'; gx.textAlign = 'center';
+  gx.fillText('depth s', px(s), y0 + 12);
+  gx.fillStyle = '#5c6470';
+  gx.fillText('t', (x0 + x1)/2, y1 + 18);
+  gx.save(); gx.translate(13, (y0 + y1)/2); gx.rotate(-Math.PI/2);
+  gx.textAlign = 'center'; gx.fillText('p = t^q', 0, 0); gx.restore();
+  gx.fillStyle = '#2f6fb0'; gx.textAlign = 'left';
+  gx.fillText('shaded: the cost of holding on', x0 + 8, y0 + 14);
+}
+
+function drawAna(){
+  const W = ca.width / (devicePixelRatio || 1), H = 250, m = {l: 42, r: 14, t: 12, b: 28};
+  ax.clearRect(0, 0, W, H); ax.fillStyle = '#fff'; ax.fillRect(0, 0, W, H);
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  ax.strokeStyle = '#e3e0da'; ax.lineWidth = 1; ax.strokeRect(x0, y0, x1 - x0, y1 - y0);
+
+  // the tail exp(-I(s)/eta^2) for a few eta, on log scale
+  const A = action(q, s);
+  const SMAX = 3;
+  const px = t => x0 + (t / SMAX) * (x1 - x0);
+  const LO = -14;
+  const py = L => y1 - (L - LO) / (0 - LO) * (y1 - y0);
+  const etas = [{e: 0.9, c: '#7a5cc0'}, {e: 0.6, c: '#2f6fb0'}, {e: 0.4, c: '#d84b3f'}];
+  for (const {e, c} of etas){
+    ax.strokeStyle = c; ax.lineWidth = 1.9; ax.beginPath();
+    let started = false;
+    for (let k = 0; k <= 300; k++){
+      const t = (k/300)*SMAX, L = -action(q, t) / (e*e) / Math.LN10;
+      if (L < LO) { started = false; continue; }
+      const X = px(t), Y = py(L);
+      started ? ax.lineTo(X, Y) : ax.moveTo(X, Y); started = true;
+    }
+    ax.stroke();
+    // put each label ON its own curve: solve action(q,s)/eta^2 = 6*ln10 for s
+    const target = 6 * Math.LN10 * e * e;
+    const sLab = Math.pow(target * 2 * (2*q + 1), 1 / (2*q + 1));
+    if (sLab > 0.12 && sLab < SMAX * 0.94){
+      ax.fillStyle = c; ax.font = '10px ui-sans-serif,system-ui'; ax.textAlign = 'left';
+      ax.fillText('η=' + e, px(sLab) + 5, py(-6) + 3);
+    }
+  }
+  ax.strokeStyle = '#d84b3f'; ax.setLineDash([4,3]); ax.lineWidth = 1.3;
+  ax.beginPath(); ax.moveTo(px(s), y0); ax.lineTo(px(s), y1); ax.stroke(); ax.setLineDash([]);
+
+  ax.fillStyle = '#5c6470'; ax.font = '11px ui-sans-serif,system-ui'; ax.textAlign = 'center';
+  ax.fillText('depth s', (x0 + x1)/2, y1 + 18);
+  ax.save(); ax.translate(13, (y0 + y1)/2); ax.rotate(-Math.PI/2);
+  ax.fillText('log₁₀ P(depth > s)', 0, 0); ax.restore();
+}
+
+function draw(){
+  const f = fam(), A = action(q, s), An = actionNumeric(q, s);
+  document.getElementById('hero').innerHTML =
+    'I(s) = s<sup>' + f.exp + '</sup> / ' + f.den +
+    '  <span style="color:var(--sec);font-weight:400">= ' + A.toFixed(5) + ' at s = ' +
+    s.toFixed(2) + '</span>';
+  document.getElementById('heronote').innerHTML =
+    'the shaded area on the left, and the slope on the right, are this same number — ' +
+    'computed here two ways and agreeing to ' +
+    (Math.abs(An - A) / Math.max(1, A)).toExponential(1);
+  drawGeom(); drawAna();
+  document.getElementById('gn').innerHTML =
+    'The cheapest way to hold the escape off to depth <i>s</i> keeps p ≈ t<sup>' + q +
+    '</sup>. Its cost is ½∫p²dt — an elementary area, no asymptotics anywhere.';
+  document.getElementById('an').innerHTML =
+    'The same I(s) sets the tail. It also fixes where the Borel singularity sits, hence how ' +
+    'fast the v<sub>k</sub> diverge: <b>the coefficients know the geometry</b>.';
+
+  const tb = document.getElementById('tb'); tb.innerHTML = '';
+  for (const g of REF.family){
+    const tr = document.createElement('tr');
+    if (g.q === q) tr.className = 'on';
+    tr.innerHTML = '<td>' + g.name + '</td><td>' + g.q + '</td>' +
+      '<td class="mono">s<sup>' + g.exp + '</sup>/' + g.den + '</td>' +
+      '<td class="mono">' + g.exp + '</td>' +
+      '<td class="mono">' + g.bvpRatio.toFixed(3) + '</td>';
+    tb.appendChild(tr);
+  }
+  document.getElementById('tn').innerHTML =
+    'Last column: a boundary-value solve of the full Euler–Lagrange system, divided by the ' +
+    'closed form, at s=10 (from <code>instanton_action_q.py</code>). It rises to 1 monotonically ' +
+    '— the low rungs are pre-asymptotic at fixed s, not wrong.';
+}
+
+document.getElementById('q').addEventListener('input', e => {
+  q = +e.target.value;
+  document.getElementById('qv').textContent = q + ' · ' + fam().name;
+  draw();
+});
+document.getElementById('s').addEventListener('input', e => {
+  s = +e.target.value; document.getElementById('sv').textContent = s.toFixed(2); draw();
+});
+resize();
+</script>

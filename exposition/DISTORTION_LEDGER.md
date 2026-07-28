@@ -283,3 +283,23 @@ the tools have been seen working.
 5. **"Fenichel does not apply" is stated, not demonstrated.** The module shows λ → 0, which is the
    hypothesis failing; it does not show a slow manifold failing to persist. That is the right
    scope — but the leap from "hypothesis fails" to "conclusion fails" is asserted.
+
+---
+
+## Module ep0 (the hook) — distortion statement
+Completed 2026-07-28 against `hook/hook.html`. Opens the course; explains nothing on purpose.
+
+1. **This is a reduced model, not a neuron.** FHN discards ion channels, spatial structure and
+   most biophysics. The course's claim is about the *geometry*, not about cells. Captioned.
+2. **The histogram is of inter-spike intervals, which is NOT the law the course derives.** The
+   derived law is a distribution over the escape *point* in the slow variable. Related, not
+   identical. Captioned — and this is the one most likely to be quietly misremembered, because
+   the ISI histogram is the first shape a viewer sees and the escape law is the last.
+3. **Spike detection uses a Schmitt trigger, and the threshold pair is a choice.** Crossing up
+   through v=1 arms a spike; the detector re-arms only below v=−1. Different thresholds give
+   different counts. Nothing on-screen says the detector has parameters.
+4. **The live and reference runs use different RNGs**, so they agree in distribution, never
+   sample-for-sample. Correct, but the side-by-side bars invite reading them as the same run.
+5. **σ is adjustable but I is not.** The excitable regime is fixed at I=0.30; a viewer cannot
+   discover that the same system oscillates without noise at I≳0.35, which is arguably the more
+   striking fact about it.

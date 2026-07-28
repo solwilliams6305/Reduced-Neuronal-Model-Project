@@ -1,0 +1,255 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>A neuron fires. The timing is random.</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#20242b; --sec:#5c6470; --line:#e3e0da;
+    --blue:#2f6fb0; --red:#d84b3f; --amb:#d9851f; --grn:#1f9d63; --pur:#7a5cc0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:13px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial}
+  .wrap{max-width:1020px;margin:0 auto;padding:22px 18px 46px}
+  h1{font-size:20px;margin:0 0 3px;font-weight:600;letter-spacing:-.2px}
+  .sub{color:var(--sec);margin:0 0 14px;font-size:12.5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:13px 15px;margin-bottom:12px}
+  canvas{display:block;width:100%}
+  h2{font-size:12.5px;margin:0 0 7px;color:var(--sec);font-weight:600}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .ctl{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--sec)}
+  input[type=range]{width:200px;accent-color:var(--amb)}
+  button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--line);
+         background:#fff;border-radius:8px;cursor:pointer;color:var(--ink)}
+  button:hover{background:#f4f2ee}
+  button.go{border-color:#c8d8ea;background:#f2f7fc;color:var(--blue);font-weight:600}
+  .mono{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+  .pass{color:var(--grn);border-color:#bfe6d2;background:#f2fbf6}
+  .fail{color:var(--red);border-color:#f2c9c4;background:#fdf3f2}
+  .qs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:820px){.qs{grid-template-columns:1fr}}
+  .q{border-radius:12px;padding:14px 16px;font-size:13px}
+  .q b{display:block;font-size:11px;letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase}
+  .qa{background:#eff5fb;border:1px solid #c8dcef} .qa b{color:var(--blue)}
+  .qb{background:#f4f0fb;border:1px solid #d9cff0} .qb b{color:var(--pur)}
+  .muted{color:var(--sec)} .note{font-size:11.5px;color:var(--sec);margin-top:8px}
+</style>
+
+<div class="wrap">
+  <h1 id="h1"></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="card">
+    <h2>voltage</h2>
+    <canvas id="cv" height="180"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>the gaps between spikes, piling up</h2>
+    <canvas id="ch" height="230"></canvas>
+    <p class="note" id="hn"></p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <span class="ctl">noise σ
+        <input id="sig" type="range" min="0" max="0.2" step="0.005" value="0.1">
+        <span class="mono" id="sigv" style="width:44px">0.100</span>
+      </span>
+      <button class="go" id="run">pause</button>
+      <button id="reset">reset</button>
+      <span class="mono" id="stats" style="color:var(--sec)"></span>
+      <span id="selftest" class="tag">self-test…</span>
+    </div>
+    <p class="note" id="note"></p>
+  </div>
+
+  <p class="sub" style="margin:18px 0 8px;font-size:13px" id="lead"></p>
+  <div class="qs">
+    <div class="q qa"><b>Question one — the geometry</b><span id="q1"></span></div>
+    <div class="q qb"><b>Question two — the shape</b><span id="q2"></span></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <p style="margin:0 0 8px;font-size:12.8px" id="promise"></p>
+    <p class="muted" style="margin:0;font-size:11.8px" id="dist"></p>
+  </div>
+</div>
+
+<script>
+const REF = {"A": 0.7, "B": 0.8, "I": 0.3, "eps": 0.08, "dt": 0.01, "vth": 1.0, "vreset": -1.0, "refHist": [0, 0, 0, 0, 0, 3, 449, 1317, 625, 294, 207, 149, 115, 90, 55, 41, 19, 21, 11, 12, 4, 8, 2, 1, 1, 2, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "refEdges": [0.0, 5.909090909090909, 11.818181818181818, 17.727272727272727, 23.636363636363637, 29.545454545454547, 35.45454545454545, 41.36363636363637, 47.27272727272727, 53.18181818181818, 59.09090909090909, 65.0, 70.9090909090909, 76.81818181818181, 82.72727272727273, 88.63636363636364, 94.54545454545455, 100.45454545454545, 106.36363636363636, 112.27272727272728, 118.18181818181819, 124.0909090909091, 130.0, 135.9090909090909, 141.8181818181818, 147.72727272727272, 153.63636363636363, 159.54545454545456, 165.45454545454547, 171.36363636363637, 177.27272727272728, 183.1818181818182, 189.0909090909091, 195.0, 200.9090909090909, 206.8181818181818, 212.72727272727272, 218.63636363636363, 224.54545454545456, 230.45454545454547, 236.36363636363637, 242.27272727272728, 248.1818181818182, 254.0909090909091, 260.0], "refStats": {"n": 3428, "mean": 52.451575262543756, "cv": 0.2874736771707303, "skew": 2.304181331584205}, "golden": [{"i": 0, "v": -1.2, "w": -0.6}, {"i": 200, "v": -0.7164506553728742, "w": -0.5660686148932262}, {"i": 400, "v": 0.36091430398754537, "w": -0.43757735666066994}, {"i": 600, "v": 1.8893869019464469, "w": -0.06918015444635267}, {"i": 800, "v": 1.7622300869760332, "w": 0.3201000771719571}, {"i": 1000, "v": 1.590856122201434, "w": 0.6386336474976716}, {"i": 1200, "v": 1.3982894475016423, "w": 0.8916996267207848}, {"i": 1400, "v": 1.1581818186836796, "w": 1.0823357030514669}, {"i": 1600, "v": 0.7675279957433863, "w": 1.2050390785476384}, {"i": 1800, "v": -0.5980523593531173, "w": 1.204577300113933}, {"i": 2000, "v": -1.991276957460443, "w": 0.9182993855877647}], "captions": {"headline": "A neuron fires. The timing is random. The randomness has a shape.", "setup": "This is FitzHugh-Nagumo with a little noise on the voltage - about the simplest thing that spikes. Let it run. The spikes are not evenly spaced, and the gaps between them are not spread out evenly either: the histogram builds a definite, lopsided shape.", "q1": "QUESTION ONE, for the geometry. What is it about the shape of this system that makes a spike happen at all - and what decides WHERE, in the slow drift, the escape occurs?", "q2": "QUESTION TWO, for the analysis. Why THAT shape? A lopsided distribution with a sharp edge on one side and a long tail on the other is not what you would guess. Where does its form come from?", "promise": "Those two questions run as separate threads and stay separate for a long time. They meet once, at a single sequence of numbers, and the answer to the second turns out to be a law that does not care which neuron model you started from.", "distortion_notreal": "This is a reduced model, not a neuron. FitzHugh-Nagumo throws away ion channels, spatial structure and most biophysics; it keeps two timescales and a cubic nonlinearity. The claim of this course is about that geometry, not about cells.", "distortion_isi": "The histogram is of inter-spike intervals from one long run at fixed parameters. It is not the escape law the course derives - that one is a distribution over the ESCAPE POINT in the slow variable, which is related but not identical."}}, CAP = REF.captions;
+document.getElementById('h1').textContent = CAP.headline;
+document.getElementById('sub').textContent = CAP.setup;
+document.getElementById('lead').innerHTML =
+  '<b>Two questions, and the rest of the course is the answer to them.</b>';
+document.getElementById('q1').textContent = CAP.q1;
+document.getElementById('q2').textContent = CAP.q2;
+document.getElementById('promise').innerHTML = '<b>What happens next.</b> ' + CAP.promise;
+document.getElementById('dist').textContent = CAP.distortion_notreal + '  ' + CAP.distortion_isi;
+
+const {A, B, I, eps, dt, vth, vreset} = REF;
+// ---------------------------------------------------------------- Class A kernel
+// Euler-Maruyama.  Deterministic part must match build_hook.py exactly; the noise does not
+// (different RNG), which is why the self-test runs at sigma = 0.
+function step(v, w, sigma, gauss){
+  const vn = v + (v - v*v*v/3 - w + I) * dt + sigma * Math.sqrt(dt) * gauss;
+  const wn = w + eps * (v + A - B * w) * dt;
+  return [vn, wn];
+}
+let spare = null, seed = 20260728 >>> 0;
+function gauss(){
+  if (spare !== null){ const s = spare; spare = null; return s; }
+  const u = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+  let a; do { a = u(); } while (a <= 1e-12);
+  const b = u(), r = Math.sqrt(-2 * Math.log(a));
+  spare = r * Math.sin(2 * Math.PI * b);
+  return r * Math.cos(2 * Math.PI * b);
+}
+
+(function selfTest(){
+  let v = -1.2, w = -0.6, worst = 0, gi = 0;
+  const want = new Map(REF.golden.map(g => [g.i, g]));
+  for (let i = 0; i <= 2000; i++){
+    if (want.has(i)){
+      const g = want.get(i);
+      worst = Math.max(worst, Math.abs(v - g.v), Math.abs(w - g.w));
+    }
+    [v, w] = step(v, w, 0, 0);
+  }
+  const el = document.getElementById('selftest'), ok = worst < 1e-10;
+  el.textContent = (ok ? 'port OK · Δ=' : 'PORT MISMATCH · Δ=') + worst.toExponential(1);
+  el.className = 'tag ' + (ok ? 'pass' : 'fail');
+  document.getElementById('note').innerHTML =
+    'The deterministic system is <b>silent</b> — at σ=0 nothing happens after the initial ' +
+    'transient, so every spike here is caused by the noise. Python’s reference histogram (' +
+    REF.refStats.n.toLocaleString() + ' intervals) is drawn behind the live one. The badge ' +
+    'checks the browser’s integrator against Python at σ=0.';
+})();
+
+let sigma = 0.1, v = -1.2, w = -0.6, prev = -1.2, t = 0, lastSpike = null, armed = true;
+const isis = [], NB = REF.refHist.length, HMAX = REF.refEdges[REF.refEdges.length - 1];
+const counts = new Array(NB).fill(0);
+const trace = []; const TRACE_N = 1400;
+let running = true;
+
+const cv = document.getElementById('cv'), vc = cv.getContext('2d');
+const ch = document.getElementById('ch'), hc = ch.getContext('2d');
+function resize(){
+  const dpr = devicePixelRatio || 1;
+  for (const [c, h] of [[cv, 180], [ch, 230]]){
+    const b = c.getBoundingClientRect(), cx = c.getContext('2d');
+    c.style.height = h + 'px';
+    c.width = b.width * dpr; c.height = h * dpr;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  draw();
+}
+addEventListener('resize', resize);
+
+function advance(steps){
+  for (let k = 0; k < steps; k++){
+    [v, w] = step(v, w, sigma, sigma > 0 ? gauss() : 0);
+    t += dt;
+    // hysteresis: re-arm only after the voltage has fallen back past vreset.  Without this the
+    // noisy trace wobbles across the threshold and every wobble is counted as a spike.
+    if (armed && prev < vth && v >= vth){
+      armed = false;
+      if (lastSpike !== null){
+        const gap = t - lastSpike;
+        isis.push(gap);
+        const b = Math.floor(gap / HMAX * NB);
+        if (b >= 0 && b < NB) counts[b]++;
+      }
+      lastSpike = t;
+    }
+    if (v < vreset) armed = true;
+    prev = v;
+    if (k % 4 === 0){ trace.push(v); if (trace.length > TRACE_N) trace.shift(); }
+  }
+}
+
+function drawTrace(){
+  const W = cv.width / (devicePixelRatio || 1), H = 180, m = {l: 40, r: 12, t: 10, b: 20};
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  vc.clearRect(0, 0, W, H); vc.fillStyle = '#fff'; vc.fillRect(0, 0, W, H);
+  vc.strokeStyle = '#e3e0da'; vc.lineWidth = 1; vc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const PY = u => y1 - (u + 2.4) / 5.0 * (y1 - y0);
+  vc.save(); vc.setLineDash([4,3]); vc.strokeStyle = '#d84b3f'; vc.lineWidth = 1;
+  vc.beginPath(); vc.moveTo(x0, PY(vth)); vc.lineTo(x1, PY(vth)); vc.stroke(); vc.restore();
+  vc.fillStyle = '#d84b3f'; vc.font = '10px ui-sans-serif,system-ui'; vc.textAlign = 'left';
+  vc.fillText('spike threshold', x0 + 6, PY(vth) - 5);
+  vc.strokeStyle = '#2f6fb0'; vc.lineWidth = 1.6; vc.beginPath();
+  for (let i = 0; i < trace.length; i++){
+    const X = x0 + i / TRACE_N * (x1 - x0), Y = PY(trace[i]);
+    i ? vc.lineTo(X, Y) : vc.moveTo(X, Y);
+  }
+  vc.stroke();
+  vc.fillStyle = '#5c6470'; vc.textAlign = 'right'; vc.fillText('v', x0 - 8, (y0 + y1)/2);
+  vc.textAlign = 'center'; vc.fillText('time →', (x0 + x1)/2, y1 + 15);
+}
+
+function drawHist(){
+  const W = ch.width / (devicePixelRatio || 1), H = 230, m = {l: 44, r: 14, t: 12, b: 30};
+  const x0 = m.l, x1 = W - m.r, y0 = m.t, y1 = H - m.b;
+  hc.clearRect(0, 0, W, H); hc.fillStyle = '#fff'; hc.fillRect(0, 0, W, H);
+  hc.strokeStyle = '#e3e0da'; hc.lineWidth = 1; hc.strokeRect(x0, y0, x1 - x0, y1 - y0);
+  const bw = (x1 - x0) / NB;
+  const refMax = Math.max(...REF.refHist) || 1, liveMax = Math.max(...counts) || 1;
+  // Python's reference, normalised to the same height so shapes can be compared
+  hc.fillStyle = 'rgba(122,92,192,.20)';
+  for (let i = 0; i < NB; i++){
+    const h = REF.refHist[i] / refMax * (y1 - y0) * .92;
+    hc.fillRect(x0 + i * bw, y1 - h, bw - 1, h);
+  }
+  hc.fillStyle = '#2f6fb0';
+  for (let i = 0; i < NB; i++){
+    const h = counts[i] / liveMax * (y1 - y0) * .92;
+    if (h > 0) hc.fillRect(x0 + i * bw + bw * .22, y1 - h, bw * .56, h);
+  }
+  hc.fillStyle = '#5c6470'; hc.font = '10.5px ui-sans-serif,system-ui'; hc.textAlign = 'center';
+  for (let g = 0; g <= HMAX; g += 15)
+    hc.fillText(String(g), x0 + g / HMAX * (x1 - x0), y1 + 15);
+  hc.fillText('gap between spikes', (x0 + x1)/2, y1 + 27);
+  hc.textAlign = 'left';
+  hc.fillStyle = '#2f6fb0'; hc.fillText('live', x0 + 10, y0 + 14);
+  hc.fillStyle = '#7a5cc0'; hc.fillText('Python reference', x0 + 10, y0 + 29);
+}
+
+function draw(){
+  drawTrace(); drawHist();
+  const n = isis.length;
+  let s = 'spikes ' + (lastSpike === null ? 0 : n + 1);
+  if (n > 4){
+    const m = isis.reduce((a, b) => a + b, 0) / n;
+    const sd = Math.sqrt(isis.reduce((a, b) => a + (b - m) ** 2, 0) / n);
+    const sk = isis.reduce((a, b) => a + ((b - m) / sd) ** 3, 0) / n;
+    s += '   mean ' + m.toFixed(1) + '   CV ' + (sd / m).toFixed(3) +
+         '   skew ' + sk.toFixed(2) +
+         '     [Python: ' + REF.refStats.mean.toFixed(1) + ', ' +
+         REF.refStats.cv.toFixed(3) + ', ' + REF.refStats.skew.toFixed(2) + ']';
+  }
+  document.getElementById('stats').textContent = s;
+  document.getElementById('hn').innerHTML =
+    'Blue is what has happened since you opened the page. Violet behind it is Python’s long run. ' +
+    'They are the same shape — <b>lopsided, with a hard edge on the left and a long tail right</b>.';
+}
+
+function frame(){
+  if (running){ advance(5200); draw(); }
+  requestAnimationFrame(frame);
+}
+document.getElementById('sig').addEventListener('input', e => {
+  sigma = +e.target.value;
+  document.getElementById('sigv').textContent = sigma.toFixed(3);
+});
+document.getElementById('run').addEventListener('click', e => {
+  running = !running; e.target.textContent = running ? 'pause' : 'run';
+});
+document.getElementById('reset').addEventListener('click', () => {
+  v = -1.2; w = -0.6; prev = -1.2; t = 0; lastSpike = null;
+  isis.length = 0; counts.fill(0); trace.length = 0; seed = 20260728 >>> 0; spare = null;
+  armed = true;
+  draw();
+});
+resize(); frame();
+</script>

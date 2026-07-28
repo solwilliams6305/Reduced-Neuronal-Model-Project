@@ -376,28 +376,35 @@ fit gives $-169$, which is meaningless. `swtl_borel.py` now **auto-drops** any g
 $n<\max{\rm idx}$ (this removed $v_6$'s $n=10,12$ and excluded $v_7$ entirely); $v_6$'s central value
 is unchanged at $-5.34$ since it already rested on the $n\ge16$ tail.
 
-**The wall.** Assembly cost measured across the two points scales as $n^{13.2}$ (11.1× for
-$10\to12$). Projections to the first *usable* resolution:
+**The wall — RETRACTED (2026-07-28).** Measured across the two *under-resolved* points the
+assembly appeared to scale as $n^{13.2}$ (11.1× for $10\to12$), projecting $n=16$ at 10.4 days and a
+full grid at ~250 days. **All of that was wrong**, and wrong three separate times:
 
-| $n$ | projected assembly | usable? |
-|---|---|---|
-| 14 | 43 h | no ($<15$) |
-| **16** | **10.4 days** | **first usable** |
-| 18 | 49 days | — |
-| 20 | 197 days | — |
+| projection | actual |
+|---|---|
+| $n=16$: 10.4 days (from $n^{13.2}$) | **17.0 h** |
+| $n=18$: ~35 h (from $n^{4.5}$) | **16.7 h** |
+| $n=18$: ~49 h (from the stalled first pair) | **16.7 h** |
 
-So a proper $v_7$ grid $(16,18,20)$ is $\sim250$ days of compute. **$v_7$ is out of reach with this
-engine** — matching the cusp's own experience (`[[program2-v6-theta48]]`: "v7 walled by assembly
+Two lessons. (i) Never fit cost scaling on under-resolved points — the $n^{13.2}$ exponent came from
+$n=10,12$, both below the idx-15 threshold. (ii) The per-pair split is **not stable**, so a stalled
+first pair says nothing about the total: at $n=16$ the pair $(8,8)$ took 15852 s and $(1,15)$ then
+44395 s; at $n=18$ the same pairs took 55591 s and 3313 s, for near-identical totals. The honest
+statement is **~17 h per grid point at $n=16$–$18$**, with an unstable internal split. $v_7$ was
+never out of reach — matching the cusp's own experience (`[[program2-v6-theta48]]`: "v7 walled by assembly
 scale"). $v_8$ is further out still: it needs idx 17, and `_yexprs_17.txt` does not exist (only
 orders 7,9,11,13,15 are built). ⚠ Note `_yfile(17)` silently returns `_yexprs_13.txt`, so a naive
 $v_8$ run would `IndexError` rather than report the missing table — the same trap that broke $v_6$.
 **[NUMERIC, hard wall]**
 
-### $v_7$ LANDED (2026-07-26): $v_7(n{=}16)=-25.7215$
+### $v_7$ COMPLETE (2026-07-26/28): $v_7=-21.5$, band $[-25.3,-21.5]$
 
 The $n=16$ run completed in **61027 s ≈ 17 h** — the first *usable* resolution ($n\ge$ idx 15; the
 $n=10,12$ points stay below threshold and are auto-dropped). One usable grid point, so no
-extrapolation: $v_7=-25.72$ with no band. Sign pattern is now $+,+,+,+,+,-,-,-$.
+extrapolation from one point. **$n=18$ then landed (2026-07-28): $v_7(n{=}18)=-25.2558$, 16.7 h.**
+The two usable points differ by only $1.8\%$, giving
+$$v_7=-21.53,\qquad\text{band }[-25.26,\,-21.53],$$
+*tighter in relative terms than $v_6$'s*. Sign pattern is $+,+,+,+,+,-,-,-$.
 
 **The 8th coefficient transforms the resummation.** Against the verified truth $f(2)=0.1655$:
 
@@ -415,8 +422,12 @@ plausible $v_7$ gave 0.22–0.25; the actual $v_7=-25.7$ gives 0.2177). **[NUMER
 
 $v_7$ does **not** rescue $\theta$ from the joint fit — that stays at 38.1° (stable across all four
 skew grids) — but it does stabilise Borel–Padé's $\theta$, which forced the calibration analysis
-above. **A second usable point ($n=18$, ~35 h) would give $v_7$ a band; it is the single highest-value
-remaining computation.**
+above. **DONE:** the second usable point landed, $v_7$ has a band, and the "single usable grid
+point" caveat is deleted from the paper's ledger — it was the last item load-bearing for a stated
+claim. Downstream: $f(2)=0.2234$ (+35.6%, was +32.2%), error at $\beta=4$ now 9.0% (was 7.7%),
+$\beta\ge8$ better than 2% (was 1%); the $|{\rm err}|<10\%$ range ($x\le1.00$) and the $\theta$
+band (33–42°) are unchanged. The monotonicity claim is softened to $x\ge0.36$: below that the
+sub-1.5% wiggles are at the ground-truth solver's own accuracy and carry no structure.
 
 **What $v_7$ was predicted to buy, before it existed.** Scanning a plausible $v_7$ through the near-diagonal
 $[4/3]$ Padé: $f(2)$ lands at 0.22–0.25 for $v_7\in[-20,-8]$, versus 0.035 from the 7-coefficient
